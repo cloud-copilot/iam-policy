@@ -1,0 +1,40 @@
+{
+  "name": "@cloud-copilot/iam-policy",
+  "version": "0.0.1",
+  "description": "An ORM for AWS IAM policies",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloud-copilot/iam-policy.git"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "types": "dist/cjs/index.d.ts",
+  "scripts": {
+    "build": "npx tsc -p tsconfig.cjs.json && npx tsc -p tsconfig.esm.json && ./postbuild.sh",
+    "test": "npx vitest --run --coverage",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "AWS",
+    "IAM"
+  ],
+  "author": "David Kerber <dave@cloudcopilot.io>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/cloud-copilot/iam-policy/issues"
+  },
+  "homepage": "https://github.com/cloud-copilot/iam-policy#readme",
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@vitest/coverage-v8": "^2.0.5",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}
