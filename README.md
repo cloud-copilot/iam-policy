@@ -1,10 +1,10 @@
 # IAM Policy Parser
 
-This is a simple IAM policy library that allows you parse and navigate IAM policies without worry about the more difficult details of parsing policies.
+This is a simple IAM policy library that allows you parse and navigate IAM policies without worring about the more difficult details of parsing policies.
 
 This may be updated in the future to allow modifying policies, right now it's read-only.
 
-**This does not validate policies**, it only parses them. If you pass in totally invalid JSON it will fail in glorious and unpredictable ways.
+_**This does not validate policies**_, it only parses them. If you pass in totally invalid JSON it will fail in glorious and unpredictable ways.
 
 Here are some ways it helps:
 
@@ -53,9 +53,9 @@ console.log(p2.statements()[0].sid()); //ObjectStatement
 
 There is similar support for condition values, principals, and resources.
 
-## Mutually Exclusive Policy Elements
+## Mutually Exclusive or Optional Policy Elements
 
-In IAM policies there are some elements that are mutually exclusive. For example, you can't have a `Principal` and a `NotPrincipal` in the same statement. We leverage the Typescript type system to make sure you only access data that is confirmed to exist in the policy.
+In IAM policies there are some elements that are mutually exclusive. For example, you can't have a `Principal` and a `NotPrincipal` in the same statement. Some elements are completely optional. We leverage the Typescript type system to make sure you only access data that is confirmed to exist in the policy.
 
 ```typescript
 import{ loadPolicy } from '@cloud-copilot/iam-policy'
@@ -75,7 +75,7 @@ const actionPolicy = {
 const p = loadPolicy(actionPolicy);
 const statement = p.statements()[0]; // Get the first statement out
 
-statement.actions() // Causes a compile time error becuase we haven't confirmed the statement has actions
+statement.actions() // Causes a compile time error becuase we haven't confirmed the statement has an Action element
 
 if(statement.isActionStatement()) {
   statement.actions() // Now we can access the actions because the type has been confirmed
@@ -128,8 +128,8 @@ if(statement.isPrincipalStatement()) {
   principals[0].value() //arn:aws:iam::123456789012:root
   ...
   principals[3].type() //Federated
-  principals[3].value() //arn:aws:iam::123456789012:root
+  principals[3].value() //cognito-identity.amazonaws.com
 }
 ```
 
-There is flattening for the `Condition` element.
+There is similar flattening for the `Condition` element.
