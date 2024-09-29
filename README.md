@@ -160,11 +160,11 @@ const p = loadPolicy(principalPolicy);
 const statement = p.statements()[0]; // Get the first statement out
 
 const conditions = statement.conditions();
-conditions[0].operation() //StringEquals
+conditions[0].operation().value() //StringEquals
 conditions[0].conditionKey() //s3:prefix
 conditions[0].conditionValues() //[ home/${aws:username} ]
 //and so on
-conditions[3].operation() //StringLike
+conditions[3].operation().value() //StringLike
 conditions[3].conditionKey() //aws:TagKeys/Foo
 conditions[3].conditionValues() // [Bar*, Baz*]
 ```

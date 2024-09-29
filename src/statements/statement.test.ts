@@ -553,7 +553,7 @@ describe('StatementImpl', () => {
 
       //Then conditions should return the Condition
       expect(statement.conditions().length).toEqual(1)
-      expect(statement.conditions()[0].operation()).toEqual('StringEquals')
+      expect(statement.conditions()[0].operation().value()).toEqual('StringEquals')
       expect(statement.conditions()[0].conditionKey()).toEqual('s3:prefix')
       expect(statement.conditions()[0].conditionValues()).toEqual(['home/${aws:username}'])
     })
@@ -573,7 +573,7 @@ describe('StatementImpl', () => {
 
       //Then conditions should return the Condition
       expect(statement.conditions().length).toEqual(1)
-      expect(statement.conditions()[0].operation()).toEqual('StringEquals')
+      expect(statement.conditions()[0].operation().value()).toEqual('StringEquals')
       expect(statement.conditions()[0].conditionKey()).toEqual('s3:prefix')
       expect(statement.conditions()[0].conditionValues()).toEqual(['home/${aws:username}', 'home/${aws:username}/'])
     })
@@ -598,16 +598,16 @@ describe('StatementImpl', () => {
 
       //Then conditions should return multiple Conditions
       expect(statement.conditions().length).toEqual(4)
-      expect(statement.conditions()[0].operation()).toEqual('StringEquals')
+      expect(statement.conditions()[0].operation().value()).toEqual('StringEquals')
       expect(statement.conditions()[0].conditionKey()).toEqual('s3:prefix')
       expect(statement.conditions()[0].conditionValues()).toEqual(['home/${aws:username}'])
-      expect(statement.conditions()[1].operation()).toEqual('StringEquals')
+      expect(statement.conditions()[1].operation().value()).toEqual('StringEquals')
       expect(statement.conditions()[1].conditionKey()).toEqual('aws:PrincipalOrgID')
       expect(statement.conditions()[1].conditionValues()).toEqual(['o-1234567890'])
-      expect(statement.conditions()[2].operation()).toEqual('StringLike')
+      expect(statement.conditions()[2].operation().value()).toEqual('StringLike')
       expect(statement.conditions()[2].conditionKey()).toEqual('s3:prefix')
       expect(statement.conditions()[2].conditionValues()).toEqual(['home/${aws:username}'])
-      expect(statement.conditions()[3].operation()).toEqual('StringLike')
+      expect(statement.conditions()[3].operation().value()).toEqual('StringLike')
       expect(statement.conditions()[3].conditionKey()).toEqual('aws:TagKeys/Foo')
       expect(statement.conditions()[3].conditionValues()).toEqual(['Bar*'])
     })
