@@ -7,6 +7,12 @@ import { Resource, ResourceImpl } from "../resources/resource.js"
  * Represents a statement in an IAM policy
  */
 export interface Statement {
+
+  /**
+   * The index of the statement in the policy, starts from 1
+   */
+  index(): number
+
   /**
    * The optional Sid (Statement ID) for a statement
    */
@@ -134,7 +140,11 @@ export interface NotPrincipalStatement extends Statement {
  * Implementation of the Statement interface and all its sub-interfaces
  */
 export class StatementImpl implements Statement, ActionStatement, NotActionStatement, ResourceStatement, NotResourceStatement, PrincipalStatement {
-  constructor(private readonly statementObject: any) {}
+  constructor(private readonly statementObject: any, private readonly _index: number) {}
+
+  public index(): number {
+    return this._index
+  }
 
   public sid(): string | undefined {
     return this.statementObject.Sid

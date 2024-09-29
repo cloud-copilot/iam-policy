@@ -76,9 +76,11 @@ describe("PolicyImpl", () => {
       const policy = new PolicyImpl(policyObject);
 
       // Then the statements should be an array with two statements
-      expect(policy.statements().length).toBe(2);
-      expect(policy.statements()[0].sid()).toBe('First');
-      expect(policy.statements()[1].sid()).toBe('Second');
+      expect(policy.statements().length).toEqual(2);
+      expect(policy.statements()[0].sid()).toEqual('First');
+      expect(policy.statements()[0].index()).toEqual(1);
+      expect(policy.statements()[1].sid()).toEqual('Second');
+      expect(policy.statements()[1].index()).toEqual(2);
     })
   })
 })

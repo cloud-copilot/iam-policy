@@ -18,6 +18,6 @@ export class PolicyImpl {
   }
 
   public statements(): Statement[] {
-    return [this.policyObject.Statement].flat().map((statement: any) => new StatementImpl(statement))
+    return [this.policyObject.Statement].flat().map((statement: any, index) => new StatementImpl(statement, index + 1))
   }
 }
