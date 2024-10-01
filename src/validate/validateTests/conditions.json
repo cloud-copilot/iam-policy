@@ -1,0 +1,124 @@
+[
+  {
+    "name": "No Condition",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow"
+      }
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Condition Array",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": []
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition", "message": "Condition must be an object, found an array"}
+    ]
+  },
+  {
+    "name": "Condition String",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": "hello"
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition", "message": "Found data type string allowed type(s) are object"}
+    ]
+  },
+  {
+    "name": "Condition Object with String values",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "StringEquals": "hello"
+        }
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition.StringEquals", "message": "Found data type string allowed type(s) are object"}
+    ]
+  },
+  {
+    "name": "Condition Object with Array values",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "StringEquals": ["hello"]
+        }
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition.StringEquals", "message": "Condition operator must be an object, found an array"}
+    ]
+  },
+  {
+    "name": "Condition Object with Array values",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "StringEquals": ["hello"]
+        }
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition.StringEquals", "message": "Condition operator must be an object, found an array"}
+    ]
+  },
+  {
+    "name": "Condition Object with Invalid Values",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "StringEquals": {
+            "aws:Username": {
+              "hello": "world"
+            }
+          }
+        }
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition.StringEquals.aws:Username", "message": "Found data type object allowed type(s) are string"}
+    ]
+  },
+  {
+    "name": "Valid Condition String",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "StringEquals": {
+            "aws:Username": "Bob"
+          }
+        }
+      }
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Valid Condition String",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "StringEquals": {
+            "aws:Username": ["Bob","OtherBob"]
+          }
+        }
+      }
+    },
+    "expectedErrors": []
+  }
+
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "name": "String Principal",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Invalid principal data type",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Principal": 7
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Statement[0].Principal", "message": "Found data type number allowed type(s) are string, object"}
+    ]
+  },
+  {
+    "name": "Object Principal, Invalid Keys",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Principal": {
+            "Bad": "arn:aws:iam::123456789012:root",
+            "Worse": "arn:aws:iam::123456789012:root"
+          }
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Statement[0].Principal.Bad", "message": "Invalid key Bad"},
+      {"path": "Statement[0].Principal.Worse", "message": "Invalid key Worse"}
+    ]
+  },
+  {
+    "name": "Object Principal, AWS",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Principal": {"AWS": "arn:aws:iam::123456789012:root"}
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Object Principal, AWS with multiple values",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Principal": {"AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"]}
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Object Principal, Service",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Principal": {"Service": "arn:aws:iam::123456789012:root"}
+        }
+      ]
+    },
+    "expectedErrors": []
+  }
+]

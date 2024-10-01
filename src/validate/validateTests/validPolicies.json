@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Minimum Valid Policy",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow"
+      }
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Valid Statement Array",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::examplebucket/*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Simple Valid Policy",
+    "policy": {
+      "Id": "Policy1234567890123",
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::examplebucket/*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Statement Fields",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::examplebucket/*",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Statement Not Fields",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "NotAction": "s3:GetObject",
+          "NotResource": "arn:aws:s3:::examplebucket/*",
+          "NotPrincipal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Condition Fields",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": "*",
+          "Condition": {
+            "StringEquals": {
+              "s3:x-amz-acl": "public-read"
+            },
+            "StringLike": {
+              "s3:x-amz-meta-*": ["user-*", "admin"]
+            }
+          }
+        }
+      ]
+    },
+    "expectedErrors": []
+  }
+]

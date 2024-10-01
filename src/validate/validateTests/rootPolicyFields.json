@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Policy is a string",
+    "policy": "hello",
+    "expectedErrors": [
+      {"path": "", "message": "Policy must be an object, received type string"}
+    ]
+  },
+  {
+    "name": "Policy is an array",
+    "policy": [{}],
+    "expectedErrors": [
+      {"path": "", "message": "Policy must be an object, received an array"}
+    ]
+  },
+  {
+    "name": "Policy is undefined",
+    "expectedErrors": [
+      {"path": "", "message": "Policy must be an object, received type undefined"}
+    ]
+  },
+  {
+    "name": "Valid Policy Id",
+    "policy": {
+      "Id": "Policy1234567890123",
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::examplebucket/*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Invalid Policy Id",
+    "policy": {
+      "Id": 7,
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::examplebucket/*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Id", "message": "Found data type number allowed type(s) are string"}
+    ]
+  },
+  {
+    "name": "Invalid Policy Version",
+    "policy": {
+      "Version": -10,
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::examplebucket/*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Version", "message": "Found data type number allowed type(s) are string"}
+    ]
+  },
+  {
+    "name": "Missing Statement Field",
+    "policy": {
+      "Id": "Policy1234567890123",
+      "Version": "2012-10-17"
+    },
+    "expectedErrors": [
+      {"path": "Statement", "message": "Statement is required"}
+    ]
+  }
+]

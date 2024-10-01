@@ -6,4 +6,5 @@ export type { Policy } from './policies/policy.js'
 export type { Principal, PrincipalType } from './principals/principal.js'
 export type { Resource } from './resources/resource.js'
 export type { ActionStatement, NotActionStatement, NotPrincipalStatement, NotResourceStatement, PrincipalStatement, ResourceStatement, Statement } from './statements/statement.js'
+export { validatePolicySyntax, type ValidationError } from './validate/validate.js'
 
