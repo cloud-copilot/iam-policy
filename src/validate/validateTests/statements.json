@@ -10,5 +10,48 @@
     "expectedErrors": [
       {"path": "Statement.Bank", "message": "Invalid key Bank"}
     ]
+  },
+  {
+    "name": "Effect is not present",
+    "policy": {
+      "Statement": {
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Effect", "message": "Effect must be present and exactly \"Allow\" or \"Deny\""}
+    ]
+  },
+  {
+    "name": "Effect is an invalid value",
+    "policy": {
+      "Statement": {
+        "Effect": "Sure, why not"
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Effect", "message": "Effect must be present and exactly \"Allow\" or \"Deny\""}
+    ]
+  },
+  {
+    "name": "Effect is case sensitive - allow",
+    "policy": {
+      "Statement": {
+        "Effect": "allow"
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Effect", "message": "Effect must be present and exactly \"Allow\" or \"Deny\""}
+    ]
+  },
+  {
+    "name": "Effect is case sensitive - deny",
+    "policy": {
+      "Statement": {
+        "Effect": "deny"
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Effect", "message": "Effect must be present and exactly \"Allow\" or \"Deny\""}
+    ]
   }
 ]
