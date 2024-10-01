@@ -1,14 +1,82 @@
-# IAM Policy Parser
+# IAM Policy Syntax Validator and Parser
 
-This is a simple IAM policy library that allows you parse and navigate IAM policies without worring about the more difficult details of parsing policies.
+This is a simple IAM policy library that allows you to safely parse and navigate IAM policies without worring about the more difficult details of parsing policies or validating syntax.
 
 This may be updated in the future to allow modifying policies, right now it's read-only.
 
-_**This does not validate policies**_, it only parses them. If you pass in totally invalid JSON it will fail in glorious and unpredictable ways.
+## Validate Policy Syntax with `validatePolicySyntax`
+`validatePolicySyntax` is a syntax linter and will not validate the the policy is logical, secure, or correct.
 
-Here are some ways it helps:
+This will take any object and return back an array of findings. If the array is empty then the policy is valid.
+```typescript
+import { validatePolicySyntax } from '@cloud-copilot/iam-policy'
 
-## Normalizing Policy Elements that are Objects/Array of Objects or String/Array of Strings
+validatePolicySyntax({
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::mybucket/*"
+    }
+  ]
+}); // []
+
+validatePolicySyntax({
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": 7,
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::mybucket/*"
+    }
+  ]
+}); // [{ message: 'Found data type number allowed type(s) are string', path: 'Statement[0].Sid'}]
+
+
+/* It will attempt to find as many issues as possible in one pass */
+validatePolicySyntax({
+  "Version": "2012-10-17",
+  "Comment": "Jacob is kewl",
+  "Statement": [
+    {
+      "Sid": "SomeStatement",
+      "Effect": 7,
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::mybucket/*"
+    }, {
+      "Sid": "SomeStatement",
+      "Effect": ["Allow"],
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::mybucket/*",
+      "Condition": {
+        "NumericLessThan": {
+          "s3:max-keys": 7,
+        },
+        "StringLike": {
+          "s3:authType": new RegExp(/REST.*/),
+          "aws:TagKeys/Foo": ["Bar*", "Baz*"]
+        }
+      }
+    }
+  ]
+}); /*
+[
+  { message: 'Invalid key Comment', path: 'Comment' },
+  { message: 'Effect must be present and exactly "Allow" or "Deny"', path: 'Statement[0].Effect' },
+  { message: 'Effect must be present and exactly "Allow" or "Deny"', path: 'Statement[1].Effect' },
+  { message: 'Found data type number allowed type(s) are string', path: 'Statement[1].Condition.NumericLessThan s3:max-keys' },
+  { message: 'Found data type object allowed type(s) are string', path: 'Statement[1].Condition.StringLike.s3:authType' }
+]
+*/
+```
+
+## IAM Policy Parsing and Processing with `loadPolicy`
+`loadPolicy` _**does not validate policies**_, if you want validation ahead of time use `validatePolicySyntax`.
+
+### Normalizes Policy Elements that are Objects/Array of Objects or String/Array of Strings
 ```typescript
 import{ loadPolicy } from '@cloud-copilot/iam-policy'
 
@@ -49,7 +117,7 @@ console.log(p2.statements()[0].sid()); //ObjectStatement
 
 There is similar support for condition values, principals, and resources.
 
-## Mutually Exclusive or Optional Policy Elements
+### Mutually Exclusive or Optional Policy Elements
 
 In IAM policies there are some elements that are mutually exclusive. For example, you can't have a `Principal` and a `NotPrincipal` in the same statement. Some elements are completely optional. We leverage the Typescript type system to make sure you only access data that is confirmed to exist in the policy.
 
@@ -86,7 +154,7 @@ if(statement.isNotActionStatement()) {
 
 There is similar support for `Action`, `NotAction`, `Principal`, `NotPrincipal`, `Resource`, and `NotResource` elements.
 
-## Flatten Complex Structures
+### Flatten Complex Structures
 
 Simplifies complex elements by flattening them into an array of homogenous objects. For example the Principal value can be a string or an object; the object values can be strings or arrays of strings.  We flatten those into an array of objects similar to what you would define in a terraform policy.
 
