@@ -19,12 +19,12 @@ export interface Action {
   /**
    * Whether the action is a wildcard action: `"*"`
    */
-  isWildcardAction(): boolean
+  isWildcardAction(): this is WildcardAction
 
   /**
    * Whether the action is a service action: `"service:Action"`
    */
-  isServiceAction(): boolean
+  isServiceAction(): this is ServiceAction
 }
 
 /**

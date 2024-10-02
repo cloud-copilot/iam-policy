@@ -1,6 +1,6 @@
 {
   "name": "@cloud-copilot/iam-policy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An ORM for AWS IAM policies",
   "repository": {
     "type": "git",
@@ -18,8 +18,10 @@
   "types": "dist/cjs/index.d.ts",
   "scripts": {
     "build": "npx tsc -p tsconfig.cjs.json && npx tsc -p tsconfig.esm.json && ./postbuild.sh",
+    "clean": "rm -rf dist",
     "test": "npx vitest --run --coverage",
-    "prepare": "npm run build"
+    "release": "npm run clean && npm run build && npm test && npm publish"
+
   },
   "keywords": [
     "AWS",
