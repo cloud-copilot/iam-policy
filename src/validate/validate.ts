@@ -48,8 +48,9 @@ function validateStatement(statement: any, path: string): ValidationError[] {
 
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.Action, `${path}.Action`, 'string'))
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.NotAction, `${path}.NotAction`, 'string'))
-  statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.Resource, `${path}.Resource`, 'string'))
-  statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.NotResource, `${path}.NotResource`, 'string'))
+
+  statementErrors.push(...validateResource(statement.Resource, `${path}.Resource`))
+  statementErrors.push(...validateResource(statement.NotResource, `${path}.NotResource`))
 
   statementErrors.push(...validateDataTypeIfExists(statement.Principal, `${path}.Principal`, ['string', 'object']))
   statementErrors.push(...validateDataTypeIfExists(statement.NotPrincipal, `${path}.NotPrincipal`, ['string', 'object']))
@@ -76,6 +77,45 @@ function validatePrincipal(principal: any, path: string): ValidationError[] {
   }
 
   return principalErrors
+
+}
+
+function validateResource(resource: any, path: string): ValidationError[] {
+  if(resource === undefined) {
+    return []
+  }
+  if(typeof resource === 'string') {
+    return validateResourceString(resource, path)
+  } else if (Array.isArray(resource)) {
+    const resourceErrors: ValidationError[] = []
+    for(let i = 0; i < resource.length; i++) {
+      resourceErrors.push(...validateResourceString(resource[i], `${path}[${i}]`))
+    }
+    return resourceErrors
+  }
+  return [
+    {
+      path,
+      message: `Must be a string or array of strings`
+    }
+  ]
+}
+
+function validateResourceString(resourceString: any, path: string): ValidationError[] {
+  if(resourceString === "*") {
+    return []
+  }
+  const parts = resourceString.split(':')
+  if(parts.length < 6 || parts.at(0) != 'arn') {
+    return [
+      {
+        path,
+        message: `Resource arn must have 6 segments and start with "arn:"`
+      }
+    ]
+  }
+
+  return []
 
 }
 

@@ -51,6 +51,7 @@ function sortErrors(errors: ValidationError[]): ValidationError[] {
 describe('valdiatePolicySyntax', () => {
   const testFolderPath = resolve(join(__dirname, 'validateTests'))
   const allFiles = getAllFiles(testFolderPath);
+  const pickTest: string | undefined = undefined;
 
   for(const testFile of allFiles) {
     const relativePath = testFile.replace(testFolderPath, '').slice(1);
@@ -58,7 +59,11 @@ describe('valdiatePolicySyntax', () => {
       const content = readFileSync(testFile, 'utf-8');
       const testCases = JSON.parse(content);
       for(const testCase of testCases) {
-        it(testCase.name, () => {
+        let testFunc: typeof it | typeof it.skip = it
+        if(pickTest && pickTest !== testCase.name) {
+          testFunc = it.skip
+        }
+        testFunc(testCase.name, () => {
           const errors = validatePolicySyntax(testCase.policy);
           expect(sortErrors(errors)).toEqual(sortErrors(testCase.expectedErrors));
         });

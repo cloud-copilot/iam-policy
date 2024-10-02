@@ -1,0 +1,118 @@
+[
+  {
+    "name": "Wildcard Resource",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": "*",
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Invalid Resource Data Type",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": 12,
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Statement[0].Resource", "message": "Must be a string or array of strings"}
+    ]
+  },
+  {
+    "name": "ARN Resource",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": "bad:aws:s3:::my_bucket",
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      { "path": "Statement[0].Resource", "message": "Resource arn must have 6 segments and start with \"arn:\""}
+
+    ]
+  },
+  {
+    "name": "ARN Resource without arn prefix",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": "aws:s3:::my_bucket",
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Statement[0].Resource", "message": "Resource arn must have 6 segments and start with \"arn:\""}
+    ]
+  },
+  {
+    "name": "Multiple ARN Resources",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": ["arn:aws:s3:::my_bucket", "arn:aws:s3:::my_bucket2"],
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Multiple ARN Resources withour arn prefix",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": ["aws:s3:::my_bucket", "arn:aws:s3:::my_bucket2"],
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Statement[0].Resource[0]", "message": "Resource arn must have 6 segments and start with \"arn:\""}
+    ]
+  },
+  {
+    "name": "ARN resource without correct number of segments",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": "aws:arn:s3::my_bucket",
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Statement[0].Resource", "message": "Resource arn must have 6 segments and start with \"arn:\""}
+    ]
+  }
+]
