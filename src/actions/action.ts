@@ -31,6 +31,12 @@ export interface Action {
  * A wildcard action: `"*"`
  */
 export interface WildcardAction extends Action {
+  /**
+   * The wildcard character `"*"`
+   *
+   * This mainly exists to differentiate between this interface and the Action interface
+   */
+  wildcardValue(): '*'
 }
 
 /**
@@ -56,6 +62,10 @@ export class ActionImpl implements Action , WildcardAction, ServiceAction {
       return 'wildcard'
     }
     return 'service'
+  }
+
+  public wildcardValue(): '*' {
+    return '*'
   }
 
   public value(): string {
