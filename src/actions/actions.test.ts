@@ -26,6 +26,19 @@ describe('ActionImpl', () => {
     })
   })
 
+  describe('wildcardValue', () => {
+    it('should return the wildcard value', () => {
+      // Given an action wildcard
+      const actionString = "*"
+
+      // When an ActionImpl is created
+      const action = new ActionImpl(actionString)
+
+      // Assert
+      expect(action.wildcardValue()).toBe('*')
+    })
+  })
+
   describe('value', () => {
     it('should return the value', () => {
       // Given an action string

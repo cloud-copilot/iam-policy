@@ -45,6 +45,8 @@ export interface WildcardAction extends Action {
 export interface ServiceAction extends Action {
   /**
    * The service of the action
+   *
+   * Guaranteed to be lowercase
    */
   service(): string
 
@@ -81,7 +83,7 @@ export class ActionImpl implements Action , WildcardAction, ServiceAction {
   }
 
   public service(): string {
-    return this.rawValue.split(':')[0]
+    return this.rawValue.split(':')[0]!.toLowerCase()
   }
 
   public action(): string {
