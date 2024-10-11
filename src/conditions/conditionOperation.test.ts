@@ -28,6 +28,17 @@ describe("ConditionOperationImpl", () => {
       expect(result).toBe(true)
     })
 
+    it('should be case insensitive', () => {
+      //Given a condition operation that ends with IfExists in a different case
+      const conditionOp = new ConditionOperationImpl('StringNotEqualsIFEXISTS')
+
+      //When isIfExists is called
+      const result = conditionOp.isIfExists()
+
+      //Then true is returned
+      expect(result).toBe(true)
+    })
+
     it("should return false if the condition operation does not end with IfExists", () => {
       //Given a condition operation that does not end with IfExists
       const conditionOp = new ConditionOperationImpl('StringNotEquals')
@@ -61,6 +72,17 @@ describe("ConditionOperationImpl", () => {
 
       //Then undefined is returned
       expect(result).toBe(undefined)
+    })
+
+    it('should be case insensitive', () => {
+      //Given a condition operation with a set operator in a different case
+      const conditionOp = new ConditionOperationImpl('FORALLVALUES:StringNotEqualsIfExists')
+
+      //When setOperator is called
+      const result = conditionOp.setOperator()
+
+      //Then the set operator is returned
+      expect(result).toBe('ForAllValues')
     })
   })
 
@@ -106,6 +128,17 @@ describe("ConditionOperationImpl", () => {
       const result = conditionOp.baseOperator()
 
       //Then the base operator without the set modifier and IfExists is returned
+      expect(result).toBe('StringNotEquals')
+    })
+
+    it('should be case insensitive', () => {
+      //Given a condition operation with the IfExists modifier in a different case
+      const conditionOp = new ConditionOperationImpl('StringNotEqualsIFEXISTS')
+
+      //When baseOperator is called
+      const result = conditionOp.baseOperator()
+
+      //Then the base operator without the IfExists modifier is returned
       expect(result).toBe('StringNotEquals')
     })
   })
