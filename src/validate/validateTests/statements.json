@@ -53,5 +53,44 @@
     "expectedErrors": [
       {"path": "Statement.Effect", "message": "Effect must be present and exactly \"Allow\" or \"Deny\""}
     ]
+  },
+  {
+    "name": "Cannot have Action and NonAction",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Action": "s3:GetObject",
+        "NotAction": "s3:GetObject"
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement", "message": "Only one of Action or NotAction is allowed, found both"}
+    ]
+  },
+  {
+    "name": "Cannot have Resource and NonResource",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::my_corporate_bucket",
+        "NotResource": "arn:aws:s3:::my_corporate_bucket"
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement", "message": "Only one of Resource or NotResource is allowed, found both"}
+    ]
+  },
+  {
+    "name": "Cannot have Principal and NotPrincipal",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Principal": {"AWS": "arn:aws:iam::123456789012:root"},
+        "NotPrincipal": {"AWS": "arn:aws:iam::123456789012:root"}
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement", "message": "Only one of Principal or NotPrincipal is allowed, found both"}
+    ]
   }
 ]

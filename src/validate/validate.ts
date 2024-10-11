@@ -46,6 +46,10 @@ function validateStatement(statement: any, path: string): ValidationError[] {
     statementErrors.push({path: `${path}.Effect`, message: `Effect must be present and exactly "Allow" or "Deny"`})
   }
 
+  statementErrors.push(...validateOnlyOneOf(statement, path, 'Action', 'NotAction'))
+  statementErrors.push(...validateOnlyOneOf(statement, path, 'Resource', 'NotResource'))
+  statementErrors.push(...validateOnlyOneOf(statement, path, 'Principal', 'NotPrincipal'))
+
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.Action, `${path}.Action`, 'string'))
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.NotAction, `${path}.NotAction`, 'string'))
 
@@ -206,4 +210,18 @@ function validateDataTypeIfExists(value: any, path: string, allowedDataTypes: Po
     })
   }
   return errors
+}
+
+function validateOnlyOneOf(value: any, path: string, firstKey: string, secondKey: string): ValidationError[] {
+  const keys = Object.keys(value)
+  if(keys.includes(firstKey) && keys.includes(secondKey)) {
+    return [
+      {
+        message: `Only one of ${firstKey} or ${secondKey} is allowed, found both`,
+        path
+      }
+    ]
+  }
+
+  return []
 }
