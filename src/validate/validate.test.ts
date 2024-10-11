@@ -22,16 +22,6 @@ function getAllFiles(dir: string, allFiles: string[] = []): string[] {
   return allFiles;
 };
 
-// const readAllFilesInDirectory = (directory: string) => {
-//   const files = readFilesRecursively(directory);
-
-//   files.forEach((file) => {
-//     const content = fs.readFileSync(file, 'utf-8');
-//     console.log(`Content of ${file}:`);
-//     console.log(content);
-//   });
-// };
-
 function sortErrors(errors: ValidationError[]): ValidationError[] {
   return errors.sort((a, b) => {
     if (a.path < b.path) {
@@ -69,8 +59,6 @@ describe('valdiatePolicySyntax', () => {
         });
       }
     })
-    console.log('testFile', testFile)
-
   }
 
   it('should return no errors if the policy is valid', () => {
