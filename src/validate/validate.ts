@@ -33,6 +33,20 @@ export function validatePolicySyntax(policyDocument: any): ValidationError[] {
     for(let i = 0; i < policyDocument.Statement.length; i++) {
       allErrors.push(...validateStatement(policyDocument.Statement[i], `Statement[${i}]`))
     }
+    const statementIdCounts = policyDocument.Statement.reduce((acc: Record<string, number>, statement: any) => {
+      if(statement.Sid) {
+        acc[statement.Sid] = acc[statement.Sid] ? acc[statement.Sid] + 1 : 1
+      }
+      return acc
+    }, {} as Record<string, number>)
+    for(const [sid, count] of Object.entries<number>(statementIdCounts)) {
+      if(count > 1) {
+        allErrors.push({
+          path: `Statement`,
+          message: `Statement Ids must be unique, found ${sid} ${count} times`
+        })
+      }
+    }
   }
 
   return allErrors

@@ -92,5 +92,28 @@
     "expectedErrors": [
       {"path": "Statement", "message": "Only one of Principal or NotPrincipal is allowed, found both"}
     ]
+  },
+  {
+    "Name": "Statement Ids must be unique",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket"
+        },
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Statement", "message": "Statement Ids must be unique, found AllowGetObject 2 times"}
+    ]
   }
+
 ]
