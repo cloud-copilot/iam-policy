@@ -157,6 +157,53 @@ describe("Principal", () => {
     })
   })
 
+  describe('isUniqueIdPrincipal', () => {
+    it('returns true if the principal is a unique id', () => {
+      //Given a unique id principal
+      const principal = new PrincipalImpl('AWS', 'AIDACKCEVSQ6C2EXAMPLE')
+
+      //When the principal is checked
+      const isUniqueIdPrincipal = principal.isUniqueIdPrincipal();
+
+      //Then the principal is a unique id principal
+      expect(isUniqueIdPrincipal).toBe(true);
+    })
+    it('returns false if the principal is not a unique id', () => {
+      //Given a non-unique id principal
+      const principal = new PrincipalImpl('CanonicalUser', 'arn:aws:iam::user/MrShow');
+
+      //When the principal is checked
+      const isUniqueIdPrincipal = principal.isUniqueIdPrincipal();
+
+      //Then the principal is not a unique id principal
+      expect(isUniqueIdPrincipal).toBe(false);
+    })
+  })
+
+  describe('uniqueId', () => {
+    it('returns the unique id of the principal', () => {
+      //Given a unique id principal
+      const principal = new PrincipalImpl('AWS', 'AIDACKCEVSQ6C2EXAMPLE');
+
+      //When the unique id is requested
+      const uniqueId = principal.uniqueId();
+
+      //Then the unique id is returned
+      expect(uniqueId).toBe('AIDACKCEVSQ6C2EXAMPLE');
+    })
+
+    it('should throw an error if the principal is not a unique id principal', () => {
+      //Given a non-unique id principal
+      const principal = new PrincipalImpl('AWS', 'arn:aws:iam::user/MrShow');
+
+      //When the unique id is requested
+      const getUniqueId = () => principal.uniqueId();
+
+      //Then an error is thrown
+      expect(getUniqueId).toThrowError('Principal is not a unique id principal, call isUniqueIdPrincipal() before calling uniqueId()');
+    })
+  })
+
   describe('isAwsPrincipal', () => {
     it('returns true if the principal is an AWS principal', () => {
       //Given an AWS principal
