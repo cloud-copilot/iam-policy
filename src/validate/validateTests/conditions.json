@@ -131,5 +131,53 @@
     "expectedErrors": [
       {"path": "Statement.Condition", "message": "If present, Condition cannot be null or undefined"}
     ]
+  },
+  {
+    "name": "Invalid set operator",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "ForSomeValue:StringEquals": {
+            "aws:Username": "Bob"
+          }
+        }
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition.ForSomeValue:StringEquals", "message": "Condition set operator must be either ForAllValues or ForAnyValue"}
+    ]
+  },
+  {
+    "name": "Malformatted Condition Operator, too many colons",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "ForAllValues:StringEquals:IfExists": {
+            "aws:Username": "Bob"
+          }
+        }
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition.ForAllValues:StringEquals:IfExists", "message": "Condition operator is invalid"}
+    ]
+  },
+  {
+    "name": "Malformatted Condition Operator, Invalid Characters",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "ForAllValues.StringEquals": {
+            "aws:Username": "Bob"
+          }
+        }
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition.ForAllValues.StringEquals", "message": "Condition operator is invalid"}
+    ]
   }
 ]

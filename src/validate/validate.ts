@@ -6,6 +6,8 @@ export interface ValidationError {
 const allowedPolicyKeys = new Set([ 'Version', 'Statement', 'Id' ])
 const allowedStatementKeys = new Set([ 'Sid', 'Effect', 'Action', 'NotAction', 'Resource', 'NotResource', 'Principal', 'NotPrincipal', 'Condition'])
 const allowedPrincipalKeys = new Set([ 'AWS', 'Service', 'Federated', 'CanonicalUser'])
+const validConditionOperatorPattern = /^[a-zA-Z0-9:]+$/
+const allowedSetOperators = new Set(["forallvalues", "foranyvalue"])
 type PolicyDataType = 'string' | 'object'
 
 export function validatePolicySyntax(policyDocument: any): ValidationError[] {
@@ -156,6 +158,29 @@ function validateCondition(condition: any, path: string): ValidationError[] {
 
   const conditionOperators = Object.keys(condition)
   for(const operator of conditionOperators) {
+    //If not valid pattern
+    if(!validConditionOperatorPattern.test(operator)) {
+      conditionErrors.push({
+        path: `${path}.${operator}`,
+        message: `Condition operator is invalid`,
+      })
+    }
+    const splitOperator = operator.split(':')
+    if(splitOperator.length > 2) {
+      conditionErrors.push({
+        path: `${path}.${operator}`,
+        message: `Condition operator is invalid`,
+      })
+    } else if (splitOperator.length === 2) {
+      const setOperator = splitOperator[0]
+      if(!allowedSetOperators.has(setOperator)) {
+        conditionErrors.push({
+          path: `${path}.${operator}`,
+          message: `Condition set operator must be either ForAllValues or ForAnyValue`,
+        })
+      }
+    }
+
     conditionErrors.push(...validateDataTypeIfExists(condition[operator], `${path}.${operator}`, 'object'))
     if(Array.isArray(condition[operator])) {
       conditionErrors.push({
