@@ -7,5 +7,5 @@ import { Policy, PolicyImpl } from "./policies/policy.js";
  * @returns the Policy object for the backing policy document
  */
 export function loadPolicy(policyDocument: any): Policy {
-    return new PolicyImpl(policyDocument);
+  return new PolicyImpl(policyDocument);
 }
