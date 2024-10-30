@@ -84,6 +84,25 @@ describe("ConditionOperationImpl", () => {
       //Then the set operator is returned
       expect(result).toBe('ForAllValues')
     })
+
+    it('should return ForAnyValue if the set operator is ForAnyValue', () => {
+      //Given a condition operation with the ForAnyValue set operator
+      const conditionOp = new ConditionOperationImpl('foranyvalue:StringNotEqualsIfExists')
+
+      //When setOperator is called
+      const result = conditionOp.setOperator()
+
+      //Then the set operator is returned
+      expect(result).toBe('ForAnyValue')
+    })
+
+    it('should throw an error if the set operator is unknown', () => {
+      //Given a condition operation with an unknown set operator
+      const conditionOp = new ConditionOperationImpl('UnknownOperator:StringNotEqualsIfExists')
+
+      //When setOperator is called, then an error is thrown
+      expect(() => conditionOp.setOperator()).toThrowError('Unknown set operator: unknownoperator')
+    })
   })
 
   describe('baseOperator', () => {
