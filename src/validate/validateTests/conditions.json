@@ -119,6 +119,17 @@
       }
     },
     "expectedErrors": []
+  },
+  {
+    "name": "Validate Condition is not null",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": null
+      }
+    },
+    "expectedErrors": [
+      {"path": "Statement.Condition", "message": "If present, Condition cannot be null or undefined"}
+    ]
   }
-
 ]

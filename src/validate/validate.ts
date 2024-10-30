@@ -75,6 +75,7 @@ function validateStatement(statement: any, path: string): ValidationError[] {
   statementErrors.push(...validatePrincipal(statement.Principal, `${path}.Principal`))
   statementErrors.push(...validatePrincipal(statement.NotPrincipal, `${path}.NotPrincipal`))
 
+  //TODO: If the condition key exists but there is no value, it is an error
   statementErrors.push(...validateCondition(statement.Condition, `${path}.Condition`))
   return statementErrors
 
@@ -139,7 +140,7 @@ function validateResourceString(resourceString: any, path: string): ValidationEr
 
 function validateCondition(condition: any, path: string): ValidationError[] {
   const conditionErrors: ValidationError[] = []
-  if(condition === undefined) {
+  if(condition === undefined || condition === null) {
     return []
   }
   conditionErrors.push(...validateDataTypeIfExists(condition, path, 'object'))
@@ -184,6 +185,11 @@ function validateKeys(object: any, allowedKeys: Set<string>, path: string): Vali
     if(!allowedKeys.has(key)) {
       keyErrors.push({
         message: `Invalid key ${key}`,
+        path: `${path}${key}`
+      })
+    } else if (object[key] === undefined || object[key] === null) {
+      keyErrors.push({
+        message: `If present, ${key} cannot be null or undefined`,
         path: `${path}${key}`
       })
     }
