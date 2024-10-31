@@ -133,6 +133,23 @@
     ]
   },
   {
+    "name": "Vaid set operators",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:Username": "Bob"
+          },
+          "ForAnyValue:StringEquals": {
+            "aws:Username": "Bob"
+          }
+        }
+      }
+    },
+    "expectedErrors": []
+  },
+  {
     "name": "Invalid set operator",
     "policy": {
       "Statement": {

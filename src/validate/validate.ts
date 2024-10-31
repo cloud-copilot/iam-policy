@@ -172,7 +172,7 @@ function validateCondition(condition: any, path: string): ValidationError[] {
         message: `Condition operator is invalid`,
       })
     } else if (splitOperator.length === 2) {
-      const setOperator = splitOperator[0]
+      const setOperator = splitOperator[0].toLowerCase()
       if(!allowedSetOperators.has(setOperator)) {
         conditionErrors.push({
           path: `${path}.${operator}`,
