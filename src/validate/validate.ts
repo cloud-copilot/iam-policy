@@ -1,7 +1,11 @@
+
 export interface ValidationError {
   message: string
   path: string
 }
+
+const serviceRegex = /^[a-zA-Z0-9-]+$/
+const actionRegex = /^[a-zA-Z0-9*\?]+$/
 
 const allowedPolicyKeys = new Set([ 'Version', 'Statement', 'Id' ])
 const allowedStatementKeys = new Set([ 'Sid', 'Effect', 'Action', 'NotAction', 'Resource', 'NotResource', 'Principal', 'NotPrincipal', 'Condition'])
@@ -107,6 +111,9 @@ function validateStatement(statement: any, path: string, validationCallbacks: Va
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.Action, `${path}.Action`, 'string'))
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.NotAction, `${path}.NotAction`, 'string'))
 
+  statementErrors.push(...validateActionIfPresent(statement.Action, `${path}.Action`))
+  statementErrors.push(...validateActionIfPresent(statement.NotAction, `${path}.NotAction`))
+
   statementErrors.push(...validateStringOrArrayStringCallback(statement, 'Action', path, validationCallbacks.validateAction))
   statementErrors.push(...validateStringOrArrayStringCallback(statement, 'NotAction', path, validationCallbacks.validateNotAction))
 
@@ -179,6 +186,59 @@ function validateResourceString(resourceString: any, path: string): ValidationEr
 
   return []
 
+}
+
+function validateActionIfPresent(action: any, path: string): ValidationError[] {
+  if(action === undefined || action === null) {
+    return []
+  }
+  //Type errors are caught elsewhere
+  if(typeof action === 'string') {
+    return validateActionString(action, path)
+  } else if (Array.isArray(action)) {
+    const actionErrors: ValidationError[] = []
+    for(let i = 0; i < action.length; i++) {
+      const value = action[i]
+      if(typeof value === 'string') {
+        actionErrors.push(...validateActionString(action[i], `${path}[${i}]`))
+      }
+
+    }
+    return actionErrors
+  }
+  return []
+}
+
+function validateActionString(string: string, path: string): ValidationError[] {
+  if(string === '*') {
+    return []
+  }
+  const parts = string.split(':')
+  if(parts.length != 2) {
+    return [
+      {
+        path,
+        message: `Action must be a wildcard (*) or have 2 segments`
+      }
+    ]
+  }
+
+  const [ service, action ] = parts
+  const errors: ValidationError[] = []
+  if(!serviceRegex.test(service)) {
+    errors.push({
+      path,
+      message: `Service can only contain letters, numbers, and hyphens`
+    })
+  }
+  if(!actionRegex.test(action)) {
+    errors.push({
+      path,
+      message: `Action can only contain letters, numbers, asterisks, and question marks`
+    })
+  }
+
+  return errors
 }
 
 function validateCondition(condition: any, path: string): ValidationError[] {

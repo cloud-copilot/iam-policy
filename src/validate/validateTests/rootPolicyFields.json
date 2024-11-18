@@ -68,6 +68,22 @@
     ]
   },
   {
+    "name": "Wrong Version String",
+    "policy": {
+      "Version": "1999-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::examplebucket/*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {"path": "Version", "message": "Version must be either \"2012-10-17\" or \"2008-10-17\""}
+    ]
+  },
+  {
     "name": "Missing Statement Field",
     "policy": {
       "Id": "Policy1234567890123",
