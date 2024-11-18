@@ -10,7 +10,17 @@ const validConditionOperatorPattern = /^[a-zA-Z0-9:]+$/
 const allowedSetOperators = new Set(["forallvalues", "foranyvalue"])
 type PolicyDataType = 'string' | 'object'
 
-export function validatePolicySyntax(policyDocument: any): ValidationError[] {
+export interface ValidationCallbacks {
+  validateStatement?: (statement: any, path: string) => ValidationError[]
+  validateAction?: (action: string, path: string) => ValidationError[]
+  validateNotAction?: (notAction: string, path: string) => ValidationError[]
+  validatePrincipal?: (principal: any, path: string) => ValidationError[]
+  validateNotPrincipal?: (notPrincipal: any, path: string) => ValidationError[]
+  validateResource?: (resource: string, path: string) => ValidationError[]
+  validateNotResource?: (notResource: string, path: string) => ValidationError[]
+}
+
+export function validatePolicySyntax(policyDocument: any, validationCallbacks: ValidationCallbacks = {}): ValidationError[] {
   const allErrors: ValidationError[] = []
   if(typeof policyDocument !== 'object') {
     return [{path: '', message: `Policy must be an object, received type ${typeof policyDocument}`}]
@@ -30,10 +40,10 @@ export function validatePolicySyntax(policyDocument: any): ValidationError[] {
   }
   allErrors.push(...validateTypeOrArrayOfTypeIfExists(policyDocument.Statement, 'Statement', ['object']))
   if(typeof policyDocument.Statement === 'object' && !Array.isArray(policyDocument.Statement)) {
-    allErrors.push(...validateStatement(policyDocument.Statement, 'Statement'))
+    allErrors.push(...validateStatement(policyDocument.Statement, 'Statement', validationCallbacks))
   } else if (Array.isArray(policyDocument.Statement)) {
     for(let i = 0; i < policyDocument.Statement.length; i++) {
-      allErrors.push(...validateStatement(policyDocument.Statement[i], `Statement[${i}]`))
+      allErrors.push(...validateStatement(policyDocument.Statement[i], `Statement[${i}]`, validationCallbacks))
     }
     const statementIdCounts = policyDocument.Statement.reduce((acc: Record<string, number>, statement: any) => {
       if(statement.Sid) {
@@ -54,13 +64,14 @@ export function validatePolicySyntax(policyDocument: any): ValidationError[] {
   return allErrors
 }
 
-function validateStatement(statement: any, path: string): ValidationError[] {
+function validateStatement(statement: any, path: string, validationCallbacks: ValidationCallbacks): ValidationError[] {
   const statementErrors: ValidationError[] = []
   statementErrors.push(...validateKeys(statement, allowedStatementKeys, path))
   statementErrors.push(...validateDataTypeIfExists(statement.Sid, `${path}.Sid`, 'string'))
   if(statement.Effect !== 'Allow' && statement.Effect !== 'Deny') {
     statementErrors.push({path: `${path}.Effect`, message: `Effect must be present and exactly "Allow" or "Deny"`})
   }
+  statementErrors.push(...validationCallbacks.validateStatement?.(statement, path) || [])
 
   statementErrors.push(...validateOnlyOneOf(statement, path, 'Action', 'NotAction'))
   statementErrors.push(...validateOnlyOneOf(statement, path, 'Resource', 'NotResource'))
@@ -68,6 +79,9 @@ function validateStatement(statement: any, path: string): ValidationError[] {
 
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.Action, `${path}.Action`, 'string'))
   statementErrors.push(...validateTypeOrArrayOfTypeIfExists(statement.NotAction, `${path}.NotAction`, 'string'))
+
+  statementErrors.push(...validateStringOrArrayStringCallback(statement, 'Action', path, validationCallbacks.validateAction))
+  statementErrors.push(...validateStringOrArrayStringCallback(statement, 'NotAction', path, validationCallbacks.validateNotAction))
 
   statementErrors.push(...validateResource(statement.Resource, `${path}.Resource`))
   statementErrors.push(...validateResource(statement.NotResource, `${path}.NotResource`))
@@ -268,5 +282,24 @@ function validateOnlyOneOf(value: any, path: string, firstKey: string, secondKey
     ]
   }
 
+  return []
+}
+
+function validateStringOrArrayStringCallback(statement: any, fieldName: string, path: string, callback?: (value: string, path: string) => ValidationError[]): ValidationError[] {
+  if(statement === undefined || !statement[fieldName] || !callback) {
+    return []
+  }
+  const value = statement[fieldName]
+  path = `${path}.${fieldName}`
+  if(typeof value === 'string') {
+    return callback(value, path)
+  } else if (Array.isArray(value)) {
+    const errors: ValidationError[] = []
+    for(let i = 0; i < value.length; i++) {
+      errors.push(...callback(value[i], `${path}[${i}]`))
+    }
+    return errors
+  }
+  //If it's not a string or string array that is caught elsewhere
   return []
 }

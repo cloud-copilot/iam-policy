@@ -1,0 +1,184 @@
+[
+  {
+    "name": "Valid RCP",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Cannot have effect Allow",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Effect must be \"Deny\" in a resource control policy",
+        "path": "Statement[0].Effect"
+      }
+    ]
+  },
+  {
+    "name": "Cannot contain NotPrincipal",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "NotPrincipal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Principal must be \"*\" in a resource control policy",
+        "path": "Statement[0].Principal"
+      },
+      {
+        "message": "NotPrincipal is not allowed in a resource control policy",
+        "path": "Statement[0].NotPrincipal"
+      }
+    ]
+  },
+  {
+    "name": "Cannot contain NotAction",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "NotAction": "s3:GetObject",
+          "NotResource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Action is required in a resource control policy",
+        "path": "Statement[0]"
+      },
+      {
+        "message": "NotAction is not allowed in a resource control policy",
+        "path": "Statement[0].NotAction"
+      }
+    ]
+  },
+  {
+    "name": "Principal must be a wildcard",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "arn:aws:iam::123456789012:root"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Principal must be \"*\" in a resource control policy",
+        "path": "Statement[0].Principal"
+      }
+    ]
+  },
+  {
+    "name": "Resource or NotResource is required",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Resource or NotResource is required in a resource control policy",
+        "path": "Statement[0]"
+      }
+    ]
+  },
+  {
+    "name": "Action Cannot be a Wildcard - string",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "*",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Action cannot be \"*\" in a resource control policy",
+        "path": "Statement[0].Action"
+      }
+    ]
+  },
+  {
+    "name": "Action Cannot be a Wildcard - array",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": ["*"],
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Action cannot be \"*\" in a resource control policy",
+        "path": "Statement[0].Action[0]"
+      }
+    ]
+  },
+  {
+    "name": "Action is a number",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": 3,
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Found data type number allowed type(s) are string",
+        "path": "Statement[0].Action"
+      }
+    ]
+  }
+]

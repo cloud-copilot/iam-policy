@@ -22,7 +22,7 @@ function getAllFiles(dir: string, allFiles: string[] = []): string[] {
   return allFiles;
 };
 
-function sortErrors(errors: ValidationError[]): ValidationError[] {
+export function sortErrors(errors: ValidationError[]): ValidationError[] {
   return errors.sort((a, b) => {
     if (a.path < b.path) {
       return -1;

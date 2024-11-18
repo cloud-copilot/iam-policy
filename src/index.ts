@@ -7,4 +7,13 @@ export type { AccountPrincipal, AwsPrincipal, CanonicalUserPrincipal, FederatedP
 export type { Resource } from './resources/resource.js'
 export type { ActionStatement, NotActionStatement, NotPrincipalStatement, NotResourceStatement, PrincipalStatement, ResourceStatement, Statement } from './statements/statement.js'
 export { validatePolicySyntax, type ValidationError } from './validate/validate.js'
+export {
+  validateEndpointPolicy,
+  validateIdentityPolicy,
+  validateResourceControlPolicy,
+  validateResourcePolicy,
+  validateServiceControlPolicy,
+  validateSessionPolicy,
+  validateTrustPolicy
+} from './validate/validateTypes.js'
 

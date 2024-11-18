@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Valid Trust Policy",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowAssumeRole",
+          "Effect": "Allow",
+          "Action": "sts:AssumeRole",
+          "Principal": {
+            "AWS": "arn:aws:iam::123456789012:root"
+          }
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Cannot contain Resource",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowAssumeRole",
+          "Effect": "Allow",
+          "Action": "sts:AssumeRole",
+          "Resource": "arn:aws:iam::123456789012:role/role-name",
+          "Principal": {
+            "AWS": "arn:aws:iam::123456789012:root"
+          }
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Resource is not allowed in a trust policy",
+        "path": "Statement[0].Resource"
+      }
+    ]
+  },
+  {
+    "name": "Cannot contain NotResource",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowAssumeRole",
+          "Effect": "Allow",
+          "NotAction": "sts:AssumeRole",
+          "NotResource": "arn:aws:iam::123456789012:role/role-name",
+          "Principal": {
+            "AWS": "arn:aws:iam::123456789012:root"
+          }
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "NotResource is not allowed in a trust policy",
+        "path": "Statement[0].NotResource"
+      }
+    ]
+  },
+  {
+    "name": "Must have Action or NotAction",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowAssumeRole",
+          "Effect": "Allow",
+          "NotPrincipal": {
+            "AWS": "arn:aws:iam::123456789012:root"
+          }
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Action or NotAction is required in a trust policy",
+        "path": "Statement[0]"
+      }
+    ]
+  },
+  {
+    "name": "Must have Principal or NotPrincipal",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowAssumeRole",
+          "Effect": "Allow",
+          "Action": "sts:AssumeRole"
+
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Principal or NotPrincipal is required in a trust policy",
+        "path": "Statement[0]"
+      }
+    ]
+  }
+]

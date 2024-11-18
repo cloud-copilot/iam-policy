@@ -1,0 +1,314 @@
+[
+  {
+    "name": "Valid SCP",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Cannot contain Principal",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Principal is not allowed in a service control policy",
+        "path": "Statement[0].Principal"
+      }
+    ]
+  },
+  {
+    "name": "Cannot contain NotPrincipal",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "NotPrincipal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "NotPrincipal is not allowed in a service control policy",
+        "path": "Statement[0].NotPrincipal"
+      }
+    ]
+  },
+  {
+    "name": "Cannot contain NotResource",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "NotResource": "arn:aws:s3:::my_corporate_bucket"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "NotResource is not allowed in a service control policy",
+        "path": "Statement[0].NotResource"
+      },
+      {
+        "message": "Resource is required in a service control policy",
+        "path": "Statement[0]"
+      }
+    ]
+  },
+  {
+    "name": "Resource is Required",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "NotAction": "s3:GetObject"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0]",
+        "message": "Resource is required in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "Action or NotAction is Required",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0]",
+        "message": "One of Action or NotAction is required in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "Action Asterisk can be at end of string",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Action": "s3:Get*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Action Asterisk must be at end of string",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Action": "s3:*Get*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0].Action",
+        "message": "Wildcard characters are only allowed at the end of Action in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "Action Question Mark must be at end of string",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Action": "s3:?Get?"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0].Action",
+        "message": "Wildcard characters are only allowed at the end of Action in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "NotAction Asterisk must be at end of string",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "NotAction": "s3:*Get*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0].NotAction",
+        "message": "Wildcard characters are only allowed at the end of NotAction in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "NotAction Question Mark must be at end of string",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "NotAction": "s3:?Get?"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0].NotAction",
+        "message": "Wildcard characters are only allowed at the end of NotAction in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "Allow Statement can have an asterisk in Resource",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "*",
+          "Action": "s3:GetBucket"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Allow Statement must have an asterisk in Resource",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Action": "s3:GetBucket"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0]",
+        "message": "Resource must be \"*\" when Effect is \"Allow\" in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "NotAction is allowed in a Deny statement",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "*",
+          "NotAction": "s3:GetBucket"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "NotAction is not allowed in an Allow statement",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Resource": "*",
+          "NotAction": "s3:GetBucket"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0]",
+        "message": "NotAction is not allowed when Effect is \"Allow\" in a service control policy"
+      }
+    ]
+  },
+  {
+    "name": "Condition is allowed in a Deny statement",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "*",
+          "Action": "s3:GetBucket",
+          "Condition": {
+            "StringEquals": {
+              "s3:prefix": "home/"
+            }
+          }
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Condition is not allowed in an Allow statement",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Resource": "*",
+          "Action": "s3:GetBucket",
+          "Condition": {
+            "StringEquals": {
+              "s3:prefix": "home/"
+            }
+          }
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement[0]",
+        "message": "Condition is not allowed when Effect is \"Allow\" in a service control policy"
+      }
+    ]
+  }
+]

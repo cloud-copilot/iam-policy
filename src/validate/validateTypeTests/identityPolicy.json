@@ -1,0 +1,93 @@
+[
+  {
+    "name": "Valid Identity Policy",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Principal Prohibited",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Principal is not allowed in an identity policy",
+        "path": "Statement[0].Principal"
+      }
+    ]
+  },
+  {
+    "name": "NotPrincipal Prohibited",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "NotPrincipal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "NotPrincipal is not allowed in an identity policy",
+        "path": "Statement[0].NotPrincipal"
+      }
+    ]
+  },
+  {
+    "name": "Action or NotAction Required",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Resource": "arn:aws:s3:::my_corporate_bucket"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Action or NotAction is required in an identity policy",
+        "path": "Statement[0]"
+      }
+    ]
+  }
+  ,
+  {
+    "name": "Resource or NotResource Required",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Action": "s3:GetObject"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Resource or NotResource is required in an identity policy",
+        "path": "Statement[0]"
+      }
+    ]
+  }
+]

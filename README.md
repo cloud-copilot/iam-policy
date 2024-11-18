@@ -73,6 +73,17 @@ validatePolicySyntax({
 */
 ```
 
+### Validate Specific Policy Types
+There are functions to validate specific policy types, these do all of the general policy validation and additional checks for the specific policy type.  For instance Service Control Policies only allow the Condition element when the Effect is Deny.
+
+* `validateIdentityPolicy(policy: any): ValidationError[]`
+* `validateServiceControlPolicy(policy: any): ValidationError[]`
+* `validateResourcePolicy(policy: any): ValidationError[]`
+* `validateTrustPolicy(policy: any): ValidationError[]`
+* `validateResourceControlPolicy(policy: any): ValidationError[]`
+* `validateEndpointPolicy(policy: any): ValidationError[]`
+* `validateSessionPolicy(policy: any): ValidationError[]`
+
 ## IAM Policy Parsing and Processing with `loadPolicy`
 `loadPolicy` _**does not validate policies**_, if you want validation ahead of time use `validatePolicySyntax`.
 

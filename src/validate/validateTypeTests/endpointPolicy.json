@@ -1,0 +1,89 @@
+[
+  {
+    "name": "Valid VPC Endpoint Policy",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Valid VPC Endpoint Policy with Not",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "NotAction": "s3:GetObject",
+          "NotResource": "arn:aws:s3:::my_corporate_bucket",
+          "NotPrincipal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Action or NotAction must be present",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Action or NotAction is required in an endpoint policy",
+        "path": "Statement[0]"
+      }
+    ]
+  },
+  {
+    "name": "Principal or NotPrincipal must be present",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Action": "s3:GetObject"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Principal or NotPrincipal is required in an endpoint policy",
+        "path": "Statement[0]"
+      }
+    ]
+  },
+  {
+    "name": "Resource or NotResource must be present",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "One of Resource or NotResource is required in an endpoint policy",
+        "path": "Statement[0]"
+      }
+    ]
+  }
+]
