@@ -64,7 +64,7 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Version", "message": "Found data type number allowed type(s) are string"}
+      {"path": "Version", "message": "Version must be a string if present"}
     ]
   },
   {

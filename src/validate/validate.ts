@@ -29,8 +29,8 @@ export function validatePolicySyntax(policyDocument: any, validationCallbacks: V
   }
 
   allErrors.push(...validateKeys(policyDocument, allowedPolicyKeys, ''))
+  allErrors.push(...validatePolicyVersion(policyDocument.Version))
 
-  allErrors.push(...validateDataTypeIfExists(policyDocument.Version, 'Version', 'string'))
   allErrors.push(...validateDataTypeIfExists(policyDocument.Id, 'Id', 'string'))
   if(!policyDocument.Statement) {
     allErrors.push({
@@ -62,6 +62,33 @@ export function validatePolicySyntax(policyDocument: any, validationCallbacks: V
   }
 
   return allErrors
+}
+
+function validatePolicyVersion(version: any): ValidationError[] {
+  if(version === undefined || version === null) {
+    return []
+  }
+  if(typeof version !== 'string') {
+    return [
+      {
+        path: 'Version',
+        message: `Version must be a string if present`
+      }
+    ]
+  }
+
+  if(version === '2012-10-17' || version === '2008-10-17') {
+    return []
+  }
+
+  return [
+    {
+      path: 'Version',
+      message: `Version must be either "2012-10-17" or "2008-10-17"`
+    }
+  ]
+
+
 }
 
 function validateStatement(statement: any, path: string, validationCallbacks: ValidationCallbacks): ValidationError[] {
