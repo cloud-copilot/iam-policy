@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { StatementImpl } from './statement.js'
+import { NotPrincipalStatement, PrincipalStatement, StatementImpl } from './statement.js'
 
 describe('StatementImpl', () => {
 
@@ -179,6 +179,52 @@ describe('StatementImpl', () => {
     })
   })
 
+  describe('principalTypeIsArray', () => {
+    it('should return true if the principal type is an array', () => {
+      //Given a statement with a Principal that is an array
+      const statementDoc = { Principal: { "AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"] } }
+
+      //When a StatementImpl is created with the statement
+      const statement: PrincipalStatement = new StatementImpl(statementDoc, 0, false)
+
+      //Then principalTypeIsArray should return true
+      expect(statement.principalTypeIsArray('AWS')).toBe(true)
+    })
+
+    it('should return false if the principal type is not an array', () => {
+      //Given a statement with a Principal that is not an array
+      const statementDoc = { Principal: { "AWS": "arn:aws:iam::123456789012:root" } }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then principalTypeIsArray should return false
+      expect(statement.principalTypeIsArray('AWS')).toBe(false)
+    })
+
+    it('should return false if the principal element is a string', () => {
+      //Given a statement with a Principal that is a string
+      const statementDoc = { Principal: '*' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then principalTypeIsArray should return false
+      expect(statement.principalTypeIsArray('AWS')).toBe(false)
+    })
+
+    it('should throw an error if principalTypeIsArray is called on a statement without Principal', () => {
+      //Given a statement without a Principal
+      const statementDoc = { }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then principalTypeIsArray should throw an error
+      expect(() => statement.principalTypeIsArray('AWS')).toThrow('Called principalTypeIsArray on a statement without Principal, use isPrincipalStatement before calling principalTypeIsArray')
+    })
+  })
+
   describe('notPrincipals', () => {
     // We don't have as many tests for notPrincipals because the implementation is the same as principals
     it('should return a wildcard principal string', () => {
@@ -203,6 +249,52 @@ describe('StatementImpl', () => {
 
       //Then notPrincipals should throw an error
       expect(() => statement.notPrincipals()).toThrow('Called notPrincipals on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipals')
+    })
+  })
+
+  describe('notPrincipalTypeIsArray', () => {
+    it('should return true if the not principal type is an array', () => {
+      //Given a statement with a NotPrincipal that is an array
+      const statementDoc = { NotPrincipal: { "AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"] } }
+
+      //When a StatementImpl is created with the statement
+      const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notPrincipalTypeIsArray should return true
+      expect(statement.notPrincipalTypeIsArray('AWS')).toBe(true)
+    })
+
+    it('should return false if the not principal type is not an array', () => {
+      //Given a statement with a NotPrincipal that is not an array
+      const statementDoc = { NotPrincipal: { "AWS": "arn:aws:iam::123456789012:root" } }
+
+      //When a StatementImpl is created with the statement
+      const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notPrincipalTypeIsArray should return false
+      expect(statement.notPrincipalTypeIsArray('AWS')).toBe(false)
+    })
+
+    it('should return false if the not principal element is a string', () => {
+      //Given a statement with a NotPrincipal that is a string
+      const statementDoc = { NotPrincipal: '*' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notPrincipalTypeIsArray should return false
+      expect(statement.notPrincipalTypeIsArray('AWS')).toBe(false)
+    })
+
+    it('should throw an error if notPrincipalTypeIsArray is called on a statement without NotPrincipal', () => {
+      //Given a statement without a NotPrincipal
+      const statementDoc = { }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notPrincipalTypeIsArray should throw an error
+      expect(() => statement.notPrincipalTypeIsArray('AWS')).toThrow('Called notPrincipalTypeIsArray on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipalTypeIsArray')
     })
   })
 

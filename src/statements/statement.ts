@@ -186,6 +186,14 @@ export interface PrincipalStatement extends Statement {
    * The principals for the statement
    */
   principals(): Principal[]
+
+  /**
+   * Is the Principal type is an array of strings
+   *
+   * @param principalType the type of the Principal such as "AWS", "Service", etc.
+   * @returns true if the principal type is an array of strings in the raw policy
+   */
+  principalTypeIsArray(principalType: string): boolean
 }
 
 export interface AnnotatedPrincipalStatement extends Annotated, PrincipalStatement {
@@ -201,6 +209,14 @@ export interface NotPrincipalStatement extends Statement {
    * The not principals for the statement
    */
   notPrincipals(): Principal[]
+
+    /**
+   * Is the NotPrincipal type is an array of strings
+   *
+   * @param notPrincipalType the type of the NotPrincipal such as "AWS", "Service", etc.
+   * @returns true if the NotPrincipal type is an array of strings in the raw policy
+   */
+  notPrincipalTypeIsArray(notPrincipalType: string): boolean
 }
 
 export interface AnnotatedNotPrincipalStatement extends Annotated, NotPrincipalStatement {
@@ -279,6 +295,13 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return this.principalCache
   }
 
+  public principalTypeIsArray(principalType: string): boolean {
+    if(!this.isPrincipalStatement()) {
+      throw new Error('Called principalTypeIsArray on a statement without Principal, use isPrincipalStatement before calling principalTypeIsArray')
+    }
+    return typeof this.statementObject.Principal === "object" && Array.isArray(this.statementObject.Principal[principalType])
+  }
+
   public notPrincipals(): Principal[]
   public notPrincipals(): AnnotatedPrincipal[]
   public notPrincipals(): Principal[] | AnnotatedPrincipal[] {
@@ -292,6 +315,13 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
       this.notPrincipalCache = this.parsePrincipalObject(this.statementObject.NotPrincipal)
     }
     return this.notPrincipalCache
+  }
+
+  public notPrincipalTypeIsArray(notPrincipalType: string): boolean {
+    if(!this.isNotPrincipalStatement()) {
+      throw new Error('Called notPrincipalTypeIsArray on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipalTypeIsArray')
+    }
+    return typeof this.statementObject.NotPrincipal === "object" && Array.isArray(this.statementObject.NotPrincipal[notPrincipalType])
   }
 
   /**
