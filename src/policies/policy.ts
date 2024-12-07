@@ -2,9 +2,25 @@ import { Annotated, Annotations, AnnotationStore } from '../annotations/annotati
 import { AnnotatedStatement, Statement, StatementImpl } from '../statements/statement.js'
 
 export interface Policy {
+  /**
+   * The version of the policy
+   */
   version(): string | undefined
+
+  /**
+   * The ID of the policy
+   */
   id(): string | undefined
+
+  /**
+   * The statements in the policy
+   */
   statements(): Statement[]
+
+  /**
+   * Whether the statement is an array
+   */
+  statementIsArray(): boolean
 }
 
 export interface AnnotatedPolicy extends Policy, Annotated {
@@ -50,5 +66,9 @@ export class PolicyImpl implements Policy, AnnotatedPolicy {
 
   public getAnnotations(): Annotations {
     return this.annotationStore
+  }
+
+  public statementIsArray(): boolean {
+    return Array.isArray(this.policyObject.Statement)
   }
 }

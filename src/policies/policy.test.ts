@@ -82,4 +82,50 @@ describe("PolicyImpl", () => {
       expect(policy.statements()[1].index()).toEqual(2);
     })
   })
+
+  describe('statementIsArray', () => {
+    it('should return true when the statement is an array', () => {
+      // Given a policy object with multiple statements in an array
+      const policyObject = {
+        Statement: [
+          {
+            Sid: 'First',
+            Effect: "Allow",
+            Action: "s3:GetObject",
+            Resource: "arn:aws:s3:::my_corporate_bucket/*"
+          },
+          {
+            Sid: 'Second',
+            Effect: "Deny",
+            Action: "s3:GetObject",
+            Resource: "arn:aws:s3:::my_corporate_bucket/secret_plans.txt"
+          }
+        ]
+      }
+
+      // When a PolicyImpl is created
+      const policy = new PolicyImpl(policyObject, false);
+
+      // Then the statementIsArray should return true
+      expect(policy.statementIsArray()).toBe(true);
+    })
+
+    it('should return false when the statement is not an array', () => {
+      // Given a policy object with a single statement in an object
+      const policyObject = {
+        Statement: {
+          Sid: 'Lonely',
+          Effect: "Allow",
+          Action: "s3:GetObject",
+          Resource: "arn:aws:s3:::my_corporate_bucket/*"
+        }
+      }
+
+      // When a PolicyImpl is created
+      const policy = new PolicyImpl(policyObject, false);
+
+      // Then the statementIsArray should return false
+      expect(policy.statementIsArray()).toBe(false);
+    })
+  })
 })
