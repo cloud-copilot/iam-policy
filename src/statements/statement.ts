@@ -1,6 +1,6 @@
 import { Action, ActionImpl, AnnotatedAction } from "../actions/action.js"
 import { Annotated, Annotations, AnnotationStore } from "../annotations/annotations.js"
-import { Condition, ConditionImpl } from "../conditions/condition.js"
+import { AnnotatedCondition, Condition, ConditionImpl } from "../conditions/condition.js"
 import { AnnotatedPrincipal, Principal, PrincipalImpl, PrincipalType } from "../principals/principal.js"
 import { AnnotatedResource, Resource, ResourceImpl } from "../resources/resource.js"
 
@@ -82,6 +82,7 @@ export interface AnnotatedStatement extends Annotated, Statement {
   isNotPrincipalStatement(): this is AnnotatedNotPrincipalStatement
   isResourceStatement(): this is AnnotatedResourceStatement
   isNotResourceStatement(): this is AnnotatedNotResourceStatement
+  conditions(): AnnotatedCondition[]
 }
 
 /**
@@ -149,7 +150,7 @@ export interface NotResourceStatement extends Statement {
 }
 
 export interface AnnotatedNotResourceStatement extends Annotated, NotResourceStatement {
-  resources(): AnnotatedResource[]
+  notResources(): AnnotatedResource[]
 }
 
 /**
@@ -193,6 +194,7 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
   private notPrincipalCache: Principal[] | undefined
   private resourceCache: Resource[] | undefined
   private notResourceCache: Resource[] | undefined
+  private conditionCache: Condition[] | undefined
   constructor(private readonly statementObject: any, private readonly _index: number, private readonly stateful: boolean) {
     this.annotationStore = new AnnotationStore()
   }
@@ -392,7 +394,19 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return this.isResourceStatement() && this.statementObject.Resource === '*'
   }
 
-  public conditions(): Condition[] {
+  public conditions(): Condition[]
+  public conditions(): AnnotatedCondition[]
+  public conditions(): Condition[] | AnnotatedCondition[] {
+    if(!this.stateful) {
+      return this.createNewConditions()
+    }
+    if(!this.conditionCache) {
+      this.conditionCache = this.createNewConditions()
+    }
+    return this.conditionCache
+  }
+
+  private createNewConditions(): Condition[] {
     if(!this.statementObject.Condition) {
       return []
     }
