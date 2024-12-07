@@ -1,3 +1,5 @@
+import { Annotated, Annotations, AnnotationStore } from "../annotations/annotations.js"
+
 export type PrincipalType = 'AWS' | 'Service' | 'Federated' | 'CanonicalUser'
 
 /**
@@ -49,6 +51,9 @@ export interface Principal {
    */
   isAccountPrincipal(): this is AccountPrincipal
 
+}
+
+export interface AnnotatedPrincipal extends Principal, Annotated {
 }
 
 /**
@@ -122,8 +127,20 @@ const accountIdRegex = /^[0-9]{12}$/
 const accountArnRegex = /^arn:.*?:iam::[0-9]{12}:root$/
 const uniqueIdRegex = /^A[0-9A-Z]+$/
 
-export class PrincipalImpl implements Principal, WildcardPrincipal, AccountPrincipal, UniqueIdPrincipal, AwsPrincipal, ServicePrincipal, FederatedPrincipal, CanonicalUserPrincipal {
-  constructor(private readonly principalType: PrincipalType, private readonly principalId: string) {}
+export class PrincipalImpl implements Principal, AnnotatedPrincipal, WildcardPrincipal, AccountPrincipal, UniqueIdPrincipal, AwsPrincipal, ServicePrincipal, FederatedPrincipal, CanonicalUserPrincipal {
+
+  private readonly annotationStore: AnnotationStore
+  constructor(private readonly principalType: PrincipalType, private readonly principalId: string) {
+    this.annotationStore = new AnnotationStore()
+  }
+
+  public addAnnotation(key: string, value: string): void {
+    this.annotationStore.addAnnotation(key, value)
+  }
+
+  public getAnnotations(): Annotations {
+    return this.annotationStore
+  }
 
   public value(): string {
     return this.principalId

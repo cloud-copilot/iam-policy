@@ -1,4 +1,4 @@
-import { type Policy, PolicyImpl } from "./policies/policy.js";
+import { AnnotatedPolicy, type Policy, PolicyImpl } from "./policies/policy.js";
 
 /**
  * Load a Policy from a policy document

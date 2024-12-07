@@ -1,7 +1,7 @@
 import { Action, ActionImpl, AnnotatedAction } from "../actions/action.js"
 import { Annotated, Annotations, AnnotationStore } from "../annotations/annotations.js"
 import { Condition, ConditionImpl } from "../conditions/condition.js"
-import { Principal, PrincipalImpl, PrincipalType } from "../principals/principal.js"
+import { AnnotatedPrincipal, Principal, PrincipalImpl, PrincipalType } from "../principals/principal.js"
 import { Resource, ResourceImpl } from "../resources/resource.js"
 
 /*
@@ -83,6 +83,7 @@ export interface Statement {
 export interface AnnotatedStatement extends Annotated, Statement {
   isActionStatement(): this is AnnotatedActionStatement
   isNotActionStatement(): this is AnnotatedNotActionStatement
+  isPrincipalStatement(): this is AnnotatedPrincipalStatement
 }
 
 /**
@@ -156,6 +157,10 @@ export interface PrincipalStatement extends Statement {
   principals(): Principal[]
 }
 
+export interface AnnotatedPrincipalStatement extends Annotated, PrincipalStatement {
+  principals(): AnnotatedPrincipal[]
+}
+
 /**
  * Represents a statement in an IAM policy that has NotPrincipal
  */
@@ -175,6 +180,7 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
   private readonly annotationStore: AnnotationStore
   private actionCache: Action[] | undefined
   private notActionCache: Action[] | undefined
+  private principalCache: Principal[] | undefined
   constructor(private readonly statementObject: any, private readonly _index: number, private readonly stateful: boolean) {
     this.annotationStore = new AnnotationStore()
   }
@@ -207,6 +213,8 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return this.effect() === 'Deny'
   }
 
+  public isPrincipalStatement(): this is PrincipalStatement
+  public isPrincipalStatement(): this is AnnotatedPrincipalStatement
   public isPrincipalStatement(): this is PrincipalStatement {
     return this.statementObject.Principal !== undefined;
   }
@@ -215,11 +223,19 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return this.statementObject.NotPrincipal !== undefined;
   }
 
-  public principals(): Principal[] {
+  public principals(): Principal[]
+  public principals(): AnnotatedPrincipal[]
+  public principals(): Principal[] | AnnotatedPrincipal[] {
     if(!this.isPrincipalStatement()) {
       throw new Error('Called principals on a statement without Principal, use isPrincipalStatement before calling principals')
     }
-    return this.parsePrincipalObject(this.statementObject.Principal)
+    if(!this.stateful) {
+      return this.parsePrincipalObject(this.statementObject.Principal)
+    }
+    if(!this.principalCache) {
+      this.principalCache = this.parsePrincipalObject(this.statementObject.Principal)
+    }
+    return this.principalCache
   }
 
   public notPrincipals(): Principal[] {
