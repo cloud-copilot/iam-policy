@@ -1,7 +1,18 @@
-import { Action, ActionImpl } from "../actions/action.js"
+import { Action, ActionImpl, AnnotatedAction } from "../actions/action.js"
+import { Annotated, Annotations, AnnotationStore } from "../annotations/annotations.js"
 import { Condition, ConditionImpl } from "../conditions/condition.js"
 import { Principal, PrincipalImpl, PrincipalType } from "../principals/principal.js"
 import { Resource, ResourceImpl } from "../resources/resource.js"
+
+/*
+things to change in a statement
+principal
+notprincipal
+resource
+notresource
+condition
+*/
+
 
 /**
  * Represents a statement in an IAM policy
@@ -69,6 +80,11 @@ export interface Statement {
   isNotResourceStatement(): this is NotResourceStatement
 }
 
+export interface AnnotatedStatement extends Annotated, Statement {
+  isActionStatement(): this is AnnotatedActionStatement
+  isNotActionStatement(): this is AnnotatedNotActionStatement
+}
+
 /**
  * Represents a statement in an IAM policy that has Action
  */
@@ -77,6 +93,13 @@ export interface ActionStatement extends Statement {
    * The actions for the statement
    */
   actions(): Action[]
+}
+
+/**
+ * Represents a statement in an IAM policy that has Action and is annotated
+ */
+export interface AnnotatedActionStatement extends Annotated, ActionStatement {
+  actions(): AnnotatedAction[]
 }
 
 /**
@@ -89,6 +112,14 @@ export interface NotActionStatement extends Statement {
    */
   notActions(): Action[]
 }
+
+/**
+ * Represents a statement in an IAM policy that has NotAction and is annotated
+ */
+export interface AnnotatedNotActionStatement extends Annotated, NotActionStatement {
+  notActions(): AnnotatedAction[]
+}
+
 
 /**
  * Represents a statement in an IAM policy that has Resource
@@ -139,8 +170,22 @@ export interface NotPrincipalStatement extends Statement {
 /**
  * Implementation of the Statement interface and all its sub-interfaces
  */
-export class StatementImpl implements Statement, ActionStatement, NotActionStatement, ResourceStatement, NotResourceStatement, PrincipalStatement {
-  constructor(private readonly statementObject: any, private readonly _index: number) {}
+export class StatementImpl implements Statement, AnnotatedStatement, ActionStatement, AnnotatedStatement, NotActionStatement, ResourceStatement, NotResourceStatement, PrincipalStatement {
+
+  private readonly annotationStore: AnnotationStore
+  private actionCache: Action[] | undefined
+  private notActionCache: Action[] | undefined
+  constructor(private readonly statementObject: any, private readonly _index: number, private readonly stateful: boolean) {
+    this.annotationStore = new AnnotationStore()
+  }
+
+  public addAnnotation(key: string, value: string): void {
+    this.annotationStore.addAnnotation(key, value)
+  }
+
+  public getAnnotations(): Annotations {
+    return this.annotationStore
+  }
 
   public index(): number {
     return this._index
@@ -206,25 +251,51 @@ export class StatementImpl implements Statement, ActionStatement, NotActionState
     }).flat()
   }
 
+  public isActionStatement(): this is AnnotatedActionStatement
   public isActionStatement(): this is ActionStatement {
     return this.statementObject.Action !== undefined;
   }
 
+  public isNotActionStatement(): this is AnnotatedNotActionStatement
   public isNotActionStatement(): this is NotActionStatement {
     return this.statementObject.NotAction !== undefined;
   }
 
-  public actions(): Action[] {
+  public actions(): Action[]
+  public actions(): AnnotatedAction[]
+  public actions(): Action[] | AnnotatedAction[] {
     if(!this.isActionStatement()) {
       throw new Error('Called actions on a statement without Action, use isActionStatement before calling actions')
     }
+    if(!this.stateful) {
+      return this.createNewActions()
+    }
+    if(!this.actionCache) {
+      this.actionCache = this.createNewActions()
+    }
+    return this.actionCache
+  }
+
+  private createNewActions(): Action[] {
     return [this.statementObject.Action].flat().map((action: any) => new ActionImpl(action))
   }
 
-  public notActions(): Action[] {
+  public notActions(): Action[]
+  public notActions(): AnnotatedAction[]
+  public notActions(): Action[] | AnnotatedAction[] {
     if(!this.isNotActionStatement()) {
       throw new Error('Called notActions on a statement without NotAction, use isNotActionStatement before calling notActions')
     }
+    if(!this.stateful) {
+      return this.createNewNotActions()
+    }
+    if(!this.notActionCache) {
+      this.notActionCache = this.createNewNotActions()
+    }
+    return this.notActionCache
+  }
+
+  private createNewNotActions(): Action[] {
     return [this.statementObject.NotAction].flat().map((action: any) => new ActionImpl(action))
   }
 

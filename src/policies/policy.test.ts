@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { PolicyImpl } from "./policy.js";
-import exp = require("constants");
 
 describe("PolicyImpl", () => {
   describe("version", () => {
@@ -11,7 +10,7 @@ describe("PolicyImpl", () => {
       }
 
       // When a PolicyImpl is created
-      const policy = new PolicyImpl(policyObject);
+      const policy = new PolicyImpl(policyObject, false);
 
       // Then the version should be the version
       expect(policy.version()).toBe(policyObject.Version);
@@ -26,7 +25,7 @@ describe("PolicyImpl", () => {
       }
 
       // When a PolicyImpl is created
-      const policy = new PolicyImpl(policyObject);
+      const policy = new PolicyImpl(policyObject, false);
 
       // Then the id should be the id
       expect(policy.id()).toBe(policyObject.Id);
@@ -46,7 +45,7 @@ describe("PolicyImpl", () => {
       }
 
       // When a PolicyImpl is created
-      const policy = new PolicyImpl(policyObject);
+      const policy = new PolicyImpl(policyObject, false);
 
       // Then the statements should be an array with one statement
       expect(policy.statements().length).toBe(1);
@@ -73,7 +72,7 @@ describe("PolicyImpl", () => {
       }
 
       // When a PolicyImpl is created
-      const policy = new PolicyImpl(policyObject);
+      const policy = new PolicyImpl(policyObject, false);
 
       // Then the statements should be an array with two statements
       expect(policy.statements().length).toEqual(2);
