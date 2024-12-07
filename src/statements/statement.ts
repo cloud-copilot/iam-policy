@@ -140,9 +140,14 @@ export interface ResourceStatement extends Statement {
   resources(): Resource[]
 
   /**
-   * Is the resource element exactly a single wildcard: `"*"`
+   * Is the Resource element exactly a single wildcard: `"*"`
    */
   hasSingleResourceWildcard(): boolean
+
+  /**
+   * Is the Resource element an array of strings
+   */
+  resourceIsArray(): boolean
 }
 
 export interface AnnotatedResourceStatement extends Annotated, ResourceStatement {
@@ -157,6 +162,16 @@ export interface NotResourceStatement extends Statement {
    * The not resources for the statement
    */
   notResources(): Resource[]
+
+  /**
+   * Is the NotResource element exactly a single wildcard: `"*"`
+   */
+  hasSingleNotResourceWildcard(): boolean
+
+  /**
+   * Is the resource element an array of strings
+   */
+  notResourceIsArray(): boolean
 }
 
 export interface AnnotatedNotResourceStatement extends Annotated, NotResourceStatement {
@@ -386,6 +401,17 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return [this.statementObject.Resource].flat().map((resource: any) => new ResourceImpl(resource))
   }
 
+  public hasSingleResourceWildcard(): boolean {
+    if(!this.isResourceStatement()) {
+      throw new Error('Called hasSingleResourceWildcard on a statement without Resource, use isResourceStatement before calling hasSingleResourceWildcard')
+    }
+    return this.statementObject.Resource === '*'
+  }
+
+  public resourceIsArray(): boolean {
+    return Array.isArray(this.statementObject.Resource)
+  }
+
   public notResources(): Resource[]
   public notResources(): AnnotatedResource[]
   public notResources(): Resource[] | AnnotatedResource[] {
@@ -405,12 +431,17 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return [this.statementObject.NotResource].flat().map((resource: any) => new ResourceImpl(resource))
   }
 
-  public hasSingleResourceWildcard(): boolean {
-    if(!this.isResourceStatement()) {
-      throw new Error('Called hasSingleResourceWildcard on a statement without Resource, use isResourceStatement before calling hasSingleResourceWildcard')
-    }
-    return this.isResourceStatement() && this.statementObject.Resource === '*'
+  public notResourceIsArray(): boolean {
+    return Array.isArray(this.statementObject.NotResource)
   }
+
+  public hasSingleNotResourceWildcard(): boolean {
+    if(!this.isNotResourceStatement()) {
+      throw new Error('Called hasSingleNotResourceWildcard on a statement without NotResource, use isNotResourceStatement before calling hasSingleNotResourceWildcard')
+    }
+    return this.statementObject.NotResource === '*'
+  }
+
 
   public conditions(): Condition[]
   public conditions(): AnnotatedCondition[]

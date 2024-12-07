@@ -526,6 +526,100 @@ describe('StatementImpl', () => {
     })
   })
 
+  describe('hasSingleNotResourceWildcard', () => {
+    it('should return true if the statement has a single NotResource wildcard', () => {
+      //Given a statement with a single NotResource wildcard
+      const statementDoc = { NotResource: '*' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleNotResourceWildcard should return true
+      expect(statement.hasSingleNotResourceWildcard()).toBe(true)
+    })
+
+    it('should return false if the statement has an array with a single NotResource wildcard', () => {
+      //Given a statement with an array with a single NotResource wildcard
+      const statementDoc = { NotResource: ['*'] }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleNotResourceWildcard should return false
+      expect(statement.hasSingleNotResourceWildcard()).toBe(false)
+    })
+
+    it('should return false if the statement does not have a single NotResource wildcard', () => {
+      //Given a statement without a single NotResource wildcard
+      const statementDoc = { NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleNotResourceWildcard should return false
+      expect(statement.hasSingleNotResourceWildcard()).toBe(false)
+    })
+
+    it('should throw an error if hasSingleNotResourceWildcard is called on a statement without NotResource', () => {
+      //Given a statement without a NotResource
+      const statementDoc = { }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleNotResourceWildcard should throw an error
+      expect(() => statement.hasSingleNotResourceWildcard()).toThrow('Called hasSingleNotResourceWildcard on a statement without NotResource, use isNotResourceStatement before calling hasSingleNotResourceWildcard')
+    })
+  })
+
+  describe('resourceIsArray', () => {
+    it('should return true if the resource is an array', () => {
+      //Given a statement with a Resource that is an array
+      const statementDoc = { Resource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then resourceIsArray should return true
+      expect(statement.resourceIsArray()).toBe(true)
+    })
+
+    it('should return false if the resource is not an array', () => {
+      //Given a statement with a Resource that is not an array
+      const statementDoc = { Resource: 'arn:aws:s3:::my_bucket' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then resourceIsArray should return false
+      expect(statement.resourceIsArray()).toBe(false)
+    })
+  })
+
+  describe('notResourceIsArray', () => {
+    it('should return true if the NotResource is an array', () => {
+      //Given a statement with a NotResource that is an array
+      const statementDoc = { NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notResourceIsArray should return true
+      expect(statement.notResourceIsArray()).toBe(true)
+    })
+
+    it('should return false if the NotResource is not an array', () => {
+      //Given a statement with a NotResource that is not an array
+      const statementDoc = { NotResource: 'arn:aws:s3:::my_bucket' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notResourceIsArray should return false
+      expect(statement.notResourceIsArray()).toBe(false)
+    })
+  })
+
   describe('conditions', () => {
     it('should return an empty array if the statement does not have a Condition', () => {
       //Given a statement without a Condition
