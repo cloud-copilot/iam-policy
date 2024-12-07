@@ -556,6 +556,7 @@ describe('StatementImpl', () => {
       expect(statement.conditions()[0].operation().value()).toEqual('StringEquals')
       expect(statement.conditions()[0].conditionKey()).toEqual('s3:prefix')
       expect(statement.conditions()[0].conditionValues()).toEqual(['home/${aws:username}'])
+      expect(statement.conditions()[0].valueIsArray()).toBe(false)
     })
 
     it('should return the conditions when the condition value is a string array', () => {
