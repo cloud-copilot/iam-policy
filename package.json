@@ -1,6 +1,6 @@
 {
   "name": "@cloud-copilot/iam-policy",
-  "version": "0.1.4",
+  "version": "0.1.5-1",
   "description": "An ORM for AWS IAM policies",
   "repository": {
     "type": "git",
@@ -21,7 +21,6 @@
     "clean": "rm -rf dist",
     "test": "npx vitest --run --coverage",
     "release": "npm install && npm run clean && npm run build && npm test && npm publish"
-
   },
   "keywords": [
     "AWS",
