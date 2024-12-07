@@ -2,15 +2,12 @@ import { Action, ActionImpl, AnnotatedAction } from "../actions/action.js"
 import { Annotated, Annotations, AnnotationStore } from "../annotations/annotations.js"
 import { Condition, ConditionImpl } from "../conditions/condition.js"
 import { AnnotatedPrincipal, Principal, PrincipalImpl, PrincipalType } from "../principals/principal.js"
-import { Resource, ResourceImpl } from "../resources/resource.js"
+import { AnnotatedResource, Resource, ResourceImpl } from "../resources/resource.js"
 
 /*
 things to change in a statement
-resource
-notresource
 condition
 */
-
 
 /**
  * Represents a statement in an IAM policy
@@ -83,6 +80,8 @@ export interface AnnotatedStatement extends Annotated, Statement {
   isNotActionStatement(): this is AnnotatedNotActionStatement
   isPrincipalStatement(): this is AnnotatedPrincipalStatement
   isNotPrincipalStatement(): this is AnnotatedNotPrincipalStatement
+  isResourceStatement(): this is AnnotatedResourceStatement
+  isNotResourceStatement(): this is AnnotatedNotResourceStatement
 }
 
 /**
@@ -120,7 +119,6 @@ export interface AnnotatedNotActionStatement extends Annotated, NotActionStateme
   notActions(): AnnotatedAction[]
 }
 
-
 /**
  * Represents a statement in an IAM policy that has Resource
  */
@@ -136,6 +134,10 @@ export interface ResourceStatement extends Statement {
   hasSingleResourceWildcard(): boolean
 }
 
+export interface AnnotatedResourceStatement extends Annotated, ResourceStatement {
+  resources(): AnnotatedResource[]
+}
+
 /**
  * Represents a statement in an IAM policy that has NotResource
  */
@@ -144,6 +146,10 @@ export interface NotResourceStatement extends Statement {
    * The not resources for the statement
    */
   notResources(): Resource[]
+}
+
+export interface AnnotatedNotResourceStatement extends Annotated, NotResourceStatement {
+  resources(): AnnotatedResource[]
 }
 
 /**
@@ -185,6 +191,8 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
   private notActionCache: Action[] | undefined
   private principalCache: Principal[] | undefined
   private notPrincipalCache: Principal[] | undefined
+  private resourceCache: Resource[] | undefined
+  private notResourceCache: Resource[] | undefined
   constructor(private readonly statementObject: any, private readonly _index: number, private readonly stateful: boolean) {
     this.annotationStore = new AnnotationStore()
   }
@@ -329,25 +337,51 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return [this.statementObject.NotAction].flat().map((action: any) => new ActionImpl(action))
   }
 
+  public isResourceStatement(): this is AnnotatedResourceStatement
   public isResourceStatement(): this is ResourceStatement {
     return this.statementObject.Resource !== undefined;
   }
 
+  public isNotResourceStatement(): this is AnnotatedNotResourceStatement
   public isNotResourceStatement(): this is NotResourceStatement {
     return this.statementObject.NotResource !== undefined;
   }
 
-  public resources(): Resource[] {
+  public resources(): Resource[]
+  public resources(): AnnotatedResource[]
+  public resources(): Resource[] | AnnotatedResource[] {
     if(!this.isResourceStatement()) {
       throw new Error('Called resources on a statement without Resource, use isResourceStatement before calling resources')
     }
+    if(!this.stateful) {
+      return this.createNewResources()
+    }
+    if(!this.resourceCache) {
+      this.resourceCache = this.createNewResources()
+    }
+    return this.resourceCache
+  }
+
+  private createNewResources(): Resource[] {
     return [this.statementObject.Resource].flat().map((resource: any) => new ResourceImpl(resource))
   }
 
-  public notResources(): Resource[] {
+  public notResources(): Resource[]
+  public notResources(): AnnotatedResource[]
+  public notResources(): Resource[] | AnnotatedResource[] {
     if(!this.isNotResourceStatement()) {
       throw new Error('Called notResources on a statement without NotResource, use isNotResourceStatement before calling notResources')
     }
+    if(!this.stateful) {
+      return this.createNewNotResources()
+    }
+    if(!this.notResourceCache) {
+      this.notResourceCache = this.createNewNotResources()
+    }
+    return this.notResourceCache
+  }
+
+  private createNewNotResources(): Resource[] {
     return [this.statementObject.NotResource].flat().map((resource: any) => new ResourceImpl(resource))
   }
 
