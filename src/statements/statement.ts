@@ -6,8 +6,6 @@ import { Resource, ResourceImpl } from "../resources/resource.js"
 
 /*
 things to change in a statement
-principal
-notprincipal
 resource
 notresource
 condition
@@ -84,6 +82,7 @@ export interface AnnotatedStatement extends Annotated, Statement {
   isActionStatement(): this is AnnotatedActionStatement
   isNotActionStatement(): this is AnnotatedNotActionStatement
   isPrincipalStatement(): this is AnnotatedPrincipalStatement
+  isNotPrincipalStatement(): this is AnnotatedNotPrincipalStatement
 }
 
 /**
@@ -172,6 +171,10 @@ export interface NotPrincipalStatement extends Statement {
   notPrincipals(): Principal[]
 }
 
+export interface AnnotatedNotPrincipalStatement extends Annotated, NotPrincipalStatement {
+  notPrincipals(): AnnotatedPrincipal[]
+}
+
 /**
  * Implementation of the Statement interface and all its sub-interfaces
  */
@@ -181,6 +184,7 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
   private actionCache: Action[] | undefined
   private notActionCache: Action[] | undefined
   private principalCache: Principal[] | undefined
+  private notPrincipalCache: Principal[] | undefined
   constructor(private readonly statementObject: any, private readonly _index: number, private readonly stateful: boolean) {
     this.annotationStore = new AnnotationStore()
   }
@@ -219,6 +223,8 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return this.statementObject.Principal !== undefined;
   }
 
+  public isNotPrincipalStatement(): this is NotPrincipalStatement
+  public isNotPrincipalStatement(): this is AnnotatedNotPrincipalStatement
   public isNotPrincipalStatement(): this is NotPrincipalStatement {
     return this.statementObject.NotPrincipal !== undefined;
   }
@@ -238,11 +244,19 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return this.principalCache
   }
 
-  public notPrincipals(): Principal[] {
+  public notPrincipals(): Principal[]
+  public notPrincipals(): AnnotatedPrincipal[]
+  public notPrincipals(): Principal[] | AnnotatedPrincipal[] {
     if(!this.isNotPrincipalStatement()) {
       throw new Error('Called notPrincipals on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipals')
     }
-    return this.parsePrincipalObject(this.statementObject.NotPrincipal)
+    if(!this.stateful) {
+      return this.parsePrincipalObject(this.statementObject.NotPrincipal)
+    }
+    if(!this.notPrincipalCache) {
+      this.notPrincipalCache = this.parsePrincipalObject(this.statementObject.NotPrincipal)
+    }
+    return this.notPrincipalCache
   }
 
   /**
