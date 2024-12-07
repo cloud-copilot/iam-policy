@@ -93,6 +93,11 @@ export interface ActionStatement extends Statement {
    * The actions for the statement
    */
   actions(): Action[]
+
+  /**
+   * Is the Action element an array of strings
+   */
+  actionIsArray(): boolean
 }
 
 /**
@@ -111,6 +116,11 @@ export interface NotActionStatement extends Statement {
    * The not actions for the statement
    */
   notActions(): Action[]
+
+  /**
+   * Is the NotAction element an array of strings
+   */
+  notActionIsArray(): boolean
 }
 
 /**
@@ -320,6 +330,10 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
     return [this.statementObject.Action].flat().map((action: any) => new ActionImpl(action))
   }
 
+  public actionIsArray(): boolean {
+    return Array.isArray(this.statementObject.Action)
+  }
+
   public notActions(): Action[]
   public notActions(): AnnotatedAction[]
   public notActions(): Action[] | AnnotatedAction[] {
@@ -337,6 +351,10 @@ export class StatementImpl implements Statement, AnnotatedStatement, ActionState
 
   private createNewNotActions(): Action[] {
     return [this.statementObject.NotAction].flat().map((action: any) => new ActionImpl(action))
+  }
+
+  public notActionIsArray(): boolean {
+    return Array.isArray(this.statementObject.NotAction)
   }
 
   public isResourceStatement(): this is AnnotatedResourceStatement

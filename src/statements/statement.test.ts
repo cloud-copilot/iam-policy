@@ -613,4 +613,52 @@ describe('StatementImpl', () => {
       expect(statement.conditions()[3].conditionValues()).toEqual(['Bar*'])
     })
   })
+
+  describe('actionIsArray', () => {
+    it('should return true if the action is an array', () => {
+      //Given a statement with an Action that is an array
+      const statementDoc = { Action: ['s3:GetObject', 's3:PutObject'] }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then actionIsArray should return true
+      expect(statement.actionIsArray()).toBe(true)
+    })
+
+    it('should return false if the action is not an array', () => {
+      //Given a statement with an Action that is not an array
+      const statementDoc = { Action: 's3:GetObject' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then actionIsArray should return false
+      expect(statement.actionIsArray()).toBe(false)
+    })
+  })
+
+  describe('notActionIsArray', () => {
+    it('should return true if the NotAction is an array', () => {
+      //Given a statement with a NotAction that is an array
+      const statementDoc = { NotAction: ['s3:GetObject', 's3:PutObject'] }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notActionIsArray should return true
+      expect(statement.notActionIsArray()).toBe(true)
+    })
+
+    it('should return false if the NotAction is not an array', () => {
+      //Given a statement with a NotAction that is not an array
+      const statementDoc = { NotAction: 's3:GetObject' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then notActionIsArray should return false
+      expect(statement.notActionIsArray()).toBe(false)
+    })
+  })
 })
