@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest"
-import { AnnotatedPolicy, PolicyImpl } from "./policy.js"
+import { describe, expect, it } from 'vitest'
+import { AnnotatedPolicy, PolicyImpl } from './policy.js'
 
 describe('AnnotatedPolicy', () => {
-  it(('should maintain annotations'), () => {
+  it('should maintain annotations', () => {
     // Given an annotated policy
     const policy = {
       Statement: {
@@ -56,5 +56,4 @@ describe('AnnotatedPolicy', () => {
     expect(newStatement1.getAnnotations().values('testAnnotation')).toEqual(['Value1', 'Value2'])
     expect(newStatement2.getAnnotations().values('testAnnotation')).toEqual(['Value3', 'Value4'])
   })
-
 })

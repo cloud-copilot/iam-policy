@@ -17,7 +17,7 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition", "message": "Condition must be an object, found an array"}
+      { "path": "Statement.Condition", "message": "Condition must be an object, found an array" }
     ]
   },
   {
@@ -29,7 +29,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition", "message": "Found data type string allowed type(s) are object"}
+      {
+        "path": "Statement.Condition",
+        "message": "Found data type string allowed type(s) are object"
+      }
     ]
   },
   {
@@ -43,7 +46,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition.StringEquals", "message": "Found data type string allowed type(s) are object"}
+      {
+        "path": "Statement.Condition.StringEquals",
+        "message": "Found data type string allowed type(s) are object"
+      }
     ]
   },
   {
@@ -57,7 +63,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition.StringEquals", "message": "Condition operator must be an object, found an array"}
+      {
+        "path": "Statement.Condition.StringEquals",
+        "message": "Condition operator must be an object, found an array"
+      }
     ]
   },
   {
@@ -71,7 +80,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition.StringEquals", "message": "Condition operator must be an object, found an array"}
+      {
+        "path": "Statement.Condition.StringEquals",
+        "message": "Condition operator must be an object, found an array"
+      }
     ]
   },
   {
@@ -89,7 +101,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition.StringEquals.aws:Username", "message": "Found data type object allowed type(s) are string"}
+      {
+        "path": "Statement.Condition.StringEquals.aws:Username",
+        "message": "Found data type object allowed type(s) are string"
+      }
     ]
   },
   {
@@ -113,7 +128,7 @@
         "Effect": "Allow",
         "Condition": {
           "StringEquals": {
-            "aws:Username": ["Bob","OtherBob"]
+            "aws:Username": ["Bob", "OtherBob"]
           }
         }
       }
@@ -129,7 +144,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition", "message": "If present, Condition cannot be null or undefined"}
+      {
+        "path": "Statement.Condition",
+        "message": "If present, Condition cannot be null or undefined"
+      }
     ]
   },
   {
@@ -162,7 +180,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition.ForSomeValue:StringEquals", "message": "Condition set operator must be either ForAllValues or ForAnyValue"}
+      {
+        "path": "Statement.Condition.ForSomeValue:StringEquals",
+        "message": "Condition set operator must be either ForAllValues or ForAnyValue"
+      }
     ]
   },
   {
@@ -178,7 +199,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition.ForAllValues:StringEquals:IfExists", "message": "Condition operator is invalid"}
+      {
+        "path": "Statement.Condition.ForAllValues:StringEquals:IfExists",
+        "message": "Condition operator is invalid"
+      }
     ]
   },
   {
@@ -194,7 +218,10 @@
       }
     },
     "expectedErrors": [
-      {"path": "Statement.Condition.ForAllValues.StringEquals", "message": "Condition operator is invalid"}
+      {
+        "path": "Statement.Condition.ForAllValues.StringEquals",
+        "message": "Condition operator is invalid"
+      }
     ]
   }
 ]

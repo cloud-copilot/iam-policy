@@ -28,10 +28,12 @@ export interface AnnotatedPolicy extends Policy, Annotated {
 }
 
 export class PolicyImpl implements Policy, AnnotatedPolicy {
-
   private readonly annotationStore: AnnotationStore
   private statementsCache: Statement[] | undefined
-  constructor(private readonly policyObject: any, private readonly stateful: boolean) {
+  constructor(
+    private readonly policyObject: any,
+    private readonly stateful: boolean
+  ) {
     this.annotationStore = new AnnotationStore()
   }
 
@@ -43,21 +45,23 @@ export class PolicyImpl implements Policy, AnnotatedPolicy {
     return this.policyObject.Id
   }
 
-  public statements(): Statement[];
-  public statements(): AnnotatedStatement[];
+  public statements(): Statement[]
+  public statements(): AnnotatedStatement[]
   public statements(): Statement[] | AnnotatedStatement[] {
-    if(!this.stateful) {
+    if (!this.stateful) {
       return this.newStatements()
     }
 
-    if(!this.statementsCache) {
+    if (!this.statementsCache) {
       this.statementsCache = this.newStatements()
     }
     return this.statementsCache
   }
 
   private newStatements(): Statement[] {
-    return [this.policyObject.Statement].flat().map((statement: any, index) => new StatementImpl(statement, index + 1, this.stateful))
+    return [this.policyObject.Statement]
+      .flat()
+      .map((statement: any, index) => new StatementImpl(statement, index + 1, this.stateful))
   }
 
   public addAnnotation(key: string, value: string): void {

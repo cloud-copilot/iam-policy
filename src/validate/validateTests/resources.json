@@ -28,7 +28,7 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Statement[0].Resource", "message": "Must be a string or array of strings"}
+      { "path": "Statement[0].Resource", "message": "Must be a string or array of strings" }
     ]
   },
   {
@@ -45,8 +45,10 @@
       ]
     },
     "expectedErrors": [
-      { "path": "Statement[0].Resource", "message": "Resource arn must have 6 segments and start with \"arn:\""}
-
+      {
+        "path": "Statement[0].Resource",
+        "message": "Resource arn must have 6 segments and start with \"arn:\""
+      }
     ]
   },
   {
@@ -63,7 +65,10 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Statement[0].Resource", "message": "Resource arn must have 6 segments and start with \"arn:\""}
+      {
+        "path": "Statement[0].Resource",
+        "message": "Resource arn must have 6 segments and start with \"arn:\""
+      }
     ]
   },
   {
@@ -95,7 +100,10 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Statement[0].Resource[0]", "message": "Resource arn must have 6 segments and start with \"arn:\""}
+      {
+        "path": "Statement[0].Resource[0]",
+        "message": "Resource arn must have 6 segments and start with \"arn:\""
+      }
     ]
   },
   {
@@ -112,7 +120,10 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Statement[0].Resource", "message": "Resource arn must have 6 segments and start with \"arn:\""}
+      {
+        "path": "Statement[0].Resource",
+        "message": "Resource arn must have 6 segments and start with \"arn:\""
+      }
     ]
   }
 ]

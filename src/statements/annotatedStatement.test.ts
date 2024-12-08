@@ -1,17 +1,27 @@
-import { describe, expect, it } from "vitest"
-import { AnnotatedActionStatement, AnnotatedNotActionStatement, AnnotatedNotPrincipalStatement, AnnotatedNotResourceStatement, AnnotatedPrincipalStatement, AnnotatedResourceStatement, AnnotatedStatement, StatementImpl } from "./statement.js"
+import { describe, expect, it } from 'vitest'
+import {
+  AnnotatedActionStatement,
+  AnnotatedNotActionStatement,
+  AnnotatedNotPrincipalStatement,
+  AnnotatedNotResourceStatement,
+  AnnotatedPrincipalStatement,
+  AnnotatedResourceStatement,
+  AnnotatedStatement,
+  StatementImpl
+} from './statement.js'
 
 describe('annotatedStatement', () => {
   it('should cache actions and their annotations', () => {
     // Given an annotated statement
-    const statement: AnnotatedStatement & AnnotatedActionStatement = new StatementImpl({
-      Effect: 'Allow',
-      Action: [
-        's3:GetObject',
-        's3:PutObject'
-      ],
-      Resource: ['*'],
-    }, 1, true)
+    const statement: AnnotatedStatement & AnnotatedActionStatement = new StatementImpl(
+      {
+        Effect: 'Allow',
+        Action: ['s3:GetObject', 's3:PutObject'],
+        Resource: ['*']
+      },
+      1,
+      true
+    )
 
     // And there are annotations on the actions
     const actions = statement.actions()
@@ -28,14 +38,15 @@ describe('annotatedStatement', () => {
 
   it('should cache not actions and their annotations', () => {
     // Given an annotated statement
-    const statement: AnnotatedStatement & AnnotatedNotActionStatement = new StatementImpl({
-      Effect: 'Allow',
-      NotAction: [
-        's3:GetObject',
-        's3:PutObject'
-      ],
-      Resource: ['*'],
-    }, 1, true)
+    const statement: AnnotatedStatement & AnnotatedNotActionStatement = new StatementImpl(
+      {
+        Effect: 'Allow',
+        NotAction: ['s3:GetObject', 's3:PutObject'],
+        Resource: ['*']
+      },
+      1,
+      true
+    )
 
     // And there are annotations on the actions
     const notActions = statement.notActions()
@@ -52,17 +63,18 @@ describe('annotatedStatement', () => {
 
   it('should cache principals and their annotations', () => {
     // Given an annotated statement
-    const statement: AnnotatedStatement & AnnotatedPrincipalStatement = new StatementImpl({
-      Effect: 'Allow',
-      Principal: {
-        AWS: [
-          'arn:aws:iam::123456789012:root',
-          'arn:aws:iam::123456789012:user/Bob'
-        ]
+    const statement: AnnotatedStatement & AnnotatedPrincipalStatement = new StatementImpl(
+      {
+        Effect: 'Allow',
+        Principal: {
+          AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789012:user/Bob']
+        },
+        Action: ['s3:GetObject'],
+        Resource: ['*']
       },
-      Action: ['s3:GetObject'],
-      Resource: ['*'],
-    }, 1, true)
+      1,
+      true
+    )
 
     // And there are annotations on the principal
     const [principal1, principal2] = statement.principals()
@@ -79,17 +91,18 @@ describe('annotatedStatement', () => {
 
   it('should cache NotPrincipals and their annotations', () => {
     // Given an annotated statement
-    const statement: AnnotatedStatement & AnnotatedNotPrincipalStatement = new StatementImpl({
-      Effect: 'Allow',
-      NotPrincipal: {
-        AWS: [
-          'arn:aws:iam::123456789012:root',
-          'arn:aws:iam::123456789012:user/Bob'
-        ]
+    const statement: AnnotatedStatement & AnnotatedNotPrincipalStatement = new StatementImpl(
+      {
+        Effect: 'Allow',
+        NotPrincipal: {
+          AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789012:user/Bob']
+        },
+        Action: ['s3:GetObject'],
+        Resource: ['*']
       },
-      Action: ['s3:GetObject'],
-      Resource: ['*'],
-    }, 1, true)
+      1,
+      true
+    )
 
     // And there are annotations on the principal
     const [principal1, principal2] = statement.notPrincipals()
@@ -106,11 +119,15 @@ describe('annotatedStatement', () => {
 
   it('should cache resources and their annotations', () => {
     // Given an annotated statement
-    const statement: AnnotatedStatement & AnnotatedResourceStatement = new StatementImpl({
-      Effect: 'Allow',
-      Action: ['s3:GetObject'],
-      Resource: ['arn:aws:s3:::bucket1/*', 'arn:aws:s3:::bucket2/*'],
-    }, 1, true)
+    const statement: AnnotatedStatement & AnnotatedResourceStatement = new StatementImpl(
+      {
+        Effect: 'Allow',
+        Action: ['s3:GetObject'],
+        Resource: ['arn:aws:s3:::bucket1/*', 'arn:aws:s3:::bucket2/*']
+      },
+      1,
+      true
+    )
 
     // And there are annotations on the resource
     const [resource1, resource2] = statement.resources()
@@ -127,11 +144,15 @@ describe('annotatedStatement', () => {
 
   it('should cache NotResources and their annotations', () => {
     // Given an annotated statement
-    const statement: AnnotatedStatement & AnnotatedNotResourceStatement = new StatementImpl({
-      Effect: 'Allow',
-      Action: ['s3:GetObject'],
-      NotResource: ['arn:aws:s3:::bucket1/*', 'arn:aws:s3:::bucket2/*'],
-    }, 1, true)
+    const statement: AnnotatedStatement & AnnotatedNotResourceStatement = new StatementImpl(
+      {
+        Effect: 'Allow',
+        Action: ['s3:GetObject'],
+        NotResource: ['arn:aws:s3:::bucket1/*', 'arn:aws:s3:::bucket2/*']
+      },
+      1,
+      true
+    )
 
     // And there are annotations on the resource
     const [resource1, resource2] = statement.notResources()
@@ -148,19 +169,23 @@ describe('annotatedStatement', () => {
 
   it('should cache conditions and their annotations', () => {
     // Given an annotated statement
-    const statement: AnnotatedStatement = new StatementImpl({
-      Effect: 'Allow',
-      Action: ['s3:GetObject'],
-      Resource: ['*'],
-      Condition: {
-        StringEquals: {
-          's3:prefix': 'home/${aws:username}'
-        },
-        ArnLike: {
-          'aws:PrincipalArn': 'arn:aws:iam::*:user/key-user'
+    const statement: AnnotatedStatement = new StatementImpl(
+      {
+        Effect: 'Allow',
+        Action: ['s3:GetObject'],
+        Resource: ['*'],
+        Condition: {
+          StringEquals: {
+            's3:prefix': 'home/${aws:username}'
+          },
+          ArnLike: {
+            'aws:PrincipalArn': 'arn:aws:iam::*:user/key-user'
+          }
         }
-      }
-    }, 1, true)
+      },
+      1,
+      true
+    )
 
     // And there are annotations on the condition
     const [condition1, condition2] = statement.conditions()

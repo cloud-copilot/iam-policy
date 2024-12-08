@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { AnnotationStore } from "./annotations.js";
+import { describe, expect, it } from 'vitest'
+import { AnnotationStore } from './annotations.js'
 
 describe('AnnotationStore', () => {
   it('should store annotations', () => {

@@ -31,11 +31,11 @@ export class ConditionOperationImpl implements ConditionOperation {
   constructor(private readonly op: string) {}
 
   public setOperator(): SetOperator | undefined {
-    if(!this.op.includes(':')) {
+    if (!this.op.includes(':')) {
       return undefined
     }
     const setOp = this.op.split(':').at(0)?.toLowerCase()
-    if(setOp === 'forallvalues') {
+    if (setOp === 'forallvalues') {
       return 'ForAllValues'
     } else if (setOp === 'foranyvalue') {
       return 'ForAnyValue'
@@ -49,7 +49,7 @@ export class ConditionOperationImpl implements ConditionOperation {
 
   public baseOperator(): string {
     const base = this.op.split(':').at(-1)!
-    if(base?.toLowerCase().endsWith('ifexists')) {
+    if (base?.toLowerCase().endsWith('ifexists')) {
       return base.slice(0, ifExistsSlice)
     }
     return base
@@ -58,5 +58,4 @@ export class ConditionOperationImpl implements ConditionOperation {
   public value(): string {
     return this.op
   }
-
 }

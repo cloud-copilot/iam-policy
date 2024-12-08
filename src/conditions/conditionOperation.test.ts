@@ -1,10 +1,9 @@
-import { describe, expect, it } from "vitest";
-import { ConditionOperationImpl } from "./conditionOperation.js";
+import { describe, expect, it } from 'vitest'
+import { ConditionOperationImpl } from './conditionOperation.js'
 
-
-describe("ConditionOperationImpl", () => {
-  describe("value", () => {
-    it("should return the raw string of the condition operation", () => {
+describe('ConditionOperationImpl', () => {
+  describe('value', () => {
+    it('should return the raw string of the condition operation', () => {
       //Given a condition operation
       const conditionOp = new ConditionOperationImpl('StringNotEqualsIfExists')
 
@@ -16,8 +15,8 @@ describe("ConditionOperationImpl", () => {
     })
   })
 
-  describe("isIfExists", () => {
-    it("should return true if the condition operation ends with IfExists", () => {
+  describe('isIfExists', () => {
+    it('should return true if the condition operation ends with IfExists', () => {
       //Given a condition operation that ends with IfExists
       const conditionOp = new ConditionOperationImpl('StringNotEqualsIfExists')
 
@@ -39,7 +38,7 @@ describe("ConditionOperationImpl", () => {
       expect(result).toBe(true)
     })
 
-    it("should return false if the condition operation does not end with IfExists", () => {
+    it('should return false if the condition operation does not end with IfExists', () => {
       //Given a condition operation that does not end with IfExists
       const conditionOp = new ConditionOperationImpl('StringNotEquals')
 

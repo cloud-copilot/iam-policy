@@ -26,7 +26,10 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Statement[0].Principal", "message": "Found data type number allowed type(s) are string, object"}
+      {
+        "path": "Statement[0].Principal",
+        "message": "Found data type number allowed type(s) are string, object"
+      }
     ]
   },
   {
@@ -45,8 +48,8 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Statement[0].Principal.Bad", "message": "Invalid key Bad"},
-      {"path": "Statement[0].Principal.Worse", "message": "Invalid key Worse"}
+      { "path": "Statement[0].Principal.Bad", "message": "Invalid key Bad" },
+      { "path": "Statement[0].Principal.Worse", "message": "Invalid key Worse" }
     ]
   },
   {
@@ -57,7 +60,7 @@
         {
           "Effect": "Allow",
           "Action": "s3:GetObject",
-          "Principal": {"AWS": "arn:aws:iam::123456789012:root"}
+          "Principal": { "AWS": "arn:aws:iam::123456789012:root" }
         }
       ]
     },
@@ -71,7 +74,9 @@
         {
           "Effect": "Allow",
           "Action": "s3:GetObject",
-          "Principal": {"AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"]}
+          "Principal": {
+            "AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"]
+          }
         }
       ]
     },
@@ -85,7 +90,7 @@
         {
           "Effect": "Allow",
           "Action": "s3:GetObject",
-          "Principal": {"Service": "arn:aws:iam::123456789012:root"}
+          "Principal": { "Service": "arn:aws:iam::123456789012:root" }
         }
       ]
     },

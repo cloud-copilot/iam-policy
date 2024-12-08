@@ -2,21 +2,17 @@
   {
     "name": "Policy is a string",
     "policy": "hello",
-    "expectedErrors": [
-      {"path": "", "message": "Policy must be an object, received type string"}
-    ]
+    "expectedErrors": [{ "path": "", "message": "Policy must be an object, received type string" }]
   },
   {
     "name": "Policy is an array",
     "policy": [{}],
-    "expectedErrors": [
-      {"path": "", "message": "Policy must be an object, received an array"}
-    ]
+    "expectedErrors": [{ "path": "", "message": "Policy must be an object, received an array" }]
   },
   {
     "name": "Policy is undefined",
     "expectedErrors": [
-      {"path": "", "message": "Policy must be an object, received type undefined"}
+      { "path": "", "message": "Policy must be an object, received type undefined" }
     ]
   },
   {
@@ -48,7 +44,7 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Id", "message": "Found data type number allowed type(s) are string"}
+      { "path": "Id", "message": "Found data type number allowed type(s) are string" }
     ]
   },
   {
@@ -63,9 +59,7 @@
         }
       ]
     },
-    "expectedErrors": [
-      {"path": "Version", "message": "Version must be a string if present"}
-    ]
+    "expectedErrors": [{ "path": "Version", "message": "Version must be a string if present" }]
   },
   {
     "name": "Wrong Version String",
@@ -80,7 +74,7 @@
       ]
     },
     "expectedErrors": [
-      {"path": "Version", "message": "Version must be either \"2012-10-17\" or \"2008-10-17\""}
+      { "path": "Version", "message": "Version must be either \"2012-10-17\" or \"2008-10-17\"" }
     ]
   },
   {
@@ -89,8 +83,6 @@
       "Id": "Policy1234567890123",
       "Version": "2012-10-17"
     },
-    "expectedErrors": [
-      {"path": "Statement", "message": "Statement is required"}
-    ]
+    "expectedErrors": [{ "path": "Statement", "message": "Statement is required" }]
   }
 ]

@@ -1,9 +1,7 @@
-
 /**
  * The annotations on a policy element
  */
 export interface Annotations {
-
   /**
    * The string keys that have annotations
    *
@@ -31,29 +29,29 @@ export interface Annotations {
 /**
  * A store for policy annotations
  */
-export class AnnotationStore implements Annotations{
-  private annotations: Record<string, string[]>;
+export class AnnotationStore implements Annotations {
+  private annotations: Record<string, string[]>
   constructor() {
-    this.annotations = {};
+    this.annotations = {}
   }
 
   addAnnotation(key: string, value: string) {
     if (!this.annotations[key]) {
-      this.annotations[key] = [];
+      this.annotations[key] = []
     }
-    this.annotations[key].push(value);
+    this.annotations[key].push(value)
   }
 
   keys(): string[] {
-    return Object.keys(this.annotations);
+    return Object.keys(this.annotations)
   }
 
   hasKey(key: string): boolean {
-    return this.annotations[key] !== undefined;
+    return this.annotations[key] !== undefined
   }
 
   values(key: string): string[] {
-    return this.annotations[key] || [];
+    return this.annotations[key] || []
   }
 }
 
@@ -61,7 +59,6 @@ export class AnnotationStore implements Annotations{
  * Standard methods for an object that can be annotated
  */
 export interface Annotated {
-
   /**
    * Add an annotation to the object
    *

@@ -1,5 +1,5 @@
-import { Annotated, Annotations, AnnotationStore } from "../annotations/annotations.js"
-import { ConditionOperation, ConditionOperationImpl } from "./conditionOperation.js"
+import { Annotated, Annotations, AnnotationStore } from '../annotations/annotations.js'
+import { ConditionOperation, ConditionOperationImpl } from './conditionOperation.js'
 
 export interface Condition {
   /**
@@ -34,9 +34,12 @@ export interface Condition {
 export interface AnnotatedCondition extends Condition, Annotated {}
 
 export class ConditionImpl implements Condition, AnnotatedCondition {
-
   private readonly annotations: AnnotationStore = new AnnotationStore()
-  constructor(private readonly op: string, private readonly key: string, private readonly values: string | string[]) {}
+  constructor(
+    private readonly op: string,
+    private readonly key: string,
+    private readonly values: string | string[]
+  ) {}
 
   public addAnnotation(key: string, value: string): void {
     this.annotations.addAnnotation(key, value)
@@ -61,7 +64,4 @@ export class ConditionImpl implements Condition, AnnotatedCondition {
   public valueIsArray(): boolean {
     return Array.isArray(this.values)
   }
-
-
 }
-

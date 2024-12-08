@@ -1,4 +1,4 @@
-import { validatePolicySyntax, ValidationError } from "./validate.js";
+import { validatePolicySyntax, ValidationError } from './validate.js'
 
 /**
  * Validates an Identity Policy attached to an IAM role or user, or managed policy
@@ -11,12 +11,14 @@ export function validateIdentityPolicy(policy: any): ValidationError[] {
     validateStatement: (statement, path) => {
       const policyType = 'an identity policy'
       const errors: ValidationError[] = []
-      errors.push(...validateProhibitedFields(statement, ['Principal', 'NotPrincipal'], path, policyType))
+      errors.push(
+        ...validateProhibitedFields(statement, ['Principal', 'NotPrincipal'], path, policyType)
+      )
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
       return errors
     }
-  });
+  })
 }
 
 /**
@@ -30,52 +32,59 @@ export function validateServiceControlPolicy(policy: any): ValidationError[] {
 
   const validateAction = (action: string, path: string, type: string): ValidationError[] => {
     const firstWildcard = Math.max(action.indexOf('*'), action.indexOf('?'))
-    if(firstWildcard === -1) {
+    if (firstWildcard === -1) {
       return []
     }
-    if(firstWildcard == action.length - 1) {
+    if (firstWildcard == action.length - 1) {
       return []
     }
-    return [{
-      path,
-      message: `Wildcard characters are only allowed at the end of ${type} in ${policyType}`
-    }]
+    return [
+      {
+        path,
+        message: `Wildcard characters are only allowed at the end of ${type} in ${policyType}`
+      }
+    ]
   }
 
   return validatePolicySyntax(policy, {
     validateStatement: (statement, path) => {
       const errors: ValidationError[] = []
-      errors.push(...validateProhibitedFields(statement, ['Principal', 'NotPrincipal', 'NotResource'], path, policyType))
+      errors.push(
+        ...validateProhibitedFields(
+          statement,
+          ['Principal', 'NotPrincipal', 'NotResource'],
+          path,
+          policyType
+        )
+      )
       errors.push(...validateAtLeastOneOf(statement, ['Resource'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
 
-      if(statement.Effect === "Allow") {
-        if(statement.Resource !== "*") {
+      if (statement.Effect === 'Allow') {
+        if (statement.Resource !== '*') {
           errors.push({
             path,
             message: `Resource must be "*" when Effect is "Allow" in ${policyType}`
           })
         }
-        if(statement.NotAction) {
+        if (statement.NotAction) {
           errors.push({
             path,
             message: `NotAction is not allowed when Effect is "Allow" in ${policyType}`
           })
         }
-        if(statement.Condition) {
+        if (statement.Condition) {
           errors.push({
             path,
             message: `Condition is not allowed when Effect is "Allow" in ${policyType}`
           })
         }
-
-
       }
       return errors
     },
     validateAction: (action, path) => validateAction(action, path, 'Action'),
     validateNotAction: (action, path) => validateAction(action, path, 'NotAction')
-  });
+  })
 }
 
 /**
@@ -90,11 +99,13 @@ export function validateResourcePolicy(policy: any): ValidationError[] {
       const policyType = 'a resource policy'
       const errors: ValidationError[] = []
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
-      errors.push(...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType))
+      errors.push(
+        ...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType)
+      )
       errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
       return errors
     }
-  });
+  })
 }
 
 /**
@@ -108,39 +119,42 @@ export function validateResourceControlPolicy(policy: any): ValidationError[] {
 
   return validatePolicySyntax(policy, {
     validateStatement: (statement, path) => {
-
       const errors: ValidationError[] = []
 
-      if(statement.Effect !== "Deny") {
+      if (statement.Effect !== 'Deny') {
         errors.push({
           path: `${path}.Effect`,
           message: `Effect must be "Deny" in ${policyType}`
         })
       }
 
-      if(statement.Principal !== "*") {
+      if (statement.Principal !== '*') {
         errors.push({
           path: `${path}.Principal`,
           message: `Principal must be "*" in ${policyType}`
         })
       }
 
-      errors.push(...validateProhibitedFields(statement, ['NotPrincipal', 'NotAction'], path, policyType))
+      errors.push(
+        ...validateProhibitedFields(statement, ['NotPrincipal', 'NotAction'], path, policyType)
+      )
       errors.push(...validateAtLeastOneOf(statement, ['Action'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
       return errors
     },
 
     validateAction: (action, path) => {
-      if(action === "*") {
-        return [{
-          path,
-          message: `Action cannot be "*" in ${policyType}`
-        }]
+      if (action === '*') {
+        return [
+          {
+            path,
+            message: `Action cannot be "*" in ${policyType}`
+          }
+        ]
       }
       return []
     }
-  });
+  })
 }
 
 /**
@@ -154,12 +168,16 @@ export function validateTrustPolicy(policy: any): ValidationError[] {
     validateStatement: (statement, path) => {
       const policyType = 'a trust policy'
       const errors: ValidationError[] = []
-      errors.push(...validateProhibitedFields(statement, ['Resource', 'NotResource'], path, policyType))
+      errors.push(
+        ...validateProhibitedFields(statement, ['Resource', 'NotResource'], path, policyType)
+      )
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
-      errors.push(...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType))
+      errors.push(
+        ...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType)
+      )
       return errors
     }
-  });
+  })
 }
 
 /**
@@ -175,10 +193,12 @@ export function validateEndpointPolicy(policy: any): ValidationError[] {
       const errors: ValidationError[] = []
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
-      errors.push(...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType))
+      errors.push(
+        ...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType)
+      )
       return errors
     }
-  });
+  })
 }
 
 /**
@@ -192,12 +212,14 @@ export function validateSessionPolicy(policy: any): ValidationError[] {
     validateStatement: (statement, path) => {
       const policyType = 'a session policy'
       const errors: ValidationError[] = []
-      errors.push(...validateProhibitedFields(statement, ['Principal', 'NotPrincipal'], path, policyType))
+      errors.push(
+        ...validateProhibitedFields(statement, ['Principal', 'NotPrincipal'], path, policyType)
+      )
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
       return errors
     }
-  });
+  })
 }
 
 /**
@@ -209,18 +231,25 @@ export function validateSessionPolicy(policy: any): ValidationError[] {
  * @param policyType the type of policy being validated
  * @returns an array of validation errors
  */
-function validateAtLeastOneOf(statement: any, requiredFields: string[], path: string, policyType: string): ValidationError[] {
-  const presentFields = requiredFields.filter(field => statement[field])
+function validateAtLeastOneOf(
+  statement: any,
+  requiredFields: string[],
+  path: string,
+  policyType: string
+): ValidationError[] {
+  const presentFields = requiredFields.filter((field) => statement[field])
   let message = `One of ${requiredFields.join(' or ')} is required in ${policyType}`
-  if(requiredFields.length === 1) {
+  if (requiredFields.length === 1) {
     message = `${requiredFields[0]} is required in ${policyType}`
   }
 
-  if(presentFields.length === 0) {
-    return [{
-      path,
-      message
-    }]
+  if (presentFields.length === 0) {
+    return [
+      {
+        path,
+        message
+      }
+    ]
   }
   return []
 }
@@ -234,10 +263,15 @@ function validateAtLeastOneOf(statement: any, requiredFields: string[], path: st
  * @param policyType the type of policy being validated
  * @returns an array of validation errors
  */
-function validateProhibitedFields(statement: any, prohibitedFields: string[], path: string, policyType: string): ValidationError[] {
+function validateProhibitedFields(
+  statement: any,
+  prohibitedFields: string[],
+  path: string,
+  policyType: string
+): ValidationError[] {
   const errors: ValidationError[] = []
-  for(const field of prohibitedFields) {
-    if(statement[field]) {
+  for (const field of prohibitedFields) {
+    if (statement[field]) {
       errors.push({
         path: `${path}.${field}`,
         message: `${field} is not allowed in ${policyType}`

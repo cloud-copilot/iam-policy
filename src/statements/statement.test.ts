@@ -2,11 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { NotPrincipalStatement, PrincipalStatement, StatementImpl } from './statement.js'
 
 describe('StatementImpl', () => {
-
   describe('sid', () => {
     it('should return the sid of the statement', () => {
       //Given a statement with a sid of 'MySid'
-      const statementDoc = { Sid: 'MySid'}
+      const statementDoc = { Sid: 'MySid' }
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -91,7 +90,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the statement does not have a Principal', () => {
       //Given a statement without a Principal
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -115,7 +114,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the statement does not have a NotPrincipal', () => {
       //Given a statement without a NotPrincipal
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -141,7 +140,7 @@ describe('StatementImpl', () => {
 
     it('should return an AWS principal string', () => {
       //Given a statement with a Principal with an AWS principal
-      const statementDoc = { Principal: { "AWS": "*" } }
+      const statementDoc = { Principal: { AWS: '*' } }
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -154,7 +153,9 @@ describe('StatementImpl', () => {
 
     it('should return multiple AWS principals', () => {
       //Given a statement with a Principal with multiple AWS principals
-      const statementDoc = { Principal: { "AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"] } }
+      const statementDoc = {
+        Principal: { AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789012:user/Bob'] }
+      }
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -169,20 +170,24 @@ describe('StatementImpl', () => {
 
     it('should throw an error if principals is called on a statement without Principal', () => {
       //Given a statement without a Principal
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then principals should throw an error
-      expect(() => statement.principals()).toThrow('Called principals on a statement without Principal, use isPrincipalStatement before calling principals')
+      expect(() => statement.principals()).toThrow(
+        'Called principals on a statement without Principal, use isPrincipalStatement before calling principals'
+      )
     })
   })
 
   describe('principalTypeIsArray', () => {
     it('should return true if the principal type is an array', () => {
       //Given a statement with a Principal that is an array
-      const statementDoc = { Principal: { "AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"] } }
+      const statementDoc = {
+        Principal: { AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789012:user/Bob'] }
+      }
 
       //When a StatementImpl is created with the statement
       const statement: PrincipalStatement = new StatementImpl(statementDoc, 0, false)
@@ -193,7 +198,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the principal type is not an array', () => {
       //Given a statement with a Principal that is not an array
-      const statementDoc = { Principal: { "AWS": "arn:aws:iam::123456789012:root" } }
+      const statementDoc = { Principal: { AWS: 'arn:aws:iam::123456789012:root' } }
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -215,13 +220,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if principalTypeIsArray is called on a statement without Principal', () => {
       //Given a statement without a Principal
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then principalTypeIsArray should throw an error
-      expect(() => statement.principalTypeIsArray('AWS')).toThrow('Called principalTypeIsArray on a statement without Principal, use isPrincipalStatement before calling principalTypeIsArray')
+      expect(() => statement.principalTypeIsArray('AWS')).toThrow(
+        'Called principalTypeIsArray on a statement without Principal, use isPrincipalStatement before calling principalTypeIsArray'
+      )
     })
   })
 
@@ -242,20 +249,26 @@ describe('StatementImpl', () => {
 
     it('should throw an error if notPrincipals is called on a statement without NotPrincipal', () => {
       //Given a statement without a NotPrincipal
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then notPrincipals should throw an error
-      expect(() => statement.notPrincipals()).toThrow('Called notPrincipals on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipals')
+      expect(() => statement.notPrincipals()).toThrow(
+        'Called notPrincipals on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipals'
+      )
     })
   })
 
   describe('notPrincipalTypeIsArray', () => {
     it('should return true if the not principal type is an array', () => {
       //Given a statement with a NotPrincipal that is an array
-      const statementDoc = { NotPrincipal: { "AWS": ["arn:aws:iam::123456789012:root", "arn:aws:iam::123456789012:user/Bob"] } }
+      const statementDoc = {
+        NotPrincipal: {
+          AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789012:user/Bob']
+        }
+      }
 
       //When a StatementImpl is created with the statement
       const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, false)
@@ -266,7 +279,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the not principal type is not an array', () => {
       //Given a statement with a NotPrincipal that is not an array
-      const statementDoc = { NotPrincipal: { "AWS": "arn:aws:iam::123456789012:root" } }
+      const statementDoc = { NotPrincipal: { AWS: 'arn:aws:iam::123456789012:root' } }
 
       //When a StatementImpl is created with the statement
       const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, false)
@@ -288,13 +301,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if notPrincipalTypeIsArray is called on a statement without NotPrincipal', () => {
       //Given a statement without a NotPrincipal
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then notPrincipalTypeIsArray should throw an error
-      expect(() => statement.notPrincipalTypeIsArray('AWS')).toThrow('Called notPrincipalTypeIsArray on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipalTypeIsArray')
+      expect(() => statement.notPrincipalTypeIsArray('AWS')).toThrow(
+        'Called notPrincipalTypeIsArray on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipalTypeIsArray'
+      )
     })
   })
 
@@ -312,7 +327,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the statement does not have an Action', () => {
       //Given a statement without an Action
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -336,7 +351,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the statement does not have a NotAction', () => {
       //Given a statement without a NotAction
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -387,13 +402,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if actions is called on a statement without Action', () => {
       //Given a statement without an Action
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then actions should throw an error
-      expect(() => statement.actions()).toThrow('Called actions on a statement without Action, use isActionStatement before calling actions')
+      expect(() => statement.actions()).toThrow(
+        'Called actions on a statement without Action, use isActionStatement before calling actions'
+      )
     })
   })
 
@@ -426,13 +443,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if notActions is called on a statement without NotAction', () => {
       //Given a statement without a NotAction
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then notActions should throw an error
-      expect(() => statement.notActions()).toThrow('Called notActions on a statement without NotAction, use isNotActionStatement before calling notActions')
+      expect(() => statement.notActions()).toThrow(
+        'Called notActions on a statement without NotAction, use isNotActionStatement before calling notActions'
+      )
     })
   })
 
@@ -450,7 +469,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the statement does not have a Resource', () => {
       //Given a statement without a Resource
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -474,7 +493,7 @@ describe('StatementImpl', () => {
 
     it('should return false if the statement does not have a NotResource', () => {
       //Given a statement without a NotResource
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -524,13 +543,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if resources is called on a statement without Resource', () => {
       //Given a statement without a Resource
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then resources should throw an error
-      expect(() => statement.resources()).toThrow('Called resources on a statement without Resource, use isResourceStatement before calling resources')
+      expect(() => statement.resources()).toThrow(
+        'Called resources on a statement without Resource, use isResourceStatement before calling resources'
+      )
     })
   })
 
@@ -549,7 +570,9 @@ describe('StatementImpl', () => {
 
     it('should return multiple resources', () => {
       //Given a statement with multiple NotResources
-      const statementDoc = { NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
+      const statementDoc = {
+        NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket']
+      }
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -562,13 +585,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if notResources is called on a statement without NotResource', () => {
       //Given a statement without a NotResource
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then notResources should throw an error
-      expect(() => statement.notResources()).toThrow('Called notResources on a statement without NotResource, use isNotResourceStatement before calling notResources')
+      expect(() => statement.notResources()).toThrow(
+        'Called notResources on a statement without NotResource, use isNotResourceStatement before calling notResources'
+      )
     })
   })
 
@@ -608,13 +633,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if hasSingleResourceWildcard is called on a statement without Resource', () => {
       //Given a statement without a Resource
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then hasSingleResourceWildcard should throw an error
-      expect(() => statement.hasSingleResourceWildcard()).toThrow('Called hasSingleResourceWildcard on a statement without Resource, use isResourceStatement before calling hasSingleResourceWildcard')
+      expect(() => statement.hasSingleResourceWildcard()).toThrow(
+        'Called hasSingleResourceWildcard on a statement without Resource, use isResourceStatement before calling hasSingleResourceWildcard'
+      )
     })
   })
 
@@ -643,7 +670,9 @@ describe('StatementImpl', () => {
 
     it('should return false if the statement does not have a single NotResource wildcard', () => {
       //Given a statement without a single NotResource wildcard
-      const statementDoc = { NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
+      const statementDoc = {
+        NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket']
+      }
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -654,13 +683,15 @@ describe('StatementImpl', () => {
 
     it('should throw an error if hasSingleNotResourceWildcard is called on a statement without NotResource', () => {
       //Given a statement without a NotResource
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
 
       //Then hasSingleNotResourceWildcard should throw an error
-      expect(() => statement.hasSingleNotResourceWildcard()).toThrow('Called hasSingleNotResourceWildcard on a statement without NotResource, use isNotResourceStatement before calling hasSingleNotResourceWildcard')
+      expect(() => statement.hasSingleNotResourceWildcard()).toThrow(
+        'Called hasSingleNotResourceWildcard on a statement without NotResource, use isNotResourceStatement before calling hasSingleNotResourceWildcard'
+      )
     })
   })
 
@@ -691,7 +722,9 @@ describe('StatementImpl', () => {
   describe('notResourceIsArray', () => {
     it('should return true if the NotResource is an array', () => {
       //Given a statement with a NotResource that is an array
-      const statementDoc = { NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
+      const statementDoc = {
+        NotResource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket']
+      }
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -715,7 +748,7 @@ describe('StatementImpl', () => {
   describe('conditions', () => {
     it('should return an empty array if the statement does not have a Condition', () => {
       //Given a statement without a Condition
-      const statementDoc = { }
+      const statementDoc = {}
 
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, false)
@@ -728,9 +761,9 @@ describe('StatementImpl', () => {
       //Given a statement with a Condition with a string value
       const statementDoc = {
         Condition: {
-           StringEquals: {
-             "s3:prefix": "home/${aws:username}"
-           }
+          StringEquals: {
+            's3:prefix': 'home/${aws:username}'
+          }
         }
       }
 
@@ -749,9 +782,9 @@ describe('StatementImpl', () => {
       //Given a statement with a Condition with a string array value
       const statementDoc = {
         Condition: {
-           StringEquals: {
-             "s3:prefix": ["home/${aws:username}", "home/${aws:username}/"]
-           }
+          StringEquals: {
+            's3:prefix': ['home/${aws:username}', 'home/${aws:username}/']
+          }
         }
       }
 
@@ -762,21 +795,24 @@ describe('StatementImpl', () => {
       expect(statement.conditions().length).toEqual(1)
       expect(statement.conditions()[0].operation().value()).toEqual('StringEquals')
       expect(statement.conditions()[0].conditionKey()).toEqual('s3:prefix')
-      expect(statement.conditions()[0].conditionValues()).toEqual(['home/${aws:username}', 'home/${aws:username}/'])
+      expect(statement.conditions()[0].conditionValues()).toEqual([
+        'home/${aws:username}',
+        'home/${aws:username}/'
+      ])
     })
 
     it('should return multiple conditions', () => {
       //Given a statement with multiple Conditions
       const statementDoc = {
         Condition: {
-           StringEquals: {
-             "s3:prefix": "home/${aws:username}",
-             "aws:PrincipalOrgID": "o-1234567890"
-           },
-           StringLike: {
-             "s3:prefix": "home/${aws:username}",
-             "aws:TagKeys/Foo": "Bar*"
-           }
+          StringEquals: {
+            's3:prefix': 'home/${aws:username}',
+            'aws:PrincipalOrgID': 'o-1234567890'
+          },
+          StringLike: {
+            's3:prefix': 'home/${aws:username}',
+            'aws:TagKeys/Foo': 'Bar*'
+          }
         }
       }
 
