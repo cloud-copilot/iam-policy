@@ -232,6 +232,56 @@ describe('StatementImpl', () => {
     })
   })
 
+  describe('hasSingleWildcardPrincipal', () => {
+    it('should return true if the statement has a single wildcard Principal', () => {
+      //Given a statement with a single wildcard Principal
+      const statementDoc = { Principal: '*' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardPrincipal should return true
+      expect(statement.hasSingleWildcardPrincipal()).toBe(true)
+    })
+
+    it('should return false if the statement has a hash with a single wildcard principal', () => {
+      //Given a statement with an array with a single wildcard Principal
+      const statementDoc = { Principal: { AWS: ['*'] } }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardPrincipal should return false
+      expect(statement.hasSingleWildcardPrincipal()).toBe(false)
+    })
+
+    it('should return false if the statement does not have a single wildcard Principal', () => {
+      //Given a statement without a single wildcard Principal
+      const statementDoc = {
+        Principal: { AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789012:user/Bob'] }
+      }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardPrincipal should return false
+      expect(statement.hasSingleWildcardPrincipal()).toBe(false)
+    })
+
+    it('should throw an error if hasSingleWildcardPrincipal is called on a statement without Principal', () => {
+      //Given a statement without a Principal
+      const statementDoc = {}
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardPrincipal should throw an error
+      expect(() => statement.hasSingleWildcardPrincipal()).toThrow(
+        'Called hasSingleWildcardPrincipal on a statement without Principal, use isPrincipalStatement before calling hasSingleWildcardPrincipal'
+      )
+    })
+  })
+
   describe('notPrincipals', () => {
     // We don't have as many tests for notPrincipals because the implementation is the same as principals
     it('should return a wildcard principal string', () => {
@@ -309,6 +359,58 @@ describe('StatementImpl', () => {
       //Then notPrincipalTypeIsArray should throw an error
       expect(() => statement.notPrincipalTypeIsArray('AWS')).toThrow(
         'Called notPrincipalTypeIsArray on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipalTypeIsArray'
+      )
+    })
+  })
+
+  describe('hasSingleWildcardNotPrincipal', () => {
+    it('should return true if the statement has a single wildcard NotPrincipal', () => {
+      //Given a statement with a single wildcard NotPrincipal
+      const statementDoc = { NotPrincipal: '*' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardNotPrincipal should return true
+      expect(statement.hasSingleWildcardNotPrincipal()).toBe(true)
+    })
+
+    it('should return false if the statement has a hash with a single wildcard NotPrincipal', () => {
+      //Given a statement with an array with a single wildcard NotPrincipal
+      const statementDoc = { NotPrincipal: { AWS: ['*'] } }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardNotPrincipal should return false
+      expect(statement.hasSingleWildcardNotPrincipal()).toBe(false)
+    })
+
+    it('should return false if the statement does not have a single wildcard NotPrincipal', () => {
+      //Given a statement without a single wildcard NotPrincipal
+      const statementDoc = {
+        NotPrincipal: {
+          AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789012:user/Bob']
+        }
+      }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardNotPrincipal should return false
+      expect(statement.hasSingleWildcardNotPrincipal()).toBe(false)
+    })
+
+    it('should throw an error if hasSingleWildcardNotPrincipal is called on a statement without NotPrincipal', () => {
+      //Given a statement without a NotPrincipal
+      const statementDoc = {}
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, false)
+
+      //Then hasSingleWildcardNotPrincipal should throw an error
+      expect(() => statement.hasSingleWildcardNotPrincipal()).toThrow(
+        'Called hasSingleWildcardNotPrincipal on a statement without NotPrincipal, use isNotPrincipalStatement before calling hasSingleWildcardNotPrincipal'
       )
     })
   })

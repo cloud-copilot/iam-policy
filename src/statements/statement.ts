@@ -197,6 +197,11 @@ export interface PrincipalStatement extends Statement {
    * @returns true if the principal type is an array of strings in the raw policy
    */
   principalTypeIsArray(principalType: string): boolean
+
+  /**
+   * Is the Principal element a single wildcard: `"*"`
+   */
+  hasSingleWildcardPrincipal(): boolean
 }
 
 export interface AnnotatedPrincipalStatement extends Annotated, PrincipalStatement {
@@ -219,6 +224,11 @@ export interface NotPrincipalStatement extends Statement {
    * @returns true if the NotPrincipal type is an array of strings in the raw policy
    */
   notPrincipalTypeIsArray(notPrincipalType: string): boolean
+
+  /**
+   * Is the NotPrincipal element a single wildcard: `"*"`
+   */
+  hasSingleWildcardNotPrincipal(): boolean
 }
 
 export interface AnnotatedNotPrincipalStatement extends Annotated, NotPrincipalStatement {
@@ -324,6 +334,15 @@ export class StatementImpl
     )
   }
 
+  public hasSingleWildcardPrincipal(): boolean {
+    if (!this.isPrincipalStatement()) {
+      throw new Error(
+        'Called hasSingleWildcardPrincipal on a statement without Principal, use isPrincipalStatement before calling hasSingleWildcardPrincipal'
+      )
+    }
+    return this.statementObject.Principal === '*'
+  }
+
   public notPrincipals(): Principal[]
   public notPrincipals(): AnnotatedPrincipal[]
   public notPrincipals(): Principal[] | AnnotatedPrincipal[] {
@@ -351,6 +370,15 @@ export class StatementImpl
       typeof this.statementObject.NotPrincipal === 'object' &&
       Array.isArray(this.statementObject.NotPrincipal[notPrincipalType])
     )
+  }
+
+  public hasSingleWildcardNotPrincipal(): boolean {
+    if (!this.isNotPrincipalStatement()) {
+      throw new Error(
+        'Called hasSingleWildcardNotPrincipal on a statement without NotPrincipal, use isNotPrincipalStatement before calling hasSingleWildcardNotPrincipal'
+      )
+    }
+    return this.statementObject.NotPrincipal === '*'
   }
 
   /**
