@@ -1,4 +1,3 @@
-import { Annotated, Annotations, AnnotationStore } from '../annotations/annotations.js'
 import { isAllWildcards } from '../utils.js'
 
 export type ActionType = 'service' | 'wildcard'
@@ -27,8 +26,6 @@ export interface Action {
    */
   isServiceAction(): this is ServiceAction
 }
-
-export interface AnnotatedAction extends Action, Annotated {}
 
 /**
  * A wildcard action: `"*"`
@@ -59,19 +56,8 @@ export interface ServiceAction extends Action {
   action(): string
 }
 
-export class ActionImpl implements Action, AnnotatedAction, WildcardAction, ServiceAction {
-  private readonly annotationStore: AnnotationStore
-  constructor(private readonly rawValue: string) {
-    this.annotationStore = new AnnotationStore()
-  }
-
-  public addAnnotation(key: string, value: string): void {
-    this.annotationStore.addAnnotation(key, value)
-  }
-
-  public getAnnotations(): Annotations {
-    return this.annotationStore
-  }
+export class ActionImpl implements Action, WildcardAction, ServiceAction {
+  constructor(private readonly rawValue: string) {}
 
   public type(): ActionType {
     if (isAllWildcards(this.rawValue)) {

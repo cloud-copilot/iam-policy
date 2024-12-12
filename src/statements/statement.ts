@@ -1,13 +1,7 @@
-import { Action, ActionImpl, AnnotatedAction } from '../actions/action.js'
-import { Annotated, Annotations, AnnotationStore } from '../annotations/annotations.js'
-import { AnnotatedCondition, Condition, ConditionImpl } from '../conditions/condition.js'
-import {
-  AnnotatedPrincipal,
-  Principal,
-  PrincipalImpl,
-  PrincipalType
-} from '../principals/principal.js'
-import { AnnotatedResource, Resource, ResourceImpl } from '../resources/resource.js'
+import { Action, ActionImpl } from '../actions/action.js'
+import { Condition, ConditionImpl } from '../conditions/condition.js'
+import { Principal, PrincipalImpl, PrincipalType } from '../principals/principal.js'
+import { Resource, ResourceImpl } from '../resources/resource.js'
 
 /*
 things to change in a statement
@@ -79,16 +73,6 @@ export interface Statement {
   isNotResourceStatement(): this is NotResourceStatement
 }
 
-export interface AnnotatedStatement extends Annotated, Statement {
-  isActionStatement(): this is AnnotatedActionStatement
-  isNotActionStatement(): this is AnnotatedNotActionStatement
-  isPrincipalStatement(): this is AnnotatedPrincipalStatement
-  isNotPrincipalStatement(): this is AnnotatedNotPrincipalStatement
-  isResourceStatement(): this is AnnotatedResourceStatement
-  isNotResourceStatement(): this is AnnotatedNotResourceStatement
-  conditions(): AnnotatedCondition[]
-}
-
 /**
  * Represents a statement in an IAM policy that has Action
  */
@@ -105,13 +89,6 @@ export interface ActionStatement extends Statement {
 }
 
 /**
- * Represents a statement in an IAM policy that has Action and is annotated
- */
-export interface AnnotatedActionStatement extends Annotated, ActionStatement {
-  actions(): AnnotatedAction[]
-}
-
-/**
  * Represents a statement in an IAM policy that has NotAction
  */
 export interface NotActionStatement extends Statement {
@@ -124,13 +101,6 @@ export interface NotActionStatement extends Statement {
    * Is the NotAction element an array of strings
    */
   notActionIsArray(): boolean
-}
-
-/**
- * Represents a statement in an IAM policy that has NotAction and is annotated
- */
-export interface AnnotatedNotActionStatement extends Annotated, NotActionStatement {
-  notActions(): AnnotatedAction[]
 }
 
 /**
@@ -153,10 +123,6 @@ export interface ResourceStatement extends Statement {
   resourceIsArray(): boolean
 }
 
-export interface AnnotatedResourceStatement extends Annotated, ResourceStatement {
-  resources(): AnnotatedResource[]
-}
-
 /**
  * Represents a statement in an IAM policy that has NotResource
  */
@@ -175,10 +141,6 @@ export interface NotResourceStatement extends Statement {
    * Is the resource element an array of strings
    */
   notResourceIsArray(): boolean
-}
-
-export interface AnnotatedNotResourceStatement extends Annotated, NotResourceStatement {
-  notResources(): AnnotatedResource[]
 }
 
 /**
@@ -204,10 +166,6 @@ export interface PrincipalStatement extends Statement {
   hasSingleWildcardPrincipal(): boolean
 }
 
-export interface AnnotatedPrincipalStatement extends Annotated, PrincipalStatement {
-  principals(): AnnotatedPrincipal[]
-}
-
 /**
  * Represents a statement in an IAM policy that has NotPrincipal
  */
@@ -231,47 +189,22 @@ export interface NotPrincipalStatement extends Statement {
   hasSingleWildcardNotPrincipal(): boolean
 }
 
-export interface AnnotatedNotPrincipalStatement extends Annotated, NotPrincipalStatement {
-  notPrincipals(): AnnotatedPrincipal[]
-}
-
 /**
  * Implementation of the Statement interface and all its sub-interfaces
  */
 export class StatementImpl
   implements
     Statement,
-    AnnotatedStatement,
     ActionStatement,
-    AnnotatedStatement,
     NotActionStatement,
     ResourceStatement,
     NotResourceStatement,
     PrincipalStatement
 {
-  private readonly annotationStore: AnnotationStore
-  private actionCache: Action[] | undefined
-  private notActionCache: Action[] | undefined
-  private principalCache: Principal[] | undefined
-  private notPrincipalCache: Principal[] | undefined
-  private resourceCache: Resource[] | undefined
-  private notResourceCache: Resource[] | undefined
-  private conditionCache: Condition[] | undefined
   constructor(
     private readonly statementObject: any,
-    private readonly _index: number,
-    private readonly stateful: boolean
-  ) {
-    this.annotationStore = new AnnotationStore()
-  }
-
-  public addAnnotation(key: string, value: string): void {
-    this.annotationStore.addAnnotation(key, value)
-  }
-
-  public getAnnotations(): Annotations {
-    return this.annotationStore
-  }
+    private readonly _index: number
+  ) {}
 
   public index(): number {
     return this._index
@@ -293,33 +226,21 @@ export class StatementImpl
     return this.effect() === 'Deny'
   }
 
-  public isPrincipalStatement(): this is PrincipalStatement
-  public isPrincipalStatement(): this is AnnotatedPrincipalStatement
   public isPrincipalStatement(): this is PrincipalStatement {
     return this.statementObject.Principal !== undefined
   }
 
-  public isNotPrincipalStatement(): this is NotPrincipalStatement
-  public isNotPrincipalStatement(): this is AnnotatedNotPrincipalStatement
   public isNotPrincipalStatement(): this is NotPrincipalStatement {
     return this.statementObject.NotPrincipal !== undefined
   }
 
-  public principals(): Principal[]
-  public principals(): AnnotatedPrincipal[]
-  public principals(): Principal[] | AnnotatedPrincipal[] {
+  public principals(): Principal[] {
     if (!this.isPrincipalStatement()) {
       throw new Error(
         'Called principals on a statement without Principal, use isPrincipalStatement before calling principals'
       )
     }
-    if (!this.stateful) {
-      return this.parsePrincipalObject(this.statementObject.Principal)
-    }
-    if (!this.principalCache) {
-      this.principalCache = this.parsePrincipalObject(this.statementObject.Principal)
-    }
-    return this.principalCache
+    return this.parsePrincipalObject(this.statementObject.Principal)
   }
 
   public principalTypeIsArray(principalType: string): boolean {
@@ -343,21 +264,13 @@ export class StatementImpl
     return this.statementObject.Principal === '*'
   }
 
-  public notPrincipals(): Principal[]
-  public notPrincipals(): AnnotatedPrincipal[]
-  public notPrincipals(): Principal[] | AnnotatedPrincipal[] {
+  public notPrincipals(): Principal[] {
     if (!this.isNotPrincipalStatement()) {
       throw new Error(
         'Called notPrincipals on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipals'
       )
     }
-    if (!this.stateful) {
-      return this.parsePrincipalObject(this.statementObject.NotPrincipal)
-    }
-    if (!this.notPrincipalCache) {
-      this.notPrincipalCache = this.parsePrincipalObject(this.statementObject.NotPrincipal)
-    }
-    return this.notPrincipalCache
+    return this.parsePrincipalObject(this.statementObject.NotPrincipal)
   }
 
   public notPrincipalTypeIsArray(notPrincipalType: string): boolean {
@@ -405,31 +318,21 @@ export class StatementImpl
       .flat()
   }
 
-  public isActionStatement(): this is AnnotatedActionStatement
   public isActionStatement(): this is ActionStatement {
     return this.statementObject.Action !== undefined
   }
 
-  public isNotActionStatement(): this is AnnotatedNotActionStatement
   public isNotActionStatement(): this is NotActionStatement {
     return this.statementObject.NotAction !== undefined
   }
 
-  public actions(): Action[]
-  public actions(): AnnotatedAction[]
-  public actions(): Action[] | AnnotatedAction[] {
+  public actions(): Action[] {
     if (!this.isActionStatement()) {
       throw new Error(
         'Called actions on a statement without Action, use isActionStatement before calling actions'
       )
     }
-    if (!this.stateful) {
-      return this.createNewActions()
-    }
-    if (!this.actionCache) {
-      this.actionCache = this.createNewActions()
-    }
-    return this.actionCache
+    return this.createNewActions()
   }
 
   private createNewActions(): Action[] {
@@ -440,21 +343,13 @@ export class StatementImpl
     return Array.isArray(this.statementObject.Action)
   }
 
-  public notActions(): Action[]
-  public notActions(): AnnotatedAction[]
-  public notActions(): Action[] | AnnotatedAction[] {
+  public notActions(): Action[] {
     if (!this.isNotActionStatement()) {
       throw new Error(
         'Called notActions on a statement without NotAction, use isNotActionStatement before calling notActions'
       )
     }
-    if (!this.stateful) {
-      return this.createNewNotActions()
-    }
-    if (!this.notActionCache) {
-      this.notActionCache = this.createNewNotActions()
-    }
-    return this.notActionCache
+    return this.createNewNotActions()
   }
 
   private createNewNotActions(): Action[] {
@@ -465,31 +360,21 @@ export class StatementImpl
     return Array.isArray(this.statementObject.NotAction)
   }
 
-  public isResourceStatement(): this is AnnotatedResourceStatement
   public isResourceStatement(): this is ResourceStatement {
     return this.statementObject.Resource !== undefined
   }
 
-  public isNotResourceStatement(): this is AnnotatedNotResourceStatement
   public isNotResourceStatement(): this is NotResourceStatement {
     return this.statementObject.NotResource !== undefined
   }
 
-  public resources(): Resource[]
-  public resources(): AnnotatedResource[]
-  public resources(): Resource[] | AnnotatedResource[] {
+  public resources(): Resource[] {
     if (!this.isResourceStatement()) {
       throw new Error(
         'Called resources on a statement without Resource, use isResourceStatement before calling resources'
       )
     }
-    if (!this.stateful) {
-      return this.createNewResources()
-    }
-    if (!this.resourceCache) {
-      this.resourceCache = this.createNewResources()
-    }
-    return this.resourceCache
+    return this.createNewResources()
   }
 
   private createNewResources(): Resource[] {
@@ -509,21 +394,13 @@ export class StatementImpl
     return Array.isArray(this.statementObject.Resource)
   }
 
-  public notResources(): Resource[]
-  public notResources(): AnnotatedResource[]
-  public notResources(): Resource[] | AnnotatedResource[] {
+  public notResources(): Resource[] {
     if (!this.isNotResourceStatement()) {
       throw new Error(
         'Called notResources on a statement without NotResource, use isNotResourceStatement before calling notResources'
       )
     }
-    if (!this.stateful) {
-      return this.createNewNotResources()
-    }
-    if (!this.notResourceCache) {
-      this.notResourceCache = this.createNewNotResources()
-    }
-    return this.notResourceCache
+    return this.createNewNotResources()
   }
 
   private createNewNotResources(): Resource[] {
@@ -545,16 +422,8 @@ export class StatementImpl
     return this.statementObject.NotResource === '*'
   }
 
-  public conditions(): Condition[]
-  public conditions(): AnnotatedCondition[]
-  public conditions(): Condition[] | AnnotatedCondition[] {
-    if (!this.stateful) {
-      return this.createNewConditions()
-    }
-    if (!this.conditionCache) {
-      this.conditionCache = this.createNewConditions()
-    }
-    return this.conditionCache
+  public conditions(): Condition[] {
+    return this.createNewConditions()
   }
 
   private createNewConditions(): Condition[] {

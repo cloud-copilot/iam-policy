@@ -1,4 +1,3 @@
-import { Annotated, Annotations, AnnotationStore } from '../annotations/annotations.js'
 import { isAllWildcards } from '../utils.js'
 
 /**
@@ -20,8 +19,6 @@ export interface Resource {
    */
   isArnResource(): this is ArnResource
 }
-
-export interface AnnotatedResource extends Resource, Annotated {}
 
 export interface ArnResource extends Resource {
   /**
@@ -50,17 +47,8 @@ export interface ArnResource extends Resource {
   resource(): string
 }
 
-export class ResourceImpl implements Resource, AnnotatedResource, ArnResource {
-  private readonly annotationStore: AnnotationStore = new AnnotationStore()
+export class ResourceImpl implements Resource, ArnResource {
   constructor(private readonly rawValue: string) {}
-
-  addAnnotation(key: string, value: string): void {
-    this.annotationStore.addAnnotation(key, value)
-  }
-
-  getAnnotations(): Annotations {
-    return this.annotationStore
-  }
 
   partition(): string {
     if (!this.isArnResource()) {
