@@ -1,4 +1,4 @@
-import { isAllWildcards } from "../utils.js"
+import { isAllWildcards } from '../utils.js'
 
 export type ActionType = 'service' | 'wildcard'
 
@@ -56,11 +56,11 @@ export interface ServiceAction extends Action {
   action(): string
 }
 
-export class ActionImpl implements Action , WildcardAction, ServiceAction {
+export class ActionImpl implements Action, WildcardAction, ServiceAction {
   constructor(private readonly rawValue: string) {}
 
   public type(): ActionType {
-    if(isAllWildcards(this.rawValue)) {
+    if (isAllWildcards(this.rawValue)) {
       return 'wildcard'
     }
     return 'service'

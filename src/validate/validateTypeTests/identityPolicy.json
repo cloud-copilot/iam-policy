@@ -70,8 +70,7 @@
         "path": "Statement[0]"
       }
     ]
-  }
-  ,
+  },
   {
     "name": "Resource or NotResource Required",
     "policy": {

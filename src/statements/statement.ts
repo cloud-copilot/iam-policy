@@ -1,13 +1,17 @@
-import { Action, ActionImpl } from "../actions/action.js"
-import { Condition, ConditionImpl } from "../conditions/condition.js"
-import { Principal, PrincipalImpl, PrincipalType } from "../principals/principal.js"
-import { Resource, ResourceImpl } from "../resources/resource.js"
+import { Action, ActionImpl } from '../actions/action.js'
+import { Condition, ConditionImpl } from '../conditions/condition.js'
+import { Principal, PrincipalImpl, PrincipalType } from '../principals/principal.js'
+import { Resource, ResourceImpl } from '../resources/resource.js'
+
+/*
+things to change in a statement
+condition
+*/
 
 /**
  * Represents a statement in an IAM policy
  */
 export interface Statement {
-
   /**
    * The index of the statement in the policy, starts from 1
    */
@@ -77,17 +81,26 @@ export interface ActionStatement extends Statement {
    * The actions for the statement
    */
   actions(): Action[]
+
+  /**
+   * Is the Action element an array of strings
+   */
+  actionIsArray(): boolean
 }
 
 /**
  * Represents a statement in an IAM policy that has NotAction
  */
 export interface NotActionStatement extends Statement {
-
   /**
    * The not actions for the statement
    */
   notActions(): Action[]
+
+  /**
+   * Is the NotAction element an array of strings
+   */
+  notActionIsArray(): boolean
 }
 
 /**
@@ -100,9 +113,14 @@ export interface ResourceStatement extends Statement {
   resources(): Resource[]
 
   /**
-   * Is the resource element exactly a single wildcard: `"*"`
+   * Is the Resource element exactly a single wildcard: `"*"`
    */
   hasSingleResourceWildcard(): boolean
+
+  /**
+   * Is the Resource element an array of strings
+   */
+  resourceIsArray(): boolean
 }
 
 /**
@@ -113,6 +131,16 @@ export interface NotResourceStatement extends Statement {
    * The not resources for the statement
    */
   notResources(): Resource[]
+
+  /**
+   * Is the NotResource element exactly a single wildcard: `"*"`
+   */
+  hasSingleNotResourceWildcard(): boolean
+
+  /**
+   * Is the resource element an array of strings
+   */
+  notResourceIsArray(): boolean
 }
 
 /**
@@ -123,24 +151,60 @@ export interface PrincipalStatement extends Statement {
    * The principals for the statement
    */
   principals(): Principal[]
+
+  /**
+   * Is the Principal type is an array of strings
+   *
+   * @param principalType the type of the Principal such as "AWS", "Service", etc.
+   * @returns true if the principal type is an array of strings in the raw policy
+   */
+  principalTypeIsArray(principalType: string): boolean
+
+  /**
+   * Is the Principal element a single wildcard: `"*"`
+   */
+  hasSingleWildcardPrincipal(): boolean
 }
 
 /**
  * Represents a statement in an IAM policy that has NotPrincipal
  */
 export interface NotPrincipalStatement extends Statement {
-
   /**
    * The not principals for the statement
    */
   notPrincipals(): Principal[]
+
+  /**
+   * Is the NotPrincipal type is an array of strings
+   *
+   * @param notPrincipalType the type of the NotPrincipal such as "AWS", "Service", etc.
+   * @returns true if the NotPrincipal type is an array of strings in the raw policy
+   */
+  notPrincipalTypeIsArray(notPrincipalType: string): boolean
+
+  /**
+   * Is the NotPrincipal element a single wildcard: `"*"`
+   */
+  hasSingleWildcardNotPrincipal(): boolean
 }
 
 /**
  * Implementation of the Statement interface and all its sub-interfaces
  */
-export class StatementImpl implements Statement, ActionStatement, NotActionStatement, ResourceStatement, NotResourceStatement, PrincipalStatement {
-  constructor(private readonly statementObject: any, private readonly _index: number) {}
+export class StatementImpl
+  implements
+    Statement,
+    ActionStatement,
+    NotActionStatement,
+    ResourceStatement,
+    NotResourceStatement,
+    PrincipalStatement
+{
+  constructor(
+    private readonly statementObject: any,
+    private readonly _index: number
+  ) {}
 
   public index(): number {
     return this._index
@@ -163,25 +227,71 @@ export class StatementImpl implements Statement, ActionStatement, NotActionState
   }
 
   public isPrincipalStatement(): this is PrincipalStatement {
-    return this.statementObject.Principal !== undefined;
+    return this.statementObject.Principal !== undefined
   }
 
   public isNotPrincipalStatement(): this is NotPrincipalStatement {
-    return this.statementObject.NotPrincipal !== undefined;
+    return this.statementObject.NotPrincipal !== undefined
   }
 
   public principals(): Principal[] {
-    if(!this.isPrincipalStatement()) {
-      throw new Error('Called principals on a statement without Principal, use isPrincipalStatement before calling principals')
+    if (!this.isPrincipalStatement()) {
+      throw new Error(
+        'Called principals on a statement without Principal, use isPrincipalStatement before calling principals'
+      )
     }
     return this.parsePrincipalObject(this.statementObject.Principal)
   }
 
+  public principalTypeIsArray(principalType: string): boolean {
+    if (!this.isPrincipalStatement()) {
+      throw new Error(
+        'Called principalTypeIsArray on a statement without Principal, use isPrincipalStatement before calling principalTypeIsArray'
+      )
+    }
+    return (
+      typeof this.statementObject.Principal === 'object' &&
+      Array.isArray(this.statementObject.Principal[principalType])
+    )
+  }
+
+  public hasSingleWildcardPrincipal(): boolean {
+    if (!this.isPrincipalStatement()) {
+      throw new Error(
+        'Called hasSingleWildcardPrincipal on a statement without Principal, use isPrincipalStatement before calling hasSingleWildcardPrincipal'
+      )
+    }
+    return this.statementObject.Principal === '*'
+  }
+
   public notPrincipals(): Principal[] {
-    if(!this.isNotPrincipalStatement()) {
-      throw new Error('Called notPrincipals on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipals')
+    if (!this.isNotPrincipalStatement()) {
+      throw new Error(
+        'Called notPrincipals on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipals'
+      )
     }
     return this.parsePrincipalObject(this.statementObject.NotPrincipal)
+  }
+
+  public notPrincipalTypeIsArray(notPrincipalType: string): boolean {
+    if (!this.isNotPrincipalStatement()) {
+      throw new Error(
+        'Called notPrincipalTypeIsArray on a statement without NotPrincipal, use isNotPrincipalStatement before calling notPrincipalTypeIsArray'
+      )
+    }
+    return (
+      typeof this.statementObject.NotPrincipal === 'object' &&
+      Array.isArray(this.statementObject.NotPrincipal[notPrincipalType])
+    )
+  }
+
+  public hasSingleWildcardNotPrincipal(): boolean {
+    if (!this.isNotPrincipalStatement()) {
+      throw new Error(
+        'Called hasSingleWildcardNotPrincipal on a statement without NotPrincipal, use isNotPrincipalStatement before calling hasSingleWildcardNotPrincipal'
+      )
+    }
+    return this.statementObject.NotPrincipal === '*'
   }
 
   /**
@@ -193,79 +303,140 @@ export class StatementImpl implements Statement, ActionStatement, NotActionState
    * @returns the backing principals for a Principal or NotPrincipal object
    */
   private parsePrincipalObject(principals: any): PrincipalImpl[] {
-    if(typeof principals === 'string') {
+    if (typeof principals === 'string') {
       return [new PrincipalImpl('AWS', principals)]
     }
-    return Object.entries(principals).map(([principalType, principalValue]) => {
-      if(typeof principalValue === 'string') {
-        return new PrincipalImpl(principalType as PrincipalType, principalValue)
-      }
-      return Object.entries(principalValue as any).map(([key, value]) => {
-        return new PrincipalImpl(principalType as PrincipalType, value as string)
+    return Object.entries(principals)
+      .map(([principalType, principalValue]) => {
+        if (typeof principalValue === 'string') {
+          return new PrincipalImpl(principalType as PrincipalType, principalValue)
+        }
+        return Object.entries(principalValue as any).map(([key, value]) => {
+          return new PrincipalImpl(principalType as PrincipalType, value as string)
+        })
       })
-    }).flat()
+      .flat()
   }
 
   public isActionStatement(): this is ActionStatement {
-    return this.statementObject.Action !== undefined;
+    return this.statementObject.Action !== undefined
   }
 
   public isNotActionStatement(): this is NotActionStatement {
-    return this.statementObject.NotAction !== undefined;
+    return this.statementObject.NotAction !== undefined
   }
 
   public actions(): Action[] {
-    if(!this.isActionStatement()) {
-      throw new Error('Called actions on a statement without Action, use isActionStatement before calling actions')
+    if (!this.isActionStatement()) {
+      throw new Error(
+        'Called actions on a statement without Action, use isActionStatement before calling actions'
+      )
     }
+    return this.createNewActions()
+  }
+
+  private createNewActions(): Action[] {
     return [this.statementObject.Action].flat().map((action: any) => new ActionImpl(action))
   }
 
+  public actionIsArray(): boolean {
+    return Array.isArray(this.statementObject.Action)
+  }
+
   public notActions(): Action[] {
-    if(!this.isNotActionStatement()) {
-      throw new Error('Called notActions on a statement without NotAction, use isNotActionStatement before calling notActions')
+    if (!this.isNotActionStatement()) {
+      throw new Error(
+        'Called notActions on a statement without NotAction, use isNotActionStatement before calling notActions'
+      )
     }
+    return this.createNewNotActions()
+  }
+
+  private createNewNotActions(): Action[] {
     return [this.statementObject.NotAction].flat().map((action: any) => new ActionImpl(action))
   }
 
+  public notActionIsArray(): boolean {
+    return Array.isArray(this.statementObject.NotAction)
+  }
+
   public isResourceStatement(): this is ResourceStatement {
-    return this.statementObject.Resource !== undefined;
+    return this.statementObject.Resource !== undefined
   }
 
   public isNotResourceStatement(): this is NotResourceStatement {
-    return this.statementObject.NotResource !== undefined;
+    return this.statementObject.NotResource !== undefined
   }
 
   public resources(): Resource[] {
-    if(!this.isResourceStatement()) {
-      throw new Error('Called resources on a statement without Resource, use isResourceStatement before calling resources')
+    if (!this.isResourceStatement()) {
+      throw new Error(
+        'Called resources on a statement without Resource, use isResourceStatement before calling resources'
+      )
     }
+    return this.createNewResources()
+  }
+
+  private createNewResources(): Resource[] {
     return [this.statementObject.Resource].flat().map((resource: any) => new ResourceImpl(resource))
   }
 
-  public notResources(): Resource[] {
-    if(!this.isNotResourceStatement()) {
-      throw new Error('Called notResources on a statement without NotResource, use isNotResourceStatement before calling notResources')
+  public hasSingleResourceWildcard(): boolean {
+    if (!this.isResourceStatement()) {
+      throw new Error(
+        'Called hasSingleResourceWildcard on a statement without Resource, use isResourceStatement before calling hasSingleResourceWildcard'
+      )
     }
-    return [this.statementObject.NotResource].flat().map((resource: any) => new ResourceImpl(resource))
+    return this.statementObject.Resource === '*'
   }
 
-  public hasSingleResourceWildcard(): boolean {
-    if(!this.isResourceStatement()) {
-      throw new Error('Called hasSingleResourceWildcard on a statement without Resource, use isResourceStatement before calling hasSingleResourceWildcard')
+  public resourceIsArray(): boolean {
+    return Array.isArray(this.statementObject.Resource)
+  }
+
+  public notResources(): Resource[] {
+    if (!this.isNotResourceStatement()) {
+      throw new Error(
+        'Called notResources on a statement without NotResource, use isNotResourceStatement before calling notResources'
+      )
     }
-    return this.isResourceStatement() && this.statementObject.Resource === '*'
+    return this.createNewNotResources()
+  }
+
+  private createNewNotResources(): Resource[] {
+    return [this.statementObject.NotResource]
+      .flat()
+      .map((resource: any) => new ResourceImpl(resource))
+  }
+
+  public notResourceIsArray(): boolean {
+    return Array.isArray(this.statementObject.NotResource)
+  }
+
+  public hasSingleNotResourceWildcard(): boolean {
+    if (!this.isNotResourceStatement()) {
+      throw new Error(
+        'Called hasSingleNotResourceWildcard on a statement without NotResource, use isNotResourceStatement before calling hasSingleNotResourceWildcard'
+      )
+    }
+    return this.statementObject.NotResource === '*'
   }
 
   public conditions(): Condition[] {
-    if(!this.statementObject.Condition) {
+    return this.createNewConditions()
+  }
+
+  private createNewConditions(): Condition[] {
+    if (!this.statementObject.Condition) {
       return []
     }
 
-    return Object.entries(this.statementObject.Condition).map(([opKey, opValue]) => {
-      return Object.entries(opValue as any).map(([condKey, condValue]) => {
-        return new ConditionImpl(opKey, condKey, condValue as string | string[])
+    return Object.entries(this.statementObject.Condition)
+      .map(([opKey, opValue]) => {
+        return Object.entries(opValue as any).map(([condKey, condValue]) => {
+          return new ConditionImpl(opKey, condKey, condValue as string | string[])
+        })
       })
-    }).flat()
+      .flat()
   }
 }

@@ -5,7 +5,7 @@ describe('ActionImpl', () => {
   describe('type', () => {
     it('should return wildcard when all wildcards', () => {
       // Given an action wildcard
-      const actionString = "*"
+      const actionString = '*'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -16,7 +16,7 @@ describe('ActionImpl', () => {
 
     it('should return service when not all wildcards', () => {
       // Given an action string
-      const actionString = "s3:GetObject"
+      const actionString = 's3:GetObject'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -29,7 +29,7 @@ describe('ActionImpl', () => {
   describe('wildcardValue', () => {
     it('should return the wildcard value', () => {
       // Given an action wildcard
-      const actionString = "*"
+      const actionString = '*'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -42,7 +42,7 @@ describe('ActionImpl', () => {
   describe('value', () => {
     it('should return the value', () => {
       // Given an action string
-      const actionString = "s3:GetObject"
+      const actionString = 's3:GetObject'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -55,7 +55,7 @@ describe('ActionImpl', () => {
   describe('isWildcardAction', () => {
     it('should return true when wildcard', () => {
       // Given an action wildcard
-      const actionString = "*"
+      const actionString = '*'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -66,7 +66,7 @@ describe('ActionImpl', () => {
 
     it('should return false when not wildcard', () => {
       // Given an action string
-      const actionString = "s3:GetObject"
+      const actionString = 's3:GetObject'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -79,7 +79,7 @@ describe('ActionImpl', () => {
   describe('isServiceAction', () => {
     it('should return true when service', () => {
       // Given an action string
-      const actionString = "s3:GetObject"
+      const actionString = 's3:GetObject'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -90,7 +90,7 @@ describe('ActionImpl', () => {
 
     it('should return false when not service', () => {
       // Given an action wildcard
-      const actionString = "*"
+      const actionString = '*'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -103,7 +103,7 @@ describe('ActionImpl', () => {
   describe('service', () => {
     it('should return the service', () => {
       // Given an action string
-      const actionString = "s3:GetObject"
+      const actionString = 's3:GetObject'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)
@@ -116,7 +116,7 @@ describe('ActionImpl', () => {
   describe('action', () => {
     it('should return the action', () => {
       // Given an action string
-      const actionString = "s3:GetObject"
+      const actionString = 's3:GetObject'
 
       // When an ActionImpl is created
       const action = new ActionImpl(actionString)

@@ -87,7 +87,6 @@
           "Sid": "AllowAssumeRole",
           "Effect": "Allow",
           "Action": "sts:AssumeRole"
-
         }
       ]
     },

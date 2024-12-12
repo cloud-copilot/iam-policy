@@ -1,4 +1,4 @@
-import { isAllWildcards } from "../utils.js";
+import { isAllWildcards } from '../utils.js'
 
 /**
  * A resource string in an IAM policy
@@ -47,47 +47,56 @@ export interface ArnResource extends Resource {
   resource(): string
 }
 
-
 export class ResourceImpl implements Resource, ArnResource {
   constructor(private readonly rawValue: string) {}
 
   partition(): string {
-    if(!this.isArnResource()) {
-      throw new Error('Called partition on a resource without an ARN, use isArnResource before calling partition')
+    if (!this.isArnResource()) {
+      throw new Error(
+        'Called partition on a resource without an ARN, use isArnResource before calling partition'
+      )
     }
-    return this.value().split(":").at(1)!
+    return this.value().split(':').at(1)!
   }
 
   service(): string {
-    if(!this.isArnResource()) {
-      throw new Error("Called service on a resource without an ARN, use isArnResource before calling service")
+    if (!this.isArnResource()) {
+      throw new Error(
+        'Called service on a resource without an ARN, use isArnResource before calling service'
+      )
     }
-    return this.value().split(":").at(2)!
+    return this.value().split(':').at(2)!
   }
 
   region(): string {
-    if(!this.isArnResource()) {
-      throw new Error("Called region on a resource without an ARN, use isArnResource before calling region")
+    if (!this.isArnResource()) {
+      throw new Error(
+        'Called region on a resource without an ARN, use isArnResource before calling region'
+      )
     }
-    return this.value().split(":").at(3)!
+    return this.value().split(':').at(3)!
   }
 
   account(): string {
-    if(!this.isArnResource()) {
-      throw new Error("Called account on a resource without an ARN, use isArnResource before calling account")
+    if (!this.isArnResource()) {
+      throw new Error(
+        'Called account on a resource without an ARN, use isArnResource before calling account'
+      )
     }
-    return this.value().split(":").at(4)!
+    return this.value().split(':').at(4)!
   }
 
   resource(): string {
-    if(!this.isArnResource()) {
-      throw new Error("Called resource on a resource without an ARN, use isArnResource before calling resource")
+    if (!this.isArnResource()) {
+      throw new Error(
+        'Called resource on a resource without an ARN, use isArnResource before calling resource'
+      )
     }
-    return this.value().split(":").slice(5).join(":")
+    return this.value().split(':').slice(5).join(':')
   }
 
   value(): string {
-    return this.rawValue;
+    return this.rawValue
   }
 
   isAllResources(): boolean {
@@ -95,6 +104,6 @@ export class ResourceImpl implements Resource, ArnResource {
   }
 
   isArnResource(): this is ArnResource {
-    return !this.isAllResources();
+    return !this.isAllResources()
   }
 }
