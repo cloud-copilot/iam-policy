@@ -28,7 +28,7 @@
     },
     "expectedErrors": [
       {
-        "message": "Principal is not allowed in an identity policy",
+        "message": "Principal is not allowed in an identity policy statement",
         "path": "Statement[0].Principal"
       }
     ]
@@ -48,7 +48,7 @@
     },
     "expectedErrors": [
       {
-        "message": "NotPrincipal is not allowed in an identity policy",
+        "message": "NotPrincipal is not allowed in an identity policy statement",
         "path": "Statement[0].NotPrincipal"
       }
     ]
@@ -66,7 +66,7 @@
     },
     "expectedErrors": [
       {
-        "message": "One of Action or NotAction is required in an identity policy",
+        "message": "One of Action or NotAction is required in an identity policy statement",
         "path": "Statement[0]"
       }
     ]
@@ -84,7 +84,7 @@
     },
     "expectedErrors": [
       {
-        "message": "One of Resource or NotResource is required in an identity policy",
+        "message": "One of Resource or NotResource is required in an identity policy statement",
         "path": "Statement[0]"
       }
     ]

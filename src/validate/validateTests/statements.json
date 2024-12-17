@@ -16,7 +16,7 @@
     },
     "expectedErrors": [
       {
-        "path": "Statement.Effect",
+        "path": "Statement",
         "message": "Effect must be present and exactly \"Allow\" or \"Deny\""
       }
     ]

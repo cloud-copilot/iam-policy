@@ -9,7 +9,7 @@ import { validatePolicySyntax, ValidationError } from './validate.js'
 export function validateIdentityPolicy(policy: any): ValidationError[] {
   return validatePolicySyntax(policy, {
     validateStatement: (statement, path) => {
-      const policyType = 'an identity policy'
+      const policyType = 'an identity policy statement'
       const errors: ValidationError[] = []
       errors.push(
         ...validateProhibitedFields(statement, ['Principal', 'NotPrincipal'], path, policyType)

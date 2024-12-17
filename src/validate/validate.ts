@@ -122,7 +122,13 @@ function validateStatement(
   const statementErrors: ValidationError[] = []
   statementErrors.push(...validateKeys(statement, allowedStatementKeys, path))
   statementErrors.push(...validateDataTypeIfExists(statement.Sid, `${path}.Sid`, 'string'))
-  if (statement.Effect !== 'Allow' && statement.Effect !== 'Deny') {
+
+  if (!statement.Effect) {
+    statementErrors.push({
+      path: path,
+      message: `Effect must be present and exactly "Allow" or "Deny"`
+    })
+  } else if (statement.Effect !== 'Allow' && statement.Effect !== 'Deny') {
     statementErrors.push({
       path: `${path}.Effect`,
       message: `Effect must be present and exactly "Allow" or "Deny"`

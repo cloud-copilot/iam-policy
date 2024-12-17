@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join, resolve } from 'path'
 import { describe, expect, it } from 'vitest'
-import { sortErrors } from './validate.test.js'
+import { sortErrors } from './testutil.js'
 import {
   validateEndpointPolicy,
   validateIdentityPolicy,
