@@ -69,13 +69,13 @@ export function validateServiceControlPolicy(policy: any): ValidationError[] {
         }
         if (statement.NotAction) {
           errors.push({
-            path,
+            path: `${path}.#NotAction`,
             message: `NotAction is not allowed when Effect is "Allow" in ${policyType}`
           })
         }
         if (statement.Condition) {
           errors.push({
-            path,
+            path: `${path}.#Condition`,
             message: `Condition is not allowed when Effect is "Allow" in ${policyType}`
           })
         }
@@ -273,7 +273,7 @@ function validateProhibitedFields(
   for (const field of prohibitedFields) {
     if (statement[field]) {
       errors.push({
-        path: `${path}.${field}`,
+        path: `${path}.#${field}`,
         message: `${field} is not allowed in ${policyType}`
       })
     }

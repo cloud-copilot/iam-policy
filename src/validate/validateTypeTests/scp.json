@@ -29,7 +29,7 @@
     "expectedErrors": [
       {
         "message": "Principal is not allowed in a service control policy",
-        "path": "Statement[0].Principal"
+        "path": "Statement[0].#Principal"
       }
     ]
   },
@@ -49,7 +49,7 @@
     "expectedErrors": [
       {
         "message": "NotPrincipal is not allowed in a service control policy",
-        "path": "Statement[0].NotPrincipal"
+        "path": "Statement[0].#NotPrincipal"
       }
     ]
   },
@@ -68,7 +68,7 @@
     "expectedErrors": [
       {
         "message": "NotResource is not allowed in a service control policy",
-        "path": "Statement[0].NotResource"
+        "path": "Statement[0].#NotResource"
       },
       {
         "message": "Resource is required in a service control policy",
@@ -263,7 +263,7 @@
     },
     "expectedErrors": [
       {
-        "path": "Statement[0]",
+        "path": "Statement[0].#NotAction",
         "message": "NotAction is not allowed when Effect is \"Allow\" in a service control policy"
       }
     ]
@@ -306,7 +306,7 @@
     },
     "expectedErrors": [
       {
-        "path": "Statement[0]",
+        "path": "Statement[0].#Condition",
         "message": "Condition is not allowed when Effect is \"Allow\" in a service control policy"
       }
     ]

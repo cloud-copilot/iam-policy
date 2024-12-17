@@ -48,8 +48,8 @@
       ]
     },
     "expectedErrors": [
-      { "path": "Statement[0].Principal.Bad", "message": "Invalid key Bad" },
-      { "path": "Statement[0].Principal.Worse", "message": "Invalid key Worse" }
+      { "path": "Statement[0].Principal.#Bad", "message": "Invalid key Bad" },
+      { "path": "Statement[0].Principal.#Worse", "message": "Invalid key Worse" }
     ]
   },
   {

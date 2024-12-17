@@ -7,7 +7,7 @@
         "Bank": "I solemnly swear that I am up to no good"
       }
     },
-    "expectedErrors": [{ "path": "Statement.Bank", "message": "Invalid key Bank" }]
+    "expectedErrors": [{ "path": "Statement.#Bank", "message": "Invalid key Bank" }]
   },
   {
     "name": "Effect is not present",

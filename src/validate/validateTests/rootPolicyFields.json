@@ -83,6 +83,6 @@
       "Id": "Policy1234567890123",
       "Version": "2012-10-17"
     },
-    "expectedErrors": [{ "path": "Statement", "message": "Statement is required" }]
+    "expectedErrors": [{ "path": "", "message": "Statement is required" }]
   }
 ]

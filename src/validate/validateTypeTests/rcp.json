@@ -54,7 +54,7 @@
       },
       {
         "message": "NotPrincipal is not allowed in a resource control policy",
-        "path": "Statement[0].NotPrincipal"
+        "path": "Statement[0].#NotPrincipal"
       }
     ]
   },
@@ -78,7 +78,7 @@
       },
       {
         "message": "NotAction is not allowed in a resource control policy",
-        "path": "Statement[0].NotAction"
+        "path": "Statement[0].#NotAction"
       }
     ]
   },

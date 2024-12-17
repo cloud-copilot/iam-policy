@@ -181,7 +181,7 @@
     },
     "expectedErrors": [
       {
-        "path": "Statement.Condition.ForSomeValue:StringEquals",
+        "path": "Statement.Condition.#ForSomeValue:StringEquals",
         "message": "Condition set operator must be either ForAllValues or ForAnyValue"
       }
     ]
@@ -200,7 +200,7 @@
     },
     "expectedErrors": [
       {
-        "path": "Statement.Condition.ForAllValues:StringEquals:IfExists",
+        "path": "Statement.Condition.#ForAllValues:StringEquals:IfExists",
         "message": "Condition operator is invalid"
       }
     ]
@@ -219,7 +219,7 @@
     },
     "expectedErrors": [
       {
-        "path": "Statement.Condition.ForAllValues.StringEquals",
+        "path": "Statement.Condition.#ForAllValues.StringEquals",
         "message": "Condition operator is invalid"
       }
     ]

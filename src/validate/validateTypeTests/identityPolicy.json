@@ -29,7 +29,7 @@
     "expectedErrors": [
       {
         "message": "Principal is not allowed in an identity policy statement",
-        "path": "Statement[0].Principal"
+        "path": "Statement[0].#Principal"
       }
     ]
   },
@@ -49,7 +49,7 @@
     "expectedErrors": [
       {
         "message": "NotPrincipal is not allowed in an identity policy statement",
-        "path": "Statement[0].NotPrincipal"
+        "path": "Statement[0].#NotPrincipal"
       }
     ]
   },

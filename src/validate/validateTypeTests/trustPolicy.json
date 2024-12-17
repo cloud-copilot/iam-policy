@@ -33,7 +33,7 @@
     "expectedErrors": [
       {
         "message": "Resource is not allowed in a trust policy",
-        "path": "Statement[0].Resource"
+        "path": "Statement[0].#Resource"
       }
     ]
   },
@@ -55,7 +55,7 @@
     "expectedErrors": [
       {
         "message": "NotResource is not allowed in a trust policy",
-        "path": "Statement[0].NotResource"
+        "path": "Statement[0].#NotResource"
       }
     ]
   },

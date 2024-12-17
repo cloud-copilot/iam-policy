@@ -52,7 +52,7 @@ export function validatePolicySyntax(
   allErrors.push(...validateDataTypeIfExists(policyDocument.Id, 'Id', 'string'))
   if (!policyDocument.Statement) {
     allErrors.push({
-      path: 'Statement',
+      path: '',
       message: 'Statement is required'
     })
   }
@@ -125,7 +125,7 @@ function validateStatement(
 
   if (!statement.Effect) {
     statementErrors.push({
-      path: path,
+      path: `${path}`,
       message: `Effect must be present and exactly "Allow" or "Deny"`
     })
   } else if (statement.Effect !== 'Allow' && statement.Effect !== 'Deny') {
@@ -327,21 +327,21 @@ function validateCondition(condition: any, path: string): ValidationError[] {
     //If not valid pattern
     if (!validConditionOperatorPattern.test(operator)) {
       conditionErrors.push({
-        path: `${path}.${operator}`,
+        path: `${path}.#${operator}`,
         message: `Condition operator is invalid`
       })
     }
     const splitOperator = operator.split(':')
     if (splitOperator.length > 2) {
       conditionErrors.push({
-        path: `${path}.${operator}`,
+        path: `${path}.#${operator}`,
         message: `Condition operator is invalid`
       })
     } else if (splitOperator.length === 2) {
       const setOperator = splitOperator[0].toLowerCase()
       if (!allowedSetOperators.has(setOperator)) {
         conditionErrors.push({
-          path: `${path}.${operator}`,
+          path: `${path}.#${operator}`,
           message: `Condition set operator must be either ForAllValues or ForAnyValue`
         })
       }
@@ -376,20 +376,17 @@ function validateCondition(condition: any, path: string): ValidationError[] {
 
 function validateKeys(object: any, allowedKeys: Set<string>, path: string): ValidationError[] {
   const keyErrors: ValidationError[] = []
-  if (path != '') {
-    path = `${path}.`
-  }
 
   for (const key of Object.keys(object)) {
     if (!allowedKeys.has(key)) {
       keyErrors.push({
         message: `Invalid key ${key}`,
-        path: `${path}${key}`
+        path: `${path}.#${key}`
       })
     } else if (object[key] === undefined || object[key] === null) {
       keyErrors.push({
         message: `If present, ${key} cannot be null or undefined`,
-        path: `${path}${key}`
+        path: `${path}.${key}`
       })
     }
   }
