@@ -5,64 +5,66 @@ This is a simple IAM policy library that allows you to safely parse and navigate
 This may be updated in the future to allow modifying policies, right now it's read-only.
 
 ## Validate Policy Syntax with `validatePolicySyntax`
+
 `validatePolicySyntax` is a syntax linter and will not validate the the policy is logical, secure, or correct.
 
 This will take any object and return back an array of findings. If the array is empty then the policy is valid.
+
 ```typescript
 import { validatePolicySyntax } from '@cloud-copilot/iam-policy'
 
 validatePolicySyntax({
-  "Version": "2012-10-17",
-  "Statement": [
+  Version: '2012-10-17',
+  Statement: [
     {
-      "Sid": "VisualEditor0",
-      "Effect": "Allow",
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::mybucket/*"
+      Sid: 'VisualEditor0',
+      Effect: 'Allow',
+      Action: 's3:GetObject',
+      Resource: 'arn:aws:s3:::mybucket/*'
     }
   ]
-}); // []
+}) // []
 
 validatePolicySyntax({
-  "Version": "2012-10-17",
-  "Statement": [
+  Version: '2012-10-17',
+  Statement: [
     {
-      "Sid": 7,
-      "Effect": "Allow",
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::mybucket/*"
+      Sid: 7,
+      Effect: 'Allow',
+      Action: 's3:GetObject',
+      Resource: 'arn:aws:s3:::mybucket/*'
     }
   ]
-}); // [{ message: 'Found data type number allowed type(s) are string', path: 'Statement[0].Sid'}]
-
+}) // [{ message: 'Found data type number allowed type(s) are string', path: 'Statement[0].Sid'}]
 
 /* It will attempt to find as many issues as possible in one pass */
 validatePolicySyntax({
-  "Version": "2012-10-17",
-  "Comment": "Jacob is kewl",
-  "Statement": [
+  Version: '2012-10-17',
+  Comment: 'Jacob is kewl',
+  Statement: [
     {
-      "Sid": "SomeStatement",
-      "Effect": 7,
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::mybucket/*"
-    }, {
-      "Sid": "SomeStatement",
-      "Effect": ["Allow"],
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::mybucket/*",
-      "Condition": {
-        "NumericLessThan": {
-          "s3:max-keys": 7,
+      Sid: 'SomeStatement',
+      Effect: 7,
+      Action: 's3:GetObject',
+      Resource: 'arn:aws:s3:::mybucket/*'
+    },
+    {
+      Sid: 'SomeStatement',
+      Effect: ['Allow'],
+      Action: 's3:GetObject',
+      Resource: 'arn:aws:s3:::mybucket/*',
+      Condition: {
+        NumericLessThan: {
+          's3:max-keys': 7
         },
-        "StringLike": {
-          "s3:authType": new RegExp(/REST.*/),
-          "aws:TagKeys/Foo": ["Bar*", "Baz*"]
+        StringLike: {
+          's3:authType': new RegExp(/REST.*/),
+          'aws:TagKeys/Foo': ['Bar*', 'Baz*']
         }
       }
     }
   ]
-}); /*
+}) /*
 [
   { message: 'Invalid key Comment', path: 'Comment' },
   { message: 'Effect must be present and exactly "Allow" or "Deny"', path: 'Statement[0].Effect' },
@@ -74,56 +76,55 @@ validatePolicySyntax({
 ```
 
 ### Validate Specific Policy Types
-There are functions to validate specific policy types, these do all of the general policy validation and additional checks for the specific policy type.  For instance Service Control Policies only allow the Condition element when the Effect is Deny.
 
-* `validateIdentityPolicy(policy: any): ValidationError[]`
-* `validateServiceControlPolicy(policy: any): ValidationError[]`
-* `validateResourcePolicy(policy: any): ValidationError[]`
-* `validateTrustPolicy(policy: any): ValidationError[]`
-* `validateResourceControlPolicy(policy: any): ValidationError[]`
-* `validateEndpointPolicy(policy: any): ValidationError[]`
-* `validateSessionPolicy(policy: any): ValidationError[]`
+There are functions to validate specific policy types, these do all of the general policy validation and additional checks for the specific policy type. For instance Service Control Policies only allow the Condition element when the Effect is Deny.
+
+- `validateIdentityPolicy(policy: any): ValidationError[]`
+- `validateServiceControlPolicy(policy: any): ValidationError[]`
+- `validateResourcePolicy(policy: any): ValidationError[]`
+- `validateTrustPolicy(policy: any): ValidationError[]`
+- `validateResourceControlPolicy(policy: any): ValidationError[]`
+- `validateEndpointPolicy(policy: any): ValidationError[]`
+- `validateSessionPolicy(policy: any): ValidationError[]`
 
 ## IAM Policy Parsing and Processing with `loadPolicy`
+
 `loadPolicy` _**does not validate policies**_, if you want validation ahead of time use `validatePolicySyntax`.
 
 ### Normalizes Policy Elements that are Objects/Array of Objects or String/Array of Strings
+
 ```typescript
-import{ loadPolicy } from '@cloud-copilot/iam-policy'
+import { loadPolicy } from '@cloud-copilot/iam-policy'
 
 //Statement can be an array of objects
 const policyOne = {
-  "Version": "2012-10-17",
-  "Statement": [
+  Version: '2012-10-17',
+  Statement: [
     {
-      "Sid": "ArrayStatement",
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-      ],
-      "Resource": "arn:aws:s3:::government-secrets/*"
+      Sid: 'ArrayStatement',
+      Effect: 'Allow',
+      Action: ['s3:GetObject'],
+      Resource: 'arn:aws:s3:::government-secrets/*'
     }
   ]
-};
+}
 
 //Statement can also be a single object
 const policyTwo = {
-  "Version": "2012-10-17",
-  "Statement": {
-    "Sid": "ObjectStatement",
-    "Effect": "Allow",
-    "Action": [
-      "s3:GetObject",
-    ],
-    "Resource": "arn:aws:s3:::government-secrets/*"
+  Version: '2012-10-17',
+  Statement: {
+    Sid: 'ObjectStatement',
+    Effect: 'Allow',
+    Action: ['s3:GetObject'],
+    Resource: 'arn:aws:s3:::government-secrets/*'
   }
-};
+}
 
 //In both cases you can use the `statements` function to get an array of statements
-const p1 = loadPolicy(policyOne);
-const p2 = loadPolicy(policyTwo);
-console.log(p1.statements()[0].sid()); //ArrayStatement
-console.log(p2.statements()[0].sid()); //ObjectStatement
+const p1 = loadPolicy(policyOne)
+const p2 = loadPolicy(policyTwo)
+console.log(p1.statements()[0].sid()) //ArrayStatement
+console.log(p2.statements()[0].sid()) //ObjectStatement
 ```
 
 There is similar support for condition values, principals, and resources.
@@ -167,36 +168,31 @@ There is similar support for `Action`, `NotAction`, `Principal`, `NotPrincipal`,
 
 ### Flatten Complex Structures
 
-Simplifies complex elements by flattening them into an array of homogenous objects. For example the Principal value can be a string or an object; the object values can be strings or arrays of strings.  We flatten those into an array of objects similar to what you would define in a terraform policy.
+Simplifies complex elements by flattening them into an array of homogenous objects. For example the Principal value can be a string or an object; the object values can be strings or arrays of strings. We flatten those into an array of objects similar to what you would define in a terraform policy.
 
 ```typescript
-import{ loadPolicy } from '@cloud-copilot/iam-policy'
+import { loadPolicy } from '@cloud-copilot/iam-policy'
 
 const principalPolicy = {
-  "Version": "2012-10-17",
-  "Statement": {
-    "Effect": "Allow",
-    "Principal": {
-      "AWS": [
-        "arn:aws:iam::123456789012:root",
-        "arn:aws:iam::123456789013:user/FoxMulder"
-      ],
-      "CanonicalUser": "79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be",
-      "Federated": "cognito-identity.amazonaws.com"
+  Version: '2012-10-17',
+  Statement: {
+    Effect: 'Allow',
+    Principal: {
+      AWS: ['arn:aws:iam::123456789012:root', 'arn:aws:iam::123456789013:user/FoxMulder'],
+      CanonicalUser: '79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be',
+      Federated: 'cognito-identity.amazonaws.com'
     },
-    "Action": [
-      "s3:GetObject",
-    ],
-    "Resource": "arn:aws:s3:::government-secrets/*"
+    Action: ['s3:GetObject'],
+    Resource: 'arn:aws:s3:::government-secrets/*'
   }
-};
+}
 
-const p = loadPolicy(principalPolicy);
+const p = loadPolicy(principalPolicy)
 
-const statement = p.statements()[0]; // Get the first statement out
-if(statement.isPrincipalStatement()) {
+const statement = p.statements()[0] // Get the first statement out
+if (statement.isPrincipalStatement()) {
   //Get an array of 4 Principal objects with a type and value
-  const principals = statement.principals();
+  const principals = statement.principals()
   principals[0].type() //AWS
   principals[0].value() //arn:aws:iam::123456789012:root
   //and so on
@@ -208,37 +204,35 @@ if(statement.isPrincipalStatement()) {
 There is similar flattening for the `Condition` element.
 
 ```typescript
-import{ loadPolicy } from '@cloud-copilot/iam-policy'
+import { loadPolicy } from '@cloud-copilot/iam-policy'
 
 const principalPolicy = {
-  "Version": "2012-10-17",
-  "Statement": {
-    "Effect": "Allow",
-    "Principal": {
-      "AWS": "arn:aws:iam::123456789012:root",
+  Version: '2012-10-17',
+  Statement: {
+    Effect: 'Allow',
+    Principal: {
+      AWS: 'arn:aws:iam::123456789012:root'
     },
-    "Action": [
-      "s3:GetObject",
-    ],
-    "Resource": "arn:aws:s3:::government-secrets/*",
-    "Condition": {
-      "StringEquals": {
-        "s3:prefix": "home/${aws:username}",
-        "aws:PrincipalOrgID": "o-1234567890"
+    Action: ['s3:GetObject'],
+    Resource: 'arn:aws:s3:::government-secrets/*',
+    Condition: {
+      StringEquals: {
+        's3:prefix': 'home/${aws:username}',
+        'aws:PrincipalOrgID': 'o-1234567890'
       },
-      "StringLike": {
-        "s3:authType": "REST*",
-        "aws:TagKeys/Foo": ["Bar*", "Baz*"]
+      StringLike: {
+        's3:authType': 'REST*',
+        'aws:TagKeys/Foo': ['Bar*', 'Baz*']
       }
     }
   }
-};
+}
 
-const p = loadPolicy(principalPolicy);
+const p = loadPolicy(principalPolicy)
 
-const statement = p.statements()[0]; // Get the first statement out
+const statement = p.statements()[0] // Get the first statement out
 
-const conditions = statement.conditions();
+const conditions = statement.conditions()
 conditions[0].operation().value() //StringEquals
 conditions[0].conditionKey() //s3:prefix
 conditions[0].conditionValues() //[ home/${aws:username} ]
