@@ -109,7 +109,7 @@
     ]
   },
   {
-    "Name": "Statement Ids must be unique",
+    "name": "Statement Ids must be unique",
     "policy": {
       "Statement": [
         {
@@ -128,8 +128,12 @@
     },
     "expectedErrors": [
       {
-        "path": "Statement",
-        "message": "Statement Ids must be unique, found AllowGetObject 2 times"
+        "path": "Statement[0].Sid",
+        "message": "Statement Ids (Sid) must be unique"
+      },
+      {
+        "path": "Statement[1].Sid",
+        "message": "Statement Ids (Sid) must be unique"
       }
     ]
   }

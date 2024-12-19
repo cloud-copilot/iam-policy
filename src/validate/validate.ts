@@ -68,20 +68,25 @@ export function validatePolicySyntax(
       )
     }
     const statementIdCounts = policyDocument.Statement.reduce(
-      (acc: Record<string, number>, statement: any) => {
+      (acc: Record<string, string[]>, statement: any, index: number) => {
         if (statement.Sid) {
-          acc[statement.Sid] = acc[statement.Sid] ? acc[statement.Sid] + 1 : 1
+          if (!acc[statement.Sid]) {
+            acc[statement.Sid] = []
+          }
+          acc[statement.Sid].push(`Statement[${index}].Sid`)
         }
         return acc
       },
       {} as Record<string, number>
     )
-    for (const [sid, count] of Object.entries<number>(statementIdCounts)) {
-      if (count > 1) {
-        allErrors.push({
-          path: `Statement`,
-          message: `Statement Ids must be unique, found ${sid} ${count} times`
-        })
+    for (const [sid, paths] of Object.entries<string[]>(statementIdCounts)) {
+      if (paths.length > 1) {
+        for (const path of paths) {
+          allErrors.push({
+            path,
+            message: `Statement Ids (Sid) must be unique`
+          })
+        }
       }
     }
   }
