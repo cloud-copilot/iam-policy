@@ -28,13 +28,36 @@ export interface Condition {
    * @returns true if the condition values are an array, false otherwise.
    */
   valueIsArray(): boolean
+
+  /**
+   * Returns the path to the operator key in the policy.
+   */
+  operatorKeyPath(): string
+
+  /**
+   * Returns the path to the operator value in the policy.
+   */
+  operatorValuePath(): string
+
+  /**
+   * Returns the path to the condition key for the policy.
+   */
+  keyPath(): string
+
+  /**
+   * Returns the path to the condition values in the policy.
+   */
+  valuesPath(): string
 }
 
 export class ConditionImpl implements Condition {
   constructor(
     private readonly op: string,
     private readonly key: string,
-    private readonly values: string | string[]
+    private readonly values: string | string[],
+    private readonly otherProps: {
+      conditionPath: string
+    }
   ) {}
 
   public operation(): ConditionOperation {
@@ -51,5 +74,21 @@ export class ConditionImpl implements Condition {
 
   public valueIsArray(): boolean {
     return Array.isArray(this.values)
+  }
+
+  public operatorKeyPath(): string {
+    return `${this.otherProps.conditionPath}.#${this.op}`
+  }
+
+  public operatorValuePath(): string {
+    return `${this.otherProps.conditionPath}.${this.op}`
+  }
+
+  public keyPath(): string {
+    return `${this.otherProps.conditionPath}.${this.op}.#${this.key}`
+  }
+
+  public valuesPath(): string {
+    return `${this.otherProps.conditionPath}.${this.op}.${this.key}`
   }
 }

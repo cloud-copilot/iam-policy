@@ -71,6 +71,11 @@ export interface Statement {
    * Does the statement have a NotResource
    */
   isNotResourceStatement(): this is NotResourceStatement
+
+  /**
+   * The path to the statement in the policy
+   */
+  path(): string
 }
 
 /**
@@ -203,11 +208,18 @@ export class StatementImpl
 {
   constructor(
     private readonly statementObject: any,
-    private readonly _index: number
+    private readonly _index: number,
+    private readonly otherProps: {
+      path: string
+    }
   ) {}
 
   public index(): number {
     return this._index
+  }
+
+  public path(): string {
+    return this.otherProps.path
   }
 
   public sid(): string | undefined {
@@ -336,7 +348,12 @@ export class StatementImpl
   }
 
   private createNewActions(): Action[] {
-    return [this.statementObject.Action].flat().map((action: any) => new ActionImpl(action))
+    if (!this.actionIsArray()) {
+      return [new ActionImpl(this.statementObject.Action, { path: `${this.path()}.Action` })]
+    }
+    return [this.statementObject.Action].flat().map((action: any, index) => {
+      return new ActionImpl(action, { path: `${this.path()}.Action[${index}]` })
+    })
   }
 
   public actionIsArray(): boolean {
@@ -353,7 +370,12 @@ export class StatementImpl
   }
 
   private createNewNotActions(): Action[] {
-    return [this.statementObject.NotAction].flat().map((action: any) => new ActionImpl(action))
+    if (!this.notActionIsArray()) {
+      return [new ActionImpl(this.statementObject.NotAction, { path: `${this.path()}.NotAction` })]
+    }
+    return [this.statementObject.NotAction].flat().map((action: any, index) => {
+      return new ActionImpl(action, { path: `${this.path()}.NotAction[${index}]` })
+    })
   }
 
   public notActionIsArray(): boolean {
@@ -378,7 +400,13 @@ export class StatementImpl
   }
 
   private createNewResources(): Resource[] {
-    return [this.statementObject.Resource].flat().map((resource: any) => new ResourceImpl(resource))
+    if (!this.resourceIsArray()) {
+      return [new ResourceImpl(this.statementObject.Resource, { path: `${this.path()}.Resource` })]
+    }
+
+    return [this.statementObject.Resource].flat().map((resource: any, index) => {
+      return new ResourceImpl(resource, { path: `${this.path()}.Resource[${index}]` })
+    })
   }
 
   public hasSingleResourceWildcard(): boolean {
@@ -404,9 +432,15 @@ export class StatementImpl
   }
 
   private createNewNotResources(): Resource[] {
-    return [this.statementObject.NotResource]
-      .flat()
-      .map((resource: any) => new ResourceImpl(resource))
+    if (!this.notResourceIsArray()) {
+      return [
+        new ResourceImpl(this.statementObject.NotResource, { path: `${this.path()}.NotResource` })
+      ]
+    }
+
+    return [this.statementObject.NotResource].flat().map((resource: any, index) => {
+      return new ResourceImpl(resource, { path: `${this.path()}.NotResource[${index}]` })
+    })
   }
 
   public notResourceIsArray(): boolean {
@@ -434,7 +468,9 @@ export class StatementImpl
     return Object.entries(this.statementObject.Condition)
       .map(([opKey, opValue]) => {
         return Object.entries(opValue as any).map(([condKey, condValue]) => {
-          return new ConditionImpl(opKey, condKey, condValue as string | string[])
+          return new ConditionImpl(opKey, condKey, condValue as string | string[], {
+            conditionPath: `${this.path()}.Condition`
+          })
         })
       })
       .flat()

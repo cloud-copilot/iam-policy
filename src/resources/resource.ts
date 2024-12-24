@@ -18,6 +18,11 @@ export interface Resource {
    * Whether the resource is an ARN resource
    */
   isArnResource(): this is ArnResource
+
+  /**
+   * The path to the resource in the policy document
+   */
+  path(): string
 }
 
 export interface ArnResource extends Resource {
@@ -48,7 +53,16 @@ export interface ArnResource extends Resource {
 }
 
 export class ResourceImpl implements Resource, ArnResource {
-  constructor(private readonly rawValue: string) {}
+  constructor(
+    private readonly rawValue: string,
+    private readonly otherProps: {
+      path: string
+    }
+  ) {}
+
+  path(): string {
+    return this.otherProps.path
+  }
 
   partition(): string {
     if (!this.isArnResource()) {

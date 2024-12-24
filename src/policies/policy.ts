@@ -38,9 +38,12 @@ export class PolicyImpl implements Policy {
   }
 
   private newStatements(): Statement[] {
-    return [this.policyObject.Statement]
-      .flat()
-      .map((statement: any, index) => new StatementImpl(statement, index + 1))
+    if (!this.statementIsArray()) {
+      return [new StatementImpl(this.policyObject.Statement, 1, { path: 'Statement' })]
+    }
+    return [this.policyObject.Statement].flat().map((statement: any, index) => {
+      return new StatementImpl(statement, index + 1, { path: `Statement[${index}]` })
+    })
   }
 
   public statementIsArray(): boolean {

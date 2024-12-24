@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { loadPolicy } from '../parser.js'
 import { NotPrincipalStatement, PrincipalStatement, StatementImpl } from './statement.js'
 
 describe('StatementImpl', () => {
@@ -8,10 +9,57 @@ describe('StatementImpl', () => {
       const statementDoc = { Sid: 'MySid' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then the sid should be 'MySid'
       expect(statement.sid()).toBe('MySid')
+    })
+  })
+
+  describe('path', () => {
+    it('should return the path of the statement if there is one', () => {
+      //Given a policy with one statement as an object
+      const policyDoc = {
+        Version: '2012-10-17',
+        Statement: {
+          Effect: 'Allow',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my_bucket'
+        }
+      }
+
+      //When the policy is parsed
+      const policy = loadPolicy(policyDoc)
+
+      //Then the path of the statement should be 'Statement'
+      expect(policy.statements()[0].path()).toBe('Statement')
+    })
+
+    it('should return the path of the statement if there are multiple statements', () => {
+      //Given a policy with multiple statements
+      const policyDoc = {
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Action: 's3:GetObject',
+            Resource: 'arn:aws:s3:::my_bucket'
+          },
+          {
+            Effect: 'Allow',
+            Action: 's3:PutObject',
+            Resource: 'arn:aws:s3:::my_bucket'
+          }
+        ]
+      }
+
+      //When the policy is parsed
+      const policy = loadPolicy(policyDoc)
+
+      //Then the path of the first statement should be 'Statement[0]'
+      expect(policy.statements()[0].path()).toBe('Statement[0]')
+      //And the path of the second statement should be 'Statement[1]'
+      expect(policy.statements()[1].path()).toBe('Statement[1]')
     })
   })
 
@@ -21,7 +69,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Effect: 'Deny' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then the effect should be 'Deny'
       expect(statement.effect()).toBe('Deny')
@@ -34,7 +82,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Effect: 'Allow' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isAllow should return true
       expect(statement.isAllow()).toBe(true)
@@ -45,7 +93,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Effect: 'Deny' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isAllow should return false
       expect(statement.isAllow()).toBe(false)
@@ -58,7 +106,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Effect: 'Deny' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isDeny should return true
       expect(statement.isDeny()).toBe(true)
@@ -69,7 +117,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Effect: 'Allow' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isDeny should return false
       expect(statement.isDeny()).toBe(false)
@@ -82,7 +130,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Principal: {} }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isPrincipalStatement should return true
       expect(statement.isPrincipalStatement()).toBe(true)
@@ -93,7 +141,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isPrincipalStatement should return false
       expect(statement.isPrincipalStatement()).toBe(false)
@@ -106,7 +154,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotPrincipal: {} }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isNotPrincipalStatement should return true
       expect(statement.isNotPrincipalStatement()).toBe(true)
@@ -117,7 +165,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isNotPrincipalStatement should return false
       expect(statement.isNotPrincipalStatement()).toBe(false)
@@ -130,7 +178,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Principal: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then principals should return a Principal with a wildcard
       expect(statement.principals().length).toEqual(1)
@@ -143,7 +191,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Principal: { AWS: '*' } }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then principals should return a Principal with an AWS principal
       expect(statement.principals().length).toEqual(1)
@@ -158,7 +206,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then principals should return multiple Principals with AWS principals
       expect(statement.principals().length).toEqual(2)
@@ -173,7 +221,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then principals should throw an error
       expect(() => statement.principals()).toThrow(
@@ -190,7 +238,9 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement: PrincipalStatement = new StatementImpl(statementDoc, 0, false)
+      const statement: PrincipalStatement = new StatementImpl(statementDoc, 0, {
+        path: 'Statement'
+      })
 
       //Then principalTypeIsArray should return true
       expect(statement.principalTypeIsArray('AWS')).toBe(true)
@@ -201,7 +251,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Principal: { AWS: 'arn:aws:iam::123456789012:root' } }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then principalTypeIsArray should return false
       expect(statement.principalTypeIsArray('AWS')).toBe(false)
@@ -212,7 +262,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Principal: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then principalTypeIsArray should return false
       expect(statement.principalTypeIsArray('AWS')).toBe(false)
@@ -223,7 +273,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then principalTypeIsArray should throw an error
       expect(() => statement.principalTypeIsArray('AWS')).toThrow(
@@ -238,7 +288,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Principal: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardPrincipal should return true
       expect(statement.hasSingleWildcardPrincipal()).toBe(true)
@@ -249,7 +299,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Principal: { AWS: ['*'] } }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardPrincipal should return false
       expect(statement.hasSingleWildcardPrincipal()).toBe(false)
@@ -262,7 +312,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardPrincipal should return false
       expect(statement.hasSingleWildcardPrincipal()).toBe(false)
@@ -273,7 +323,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardPrincipal should throw an error
       expect(() => statement.hasSingleWildcardPrincipal()).toThrow(
@@ -289,7 +339,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotPrincipal: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notPrincipals should return a Principal with a wildcard
       expect(statement.notPrincipals().length).toEqual(1)
@@ -302,7 +352,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notPrincipals should throw an error
       expect(() => statement.notPrincipals()).toThrow(
@@ -321,7 +371,9 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, false)
+      const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, {
+        path: 'Statement'
+      })
 
       //Then notPrincipalTypeIsArray should return true
       expect(statement.notPrincipalTypeIsArray('AWS')).toBe(true)
@@ -332,7 +384,9 @@ describe('StatementImpl', () => {
       const statementDoc = { NotPrincipal: { AWS: 'arn:aws:iam::123456789012:root' } }
 
       //When a StatementImpl is created with the statement
-      const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, false)
+      const statement: NotPrincipalStatement = new StatementImpl(statementDoc, 0, {
+        path: 'Statement'
+      })
 
       //Then notPrincipalTypeIsArray should return false
       expect(statement.notPrincipalTypeIsArray('AWS')).toBe(false)
@@ -343,7 +397,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotPrincipal: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notPrincipalTypeIsArray should return false
       expect(statement.notPrincipalTypeIsArray('AWS')).toBe(false)
@@ -354,7 +408,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notPrincipalTypeIsArray should throw an error
       expect(() => statement.notPrincipalTypeIsArray('AWS')).toThrow(
@@ -369,7 +423,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotPrincipal: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardNotPrincipal should return true
       expect(statement.hasSingleWildcardNotPrincipal()).toBe(true)
@@ -380,7 +434,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotPrincipal: { AWS: ['*'] } }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardNotPrincipal should return false
       expect(statement.hasSingleWildcardNotPrincipal()).toBe(false)
@@ -395,7 +449,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardNotPrincipal should return false
       expect(statement.hasSingleWildcardNotPrincipal()).toBe(false)
@@ -406,7 +460,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleWildcardNotPrincipal should throw an error
       expect(() => statement.hasSingleWildcardNotPrincipal()).toThrow(
@@ -421,7 +475,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Action: {} }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isActionStatement should return true
       expect(statement.isActionStatement()).toBe(true)
@@ -432,7 +486,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isActionStatement should return false
       expect(statement.isActionStatement()).toBe(false)
@@ -445,7 +499,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotAction: {} }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isNotActionStatement should return true
       expect(statement.isNotActionStatement()).toBe(true)
@@ -456,7 +510,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isNotActionStatement should return false
       expect(statement.isNotActionStatement()).toBe(false)
@@ -469,7 +523,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Action: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then actions should return an Action with a wildcard
       expect(statement.actions().length).toEqual(1)
@@ -482,7 +536,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Action: 's3:GetObject' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then actions should return an Action
       expect(statement.actions().length).toEqual(1)
@@ -494,7 +548,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Action: ['s3:GetObject', 's3:PutObject'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then actions should return multiple Actions
       expect(statement.actions().length).toEqual(2)
@@ -507,7 +561,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then actions should throw an error
       expect(() => statement.actions()).toThrow(
@@ -522,7 +576,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotAction: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notActions should return an Action with a wildcard
       expect(statement.notActions().length).toEqual(1)
@@ -535,7 +589,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotAction: ['s3:GetObject', 's3:PutObject'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notActions should return multiple Actions
       expect(statement.notActions().length).toEqual(2)
@@ -548,7 +602,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notActions should throw an error
       expect(() => statement.notActions()).toThrow(
@@ -563,7 +617,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: {} }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isResourceStatement should return true
       expect(statement.isResourceStatement()).toBe(true)
@@ -574,7 +628,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isResourceStatement should return false
       expect(statement.isResourceStatement()).toBe(false)
@@ -587,7 +641,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotResource: {} }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isNotResourceStatement should return true
       expect(statement.isNotResourceStatement()).toBe(true)
@@ -598,7 +652,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then isNotResourceStatement should return false
       expect(statement.isNotResourceStatement()).toBe(false)
@@ -611,7 +665,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then resources should return a Resource with a wildcard
       expect(statement.resources().length).toEqual(1)
@@ -623,7 +677,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: 'arn:aws:s3:::my_bucket' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then resources should return a Resource
       expect(statement.resources().length).toEqual(1)
@@ -635,7 +689,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then resources should return multiple Resources
       expect(statement.resources().length).toEqual(2)
@@ -648,7 +702,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then resources should throw an error
       expect(() => statement.resources()).toThrow(
@@ -663,7 +717,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotResource: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notResources should return a Resource with a wildcard
       expect(statement.notResources().length).toEqual(1)
@@ -677,7 +731,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notResources should return multiple Resources
       expect(statement.notResources().length).toEqual(2)
@@ -690,7 +744,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notResources should throw an error
       expect(() => statement.notResources()).toThrow(
@@ -705,7 +759,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleResourceWildcard should return true
       expect(statement.hasSingleResourceWildcard()).toBe(true)
@@ -716,7 +770,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: ['*'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleResourceWildcard should return false
       expect(statement.hasSingleResourceWildcard()).toBe(false)
@@ -727,7 +781,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleResourceWildcard should return false
       expect(statement.hasSingleResourceWildcard()).toBe(false)
@@ -738,7 +792,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleResourceWildcard should throw an error
       expect(() => statement.hasSingleResourceWildcard()).toThrow(
@@ -753,7 +807,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotResource: '*' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleNotResourceWildcard should return true
       expect(statement.hasSingleNotResourceWildcard()).toBe(true)
@@ -764,7 +818,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotResource: ['*'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleNotResourceWildcard should return false
       expect(statement.hasSingleNotResourceWildcard()).toBe(false)
@@ -777,7 +831,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleNotResourceWildcard should return false
       expect(statement.hasSingleNotResourceWildcard()).toBe(false)
@@ -788,7 +842,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then hasSingleNotResourceWildcard should throw an error
       expect(() => statement.hasSingleNotResourceWildcard()).toThrow(
@@ -803,7 +857,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: ['arn:aws:s3:::my_bucket', 'arn:aws:s3:::my_other_bucket'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then resourceIsArray should return true
       expect(statement.resourceIsArray()).toBe(true)
@@ -814,7 +868,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Resource: 'arn:aws:s3:::my_bucket' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then resourceIsArray should return false
       expect(statement.resourceIsArray()).toBe(false)
@@ -829,7 +883,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notResourceIsArray should return true
       expect(statement.notResourceIsArray()).toBe(true)
@@ -840,7 +894,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotResource: 'arn:aws:s3:::my_bucket' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notResourceIsArray should return false
       expect(statement.notResourceIsArray()).toBe(false)
@@ -853,7 +907,7 @@ describe('StatementImpl', () => {
       const statementDoc = {}
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then conditions should return an empty array
       expect(statement.conditions()).toEqual([])
@@ -870,7 +924,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then conditions should return the Condition
       expect(statement.conditions().length).toEqual(1)
@@ -891,7 +945,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then conditions should return the Condition
       expect(statement.conditions().length).toEqual(1)
@@ -919,7 +973,7 @@ describe('StatementImpl', () => {
       }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then conditions should return multiple Conditions
       expect(statement.conditions().length).toEqual(4)
@@ -944,7 +998,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Action: ['s3:GetObject', 's3:PutObject'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then actionIsArray should return true
       expect(statement.actionIsArray()).toBe(true)
@@ -955,7 +1009,7 @@ describe('StatementImpl', () => {
       const statementDoc = { Action: 's3:GetObject' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then actionIsArray should return false
       expect(statement.actionIsArray()).toBe(false)
@@ -968,7 +1022,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotAction: ['s3:GetObject', 's3:PutObject'] }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notActionIsArray should return true
       expect(statement.notActionIsArray()).toBe(true)
@@ -979,7 +1033,7 @@ describe('StatementImpl', () => {
       const statementDoc = { NotAction: 's3:GetObject' }
 
       //When a StatementImpl is created with the statement
-      const statement = new StatementImpl(statementDoc, 0, false)
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
       //Then notActionIsArray should return false
       expect(statement.notActionIsArray()).toBe(false)

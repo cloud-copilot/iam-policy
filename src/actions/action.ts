@@ -25,6 +25,11 @@ export interface Action {
    * Whether the action is a service action: `"service:Action"`
    */
   isServiceAction(): this is ServiceAction
+
+  /**
+   * The path to the action string in the policy
+   */
+  path(): string
 }
 
 /**
@@ -57,7 +62,16 @@ export interface ServiceAction extends Action {
 }
 
 export class ActionImpl implements Action, WildcardAction, ServiceAction {
-  constructor(private readonly rawValue: string) {}
+  constructor(
+    private readonly rawValue: string,
+    private readonly otherProps: {
+      path: string
+    }
+  ) {}
+
+  public path(): string {
+    return this.otherProps.path
+  }
 
   public type(): ActionType {
     if (isAllWildcards(this.rawValue)) {
