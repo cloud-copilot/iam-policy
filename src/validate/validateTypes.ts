@@ -118,6 +118,17 @@ export function validateResourceControlPolicy(policy: any): ValidationError[] {
   const policyType = 'a resource control policy'
 
   return validatePolicySyntax(policy, {
+    validateVersion: (version, path) => {
+      if (version !== '2012-10-17') {
+        return [
+          {
+            path: version === undefined ? path : `Version`,
+            message: `Version must be "2012-10-17" in ${policyType}`
+          }
+        ]
+      }
+      return []
+    },
     validateStatement: (statement, path) => {
       const errors: ValidationError[] = []
 

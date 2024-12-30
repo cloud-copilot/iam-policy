@@ -24,6 +24,7 @@ const allowedSetOperators = new Set(['forallvalues', 'foranyvalue'])
 type PolicyDataType = 'string' | 'object'
 
 export interface ValidationCallbacks {
+  validateVersion?: (version: any, path: string) => ValidationError[]
   validateStatement?: (statement: any, path: string) => ValidationError[]
   validateAction?: (action: string, path: string) => ValidationError[]
   validateNotAction?: (notAction: string, path: string) => ValidationError[]
@@ -47,7 +48,12 @@ export function validatePolicySyntax(
   }
 
   allErrors.push(...validateKeys(policyDocument, allowedPolicyKeys, ''))
-  allErrors.push(...validatePolicyVersion(policyDocument.Version))
+
+  if (validationCallbacks.validateVersion) {
+    allErrors.push(...validationCallbacks.validateVersion(policyDocument.Version, ''))
+  } else {
+    allErrors.push(...validatePolicyVersion(policyDocument.Version))
+  }
 
   allErrors.push(...validateDataTypeIfExists(policyDocument.Id, 'Id', 'string'))
   if (!policyDocument.Statement) {
