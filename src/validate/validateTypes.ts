@@ -141,7 +141,7 @@ export function validateResourceControlPolicy(policy: any): ValidationError[] {
 
       if (statement.Principal !== '*') {
         errors.push({
-          path: `${path}.Principal`,
+          path: statement.Principal == undefined ? path : `${path}.Principal`,
           message: `Principal must be "*" in ${policyType}`
         })
       }
