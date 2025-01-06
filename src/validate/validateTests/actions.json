@@ -75,6 +75,25 @@
     ]
   },
   {
+    "name": "Too many segments",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Action is required for the service",
+        "path": "Statement[0].Action"
+      }
+    ]
+  },
+  {
     "name": "Invalid Service",
     "policy": {
       "Version": "2012-10-17",

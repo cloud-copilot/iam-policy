@@ -289,7 +289,7 @@ function validateActionString(string: string, path: string): ValidationError[] {
   if (string === '*') {
     return []
   }
-  const parts = string.split(':')
+  const parts = string.trim().split(':')
   if (parts.length != 2) {
     return [
       {
@@ -307,7 +307,12 @@ function validateActionString(string: string, path: string): ValidationError[] {
       message: `Service can only contain letters, numbers, and hyphens`
     })
   }
-  if (!actionRegex.test(action)) {
+  if (action.length === 0) {
+    errors.push({
+      path,
+      message: `Action is required for the service`
+    })
+  } else if (!actionRegex.test(action)) {
     errors.push({
       path,
       message: `Action can only contain letters, numbers, asterisks, and question marks`
