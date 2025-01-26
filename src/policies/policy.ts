@@ -20,6 +20,11 @@ export interface Policy {
    * Whether the statement is an array
    */
   statementIsArray(): boolean
+
+  /**
+   * The raw policy object as JSON
+   */
+  toJSON(): any
 }
 
 export class PolicyImpl implements Policy {
@@ -48,5 +53,9 @@ export class PolicyImpl implements Policy {
 
   public statementIsArray(): boolean {
     return Array.isArray(this.policyObject.Statement)
+  }
+
+  public toJSON(): any {
+    return this.policyObject
   }
 }
