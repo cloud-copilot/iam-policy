@@ -1,6 +1,6 @@
 # IAM Policy Syntax Validator and Parser
 
-[![NPM Version](https://img.shields.io/npm/v/@cloud-copilot/iam-policy.svg?logo=nodedotjs)](https://www.npmjs.com/package/@cloud-copilot/iam-policy) [![License: AGPL v3](https://img.shields.io/github/license/cloud-copilot/iam-policy)](LICENSE.txt)
+[![NPM Version](https://img.shields.io/npm/v/@cloud-copilot/iam-policy.svg?logo=nodedotjs)](https://www.npmjs.com/package/@cloud-copilot/iam-policy) [![License: AGPL v3](https://img.shields.io/github/license/cloud-copilot/iam-policy)](LICENSE.txt) [![GuardDog](https://github.com/cloud-copilot/iam-policy/actions/workflows/guarddog.yml/badge.svg)](https://github.com/cloud-copilot/iam-policy/actions/workflows/guarddog.yml) [![Known Vulnerabilities](https://snyk.io/test/github/cloud-copilot/iam-policy/badge.svg?targetFile=package.json&style=flat-square)](https://snyk.io/test/github/cloud-copilot/iam-policy?targetFile=package.json)
 
 This is a simple IAM policy library that allows you to safely parse and navigate IAM policies without worrying about the more difficult details of parsing policies or validating syntax.
 
