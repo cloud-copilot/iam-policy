@@ -1,6 +1,6 @@
 import { Statement, StatementImpl } from '../statements/statement.js'
 
-export interface Policy {
+export interface Policy<T = undefined> {
   /**
    * The version of the policy
    */
@@ -25,10 +25,20 @@ export interface Policy {
    * The raw policy object as JSON
    */
   toJSON(): any
+
+  /**
+   * Metadata is any object to store additional information about the policy.
+   * Up to you as a user to define the type of the metadata and is optional.
+   */
+  metadata(): T extends undefined ? undefined : T
+  // metadata(): MetadataType<T>
 }
 
-export class PolicyImpl implements Policy {
-  constructor(private readonly policyObject: any) {}
+export class PolicyImpl<T> implements Policy<T> {
+  constructor(
+    private readonly policyObject: any,
+    private readonly theMetadata?: T
+  ) {}
 
   public version(): string | undefined {
     return this.policyObject.Version
@@ -57,5 +67,10 @@ export class PolicyImpl implements Policy {
 
   public toJSON(): any {
     return this.policyObject
+  }
+
+  public metadata(): T extends undefined ? undefined : T {
+    // public metadata(): MetadataType<T> {
+    return this.theMetadata as T extends undefined ? undefined : T
   }
 }

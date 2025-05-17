@@ -128,4 +128,41 @@ describe('PolicyImpl', () => {
       expect(policy.statementIsArray()).toBe(false)
     })
   })
+
+  describe('toJSON', () => {
+    it('should return the policy object as JSON', () => {
+      // Given a policy object
+      const policyObject = {
+        Version: '2012-10-17',
+        Statement: {
+          Sid: 'Lonely',
+          Effect: 'Allow',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my_corporate_bucket/*'
+        }
+      }
+
+      // When a PolicyImpl is created
+      const policy = new PolicyImpl(policyObject, false)
+
+      // Then the toJSON should return the policy object
+      expect(policy.toJSON()).toEqual(policyObject)
+    })
+  })
+
+  describe('metadata', () => {
+    it('should return the metadata', () => {
+      // Given a policy object and metadata
+      const policyObject = {
+        Version: '2012-10-17'
+      }
+      const metadata = { key: 'value' }
+
+      // When a PolicyImpl is created
+      const policy = new PolicyImpl(policyObject, metadata)
+
+      // Then the metadata should be the metadata
+      expect(policy.metadata()).toEqual(metadata)
+    })
+  })
 })
