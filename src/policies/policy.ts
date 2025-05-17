@@ -31,7 +31,6 @@ export interface Policy<T = undefined> {
    * Up to you as a user to define the type of the metadata and is optional.
    */
   metadata(): T extends undefined ? undefined : T
-  // metadata(): MetadataType<T>
 }
 
 export class PolicyImpl<T> implements Policy<T> {
