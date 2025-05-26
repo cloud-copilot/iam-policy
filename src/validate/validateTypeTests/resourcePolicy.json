@@ -51,24 +51,5 @@
         "path": "Statement[0]"
       }
     ]
-  },
-  {
-    "name": "Resource or NotResource is required",
-    "policy": {
-      "Statement": [
-        {
-          "Sid": "AllowGetObject",
-          "Effect": "Deny",
-          "NotAction": "s3:GetObject",
-          "Principal": "*"
-        }
-      ]
-    },
-    "expectedErrors": [
-      {
-        "message": "One of Resource or NotResource is required in a resource policy",
-        "path": "Statement[0]"
-      }
-    ]
   }
 ]

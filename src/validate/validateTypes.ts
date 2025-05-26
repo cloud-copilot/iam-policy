@@ -88,7 +88,9 @@ export function validateServiceControlPolicy(policy: any): ValidationError[] {
 }
 
 /**
- * Validates a Resource Policy attached to an S3 bucket, SQS queue, or other resource
+ * Validates a Resource Policy attached to an S3 bucket, SQS queue, or other resource. \
+ *
+ * This is very generic and will not be able to validate all resource policies.
  *
  * @param policy the policy to validate
  * @returns an array of validation errors
@@ -102,7 +104,6 @@ export function validateResourcePolicy(policy: any): ValidationError[] {
       errors.push(
         ...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType)
       )
-      errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
       return errors
     }
   })
