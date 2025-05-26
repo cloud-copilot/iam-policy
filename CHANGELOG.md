@@ -1,3 +1,10 @@
+## [0.1.27](https://github.com/cloud-copilot/iam-policy/compare/v0.1.26...v0.1.27) (2025-05-26)
+
+
+### Bug Fixes
+
+* Fix generic resource policy validation. Should not expect Resource or NotResource. ([9d2ee8a](https://github.com/cloud-copilot/iam-policy/commit/9d2ee8a1772c93cec28af2647c7421cbbc0eec29))
+
 ## [0.1.26](https://github.com/cloud-copilot/iam-policy/compare/v0.1.25...v0.1.26) (2025-05-26)
 
 ## [0.1.25](https://github.com/cloud-copilot/iam-policy/compare/v0.1.24...v0.1.25) (2025-05-24)
