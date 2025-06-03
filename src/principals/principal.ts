@@ -1,3 +1,5 @@
+import { isAllWildcards } from '../utils.js'
+
 export type PrincipalType = 'AWS' | 'Service' | 'Federated' | 'CanonicalUser'
 
 /**
@@ -144,7 +146,7 @@ export class PrincipalImpl
   }
 
   public isWildcardPrincipal(): this is WildcardPrincipal {
-    return this.principalType === 'AWS' && this.principalId === '*'
+    return this.principalType === 'AWS' && isAllWildcards(this.principalId)
   }
 
   public isAccountPrincipal(): this is AccountPrincipal {
@@ -167,7 +169,9 @@ export class PrincipalImpl
     }
     const anyThis: any = this
     return (
-      anyThis.principalId != '*' && !anyThis.isAccountPrincipal() && !anyThis.isUniqueIdPrincipal()
+      !isAllWildcards(anyThis.principalId) &&
+      !anyThis.isAccountPrincipal() &&
+      !anyThis.isUniqueIdPrincipal()
     )
   }
 
