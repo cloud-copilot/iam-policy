@@ -38,6 +38,12 @@ export interface Statement {
   isDeny(): boolean
 
   /**
+   * The conditions of the statement as a map similar to the AWS IAM policy document.
+   * In this case all condition values are arrays, instead of strings or arrays.
+   */
+  conditionMap(): Record<string, Record<string, string[]>> | undefined
+
+  /**
    * The conditions for the statement
    */
   conditions(): Condition[]
@@ -454,6 +460,22 @@ export class StatementImpl
       )
     }
     return this.statementObject.NotResource === '*'
+  }
+
+  public conditionMap(): Record<string, Record<string, string[]>> | undefined {
+    if (!this.statementObject.Condition) {
+      return undefined
+    }
+    const result = {} as Record<string, Record<string, string[]>>
+    for (const key of Object.keys(this.statementObject.Condition)) {
+      const value = this.statementObject.Condition[key]
+      result[key] = {}
+      for (const subKey of Object.keys(value)) {
+        const subValue = value[subKey]
+        result[key][subKey] = [subValue].flat()
+      }
+    }
+    return result
   }
 
   public conditions(): Condition[] {
