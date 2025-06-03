@@ -1,3 +1,10 @@
+## [0.1.29](https://github.com/cloud-copilot/iam-policy/compare/v0.1.28...v0.1.29) (2025-06-03)
+
+
+### Features
+
+* adding the ability to get back the conditions from a statement as a map ([c95acc5](https://github.com/cloud-copilot/iam-policy/commit/c95acc5ec7e9952992b4d322a288b4dca4b11a3c))
+
 ## [0.1.28](https://github.com/cloud-copilot/iam-policy/compare/v0.1.27...v0.1.28) (2025-06-03)
 
 
