@@ -472,7 +472,7 @@ export class StatementImpl
       result[key] = {}
       for (const subKey of Object.keys(value)) {
         const subValue = value[subKey]
-        result[key][subKey] = [subValue].flat()
+        result[key][subKey] = Array.isArray(subValue) ? subValue : [subValue]
       }
     }
     return result
