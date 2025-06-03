@@ -27,6 +27,17 @@ describe('Principal', () => {
       expect(isWildcardPrincipal).toBe(true)
     })
 
+    it('returns true if the principal is multiple wildcards', () => {
+      //Given a principal with multiple wildcards
+      const principal = new PrincipalImpl('AWS', '**')
+
+      //When the principal is checked
+      const isWildcardPrincipal = principal.isWildcardPrincipal()
+
+      //Then the principal is a wildcard principal
+      expect(isWildcardPrincipal).toBe(true)
+    })
+
     it('returns false if the principal is not a wildcard principal', () => {
       //Given a non-wildcard principal
       const principal = new PrincipalImpl('AWS', '123456789012')

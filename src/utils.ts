@@ -5,5 +5,5 @@
  * @returns True if the value is all wildcards, false otherwise
  */
 export function isAllWildcards(value: string): boolean {
-  return value.match(/^\**$/) !== null
+  return value.match(/^\*+$/) !== null
 }
