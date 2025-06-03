@@ -1,3 +1,10 @@
+## [0.1.28](https://github.com/cloud-copilot/iam-policy/compare/v0.1.27...v0.1.28) (2025-06-03)
+
+
+### Features
+
+* Improving detection of wildcard principals ([a1edf2d](https://github.com/cloud-copilot/iam-policy/commit/a1edf2d591c7b62d8d624e9cc1884b2f42090c72))
+
 ## [0.1.27](https://github.com/cloud-copilot/iam-policy/compare/v0.1.26...v0.1.27) (2025-05-26)
 
 
