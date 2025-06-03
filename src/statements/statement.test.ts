@@ -901,6 +901,42 @@ describe('StatementImpl', () => {
     })
   })
 
+  describe('conditionMap', () => {
+    it('should return put single values in arrays and arrays as array', () => {
+      //Given a statement with a Condition
+      const statementDoc = {
+        Condition: {
+          StringEquals: {
+            's3:prefix': 'home/${aws:username}',
+            'aws:PrincipalTag/Foo': ['Bar', 'Baz']
+          }
+        }
+      }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
+
+      //Then conditionMap should return the conditionMap with single values in arrays and arrays as array
+      expect(statement.conditionMap()).toEqual({
+        StringEquals: {
+          's3:prefix': ['home/${aws:username}'],
+          'aws:PrincipalTag/Foo': ['Bar', 'Baz']
+        }
+      })
+    })
+
+    it('should return undefined if the statement does not have a Condition', () => {
+      //Given a statement without a Condition
+      const statementDoc = {}
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
+
+      //Then conditionMap should return undefined
+      expect(statement.conditionMap()).toBeUndefined()
+    })
+  })
+
   describe('conditions', () => {
     it('should return an empty array if the statement does not have a Condition', () => {
       //Given a statement without a Condition
