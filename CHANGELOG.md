@@ -1,3 +1,10 @@
+## [0.1.33](https://github.com/cloud-copilot/iam-policy/compare/v0.1.32...v0.1.33) (2025-06-29)
+
+
+### Bug Fixes
+
+* Correct return types of metadata policies ([1c66199](https://github.com/cloud-copilot/iam-policy/commit/1c66199a7b9975eabb9ea611f41db4a490c187dc))
+
 ## [0.1.32](https://github.com/cloud-copilot/iam-policy/compare/v0.1.31...v0.1.32) (2025-06-21)
 
 ## [0.1.31](https://github.com/cloud-copilot/iam-policy/compare/v0.1.30...v0.1.31) (2025-06-17)
