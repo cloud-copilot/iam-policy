@@ -30,10 +30,10 @@ export interface Policy<T = undefined> {
    * Metadata is any object to store additional information about the policy.
    * Up to you as a user to define the type of the metadata and is optional.
    */
-  metadata(): T extends undefined ? undefined : T
+  metadata(): T
 }
 
-export class PolicyImpl<T> implements Policy<T> {
+export class PolicyImpl<T = undefined> implements Policy<T> {
   constructor(
     private readonly policyObject: any,
     private readonly theMetadata?: T
@@ -68,8 +68,7 @@ export class PolicyImpl<T> implements Policy<T> {
     return this.policyObject
   }
 
-  public metadata(): T extends undefined ? undefined : T {
-    // public metadata(): MetadataType<T> {
-    return this.theMetadata as T extends undefined ? undefined : T
+  public metadata(): T {
+    return this.theMetadata as T
   }
 }
