@@ -1,3 +1,10 @@
+## [0.1.35](https://github.com/cloud-copilot/iam-policy/compare/v0.1.34...v0.1.35) (2025-06-30)
+
+
+### Features
+
+* Improved VPC Endpoint validation ([5af57cb](https://github.com/cloud-copilot/iam-policy/commit/5af57cbed43dfc921b419a8f83d68183a35d6142))
+
 ## [0.1.34](https://github.com/cloud-copilot/iam-policy/compare/v0.1.33...v0.1.34) (2025-06-29)
 
 ## [0.1.33](https://github.com/cloud-copilot/iam-policy/compare/v0.1.32...v0.1.33) (2025-06-29)
