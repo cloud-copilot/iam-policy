@@ -203,11 +203,16 @@ export function validateEndpointPolicy(policy: any): ValidationError[] {
     validateStatement: (statement, path) => {
       const policyType = 'an endpoint policy'
       const errors: ValidationError[] = []
+      errors.push(...validateProhibitedFields(statement, ['NotPrincipal'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
-      errors.push(
-        ...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType)
-      )
+      errors.push(...validateAtLeastOneOf(statement, ['Principal'], path, policyType))
+      if (statement.Principal && statement.Principal !== '*') {
+        errors.push({
+          message: `Principal must be "*" in ${policyType}`,
+          path: `${path}.Principal`
+        })
+      }
       return errors
     }
   })
