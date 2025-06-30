@@ -23,7 +23,7 @@
           "Effect": "Deny",
           "NotAction": "s3:GetObject",
           "NotResource": "arn:aws:s3:::my_corporate_bucket",
-          "NotPrincipal": "*"
+          "Principal": "*"
         }
       ]
     },
@@ -49,7 +49,7 @@
     ]
   },
   {
-    "name": "Principal or NotPrincipal must be present",
+    "name": "Principal must be Present",
     "policy": {
       "Statement": [
         {
@@ -62,8 +62,28 @@
     },
     "expectedErrors": [
       {
-        "message": "One of Principal or NotPrincipal is required in an endpoint policy",
+        "message": "Principal is required in an endpoint policy",
         "path": "Statement[0]"
+      }
+    ]
+  },
+  {
+    "name": "Principal must be *",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Deny",
+          "Resource": "arn:aws:s3:::my_corporate_bucket",
+          "Action": "s3:GetObject",
+          "Principal": "arn:aws:iam::123456789012:root"
+        }
+      ]
+    },
+    "expectedErrors": [
+      {
+        "message": "Principal must be \"*\" in an endpoint policy",
+        "path": "Statement[0].Principal"
       }
     ]
   },
