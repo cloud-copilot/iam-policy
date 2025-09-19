@@ -1,3 +1,10 @@
+## [0.1.47](https://github.com/cloud-copilot/iam-policy/compare/v0.1.46...v0.1.47) (2025-09-19)
+
+
+### Features
+
+* Update SCP validation for new IAM Features ([555fbc5](https://github.com/cloud-copilot/iam-policy/commit/555fbc5b9684d5288542279b4695ecb7cba05096))
+
 ## [0.1.46](https://github.com/cloud-copilot/iam-policy/compare/v0.1.45...v0.1.46) (2025-09-15)
 
 ## [0.1.45](https://github.com/cloud-copilot/iam-policy/compare/v0.1.44...v0.1.45) (2025-09-07)
