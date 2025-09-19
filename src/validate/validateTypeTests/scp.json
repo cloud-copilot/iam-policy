@@ -54,7 +54,7 @@
     ]
   },
   {
-    "name": "Cannot contain NotResource",
+    "name": "NotResource is allowed",
     "policy": {
       "Statement": [
         {
@@ -65,19 +65,10 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "message": "NotResource is not allowed in a service control policy",
-        "path": "Statement[0].#NotResource"
-      },
-      {
-        "message": "Resource is required in a service control policy",
-        "path": "Statement[0]"
-      }
-    ]
+    "expectedErrors": []
   },
   {
-    "name": "Resource is Required",
+    "name": "Resource or NotResource is Required",
     "policy": {
       "Statement": [
         {
@@ -90,7 +81,7 @@
     "expectedErrors": [
       {
         "path": "Statement[0]",
-        "message": "Resource is required in a service control policy"
+        "message": "One of Resource or NotResource is required in a service control policy"
       }
     ]
   },
@@ -127,7 +118,7 @@
     "expectedErrors": []
   },
   {
-    "name": "Action Asterisk must be at end of string",
+    "name": "Action Asterisk Can be at the beginning of string",
     "policy": {
       "Statement": [
         {
@@ -138,15 +129,10 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].Action",
-        "message": "Wildcard characters are only allowed at the end of Action in a service control policy"
-      }
-    ]
+    "expectedErrors": []
   },
   {
-    "name": "Action Question Mark must be at end of string",
+    "name": "Action Question Mark Can be at beginning of string",
     "policy": {
       "Statement": [
         {
@@ -157,15 +143,10 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].Action",
-        "message": "Wildcard characters are only allowed at the end of Action in a service control policy"
-      }
-    ]
+    "expectedErrors": []
   },
   {
-    "name": "NotAction Asterisk must be at end of string",
+    "name": "NotAction Asterisk can be anywhere in string",
     "policy": {
       "Statement": [
         {
@@ -176,15 +157,10 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].NotAction",
-        "message": "Wildcard characters are only allowed at the end of NotAction in a service control policy"
-      }
-    ]
+    "expectedErrors": []
   },
   {
-    "name": "NotAction Question Mark must be at end of string",
+    "name": "NotAction Question Mark can be anywhere in string",
     "policy": {
       "Statement": [
         {
@@ -195,29 +171,10 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].NotAction",
-        "message": "Wildcard characters are only allowed at the end of NotAction in a service control policy"
-      }
-    ]
-  },
-  {
-    "name": "Allow Statement can have an asterisk in Resource",
-    "policy": {
-      "Statement": [
-        {
-          "Sid": "AllowGetObject",
-          "Effect": "Deny",
-          "Resource": "*",
-          "Action": "s3:GetBucket"
-        }
-      ]
-    },
     "expectedErrors": []
   },
   {
-    "name": "Allow Statement must have an asterisk in Resource",
+    "name": "Allow Statement can have specific Resource",
     "policy": {
       "Statement": [
         {
@@ -228,12 +185,21 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0]",
-        "message": "Resource must be \"*\" when Effect is \"Allow\" in a service control policy"
-      }
-    ]
+    "expectedErrors": []
+  },
+  {
+    "name": "Allow Statement can have asterisk in Resource",
+    "policy": {
+      "Statement": [
+        {
+          "Sid": "AllowGetObject",
+          "Effect": "Allow",
+          "Resource": "*",
+          "Action": "s3:GetBucket"
+        }
+      ]
+    },
+    "expectedErrors": []
   },
   {
     "name": "NotAction is allowed in a Deny statement",
@@ -250,7 +216,7 @@
     "expectedErrors": []
   },
   {
-    "name": "NotAction is not allowed in an Allow statement",
+    "name": "NotAction is allowed in an Allow statement",
     "policy": {
       "Statement": [
         {
@@ -261,12 +227,7 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].#NotAction",
-        "message": "NotAction is not allowed when Effect is \"Allow\" in a service control policy"
-      }
-    ]
+    "expectedErrors": []
   },
   {
     "name": "Condition is allowed in a Deny statement",
@@ -288,7 +249,7 @@
     "expectedErrors": []
   },
   {
-    "name": "Condition is not allowed in an Allow statement",
+    "name": "Condition is now allowed in an Allow statement",
     "policy": {
       "Statement": [
         {
@@ -304,11 +265,6 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].#Condition",
-        "message": "Condition is not allowed when Effect is \"Allow\" in a service control policy"
-      }
-    ]
+    "expectedErrors": []
   }
 ]

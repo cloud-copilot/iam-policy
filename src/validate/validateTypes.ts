@@ -30,60 +30,17 @@ export function validateIdentityPolicy(policy: any): ValidationError[] {
 export function validateServiceControlPolicy(policy: any): ValidationError[] {
   const policyType = 'a service control policy'
 
-  const validateAction = (action: string, path: string, type: string): ValidationError[] => {
-    const firstWildcard = Math.max(action.indexOf('*'), action.indexOf('?'))
-    if (firstWildcard === -1) {
-      return []
-    }
-    if (firstWildcard == action.length - 1) {
-      return []
-    }
-    return [
-      {
-        path,
-        message: `Wildcard characters are only allowed at the end of ${type} in ${policyType}`
-      }
-    ]
-  }
-
   return validatePolicySyntax(policy, {
     validateStatement: (statement, path) => {
       const errors: ValidationError[] = []
       errors.push(
-        ...validateProhibitedFields(
-          statement,
-          ['Principal', 'NotPrincipal', 'NotResource'],
-          path,
-          policyType
-        )
+        ...validateProhibitedFields(statement, ['Principal', 'NotPrincipal'], path, policyType)
       )
-      errors.push(...validateAtLeastOneOf(statement, ['Resource'], path, policyType))
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
+      errors.push(...validateAtLeastOneOf(statement, ['Resource', 'NotResource'], path, policyType))
 
-      if (statement.Effect === 'Allow') {
-        if (statement.Resource !== '*') {
-          errors.push({
-            path,
-            message: `Resource must be "*" when Effect is "Allow" in ${policyType}`
-          })
-        }
-        if (statement.NotAction) {
-          errors.push({
-            path: `${path}.#NotAction`,
-            message: `NotAction is not allowed when Effect is "Allow" in ${policyType}`
-          })
-        }
-        if (statement.Condition) {
-          errors.push({
-            path: `${path}.#Condition`,
-            message: `Condition is not allowed when Effect is "Allow" in ${policyType}`
-          })
-        }
-      }
       return errors
-    },
-    validateAction: (action, path) => validateAction(action, path, 'Action'),
-    validateNotAction: (action, path) => validateAction(action, path, 'NotAction')
+    }
   })
 }
 
