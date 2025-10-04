@@ -1,6 +1,6 @@
 {
   "name": "@cloud-copilot/iam-policy",
-  "version": "0.1.49",
+  "version": "0.1.50",
   "description": "An ORM for AWS IAM policies",
   "repository": {
     "type": "git",
