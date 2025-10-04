@@ -84,7 +84,7 @@ export interface Statement {
   path(): string
 
   /**
-   * The raw policy object as JSON
+   * Returns the raw policy object
    */
   toJSON(): any
 }
