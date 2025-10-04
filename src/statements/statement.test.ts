@@ -1075,4 +1075,21 @@ describe('StatementImpl', () => {
       expect(statement.notActionIsArray()).toBe(false)
     })
   })
+
+  describe('toJSON', () => {
+    it('should return the original statement object', () => {
+      //Given a statement
+      const statementDoc = {
+        Effect: 'Allow',
+        Action: 's3:GetObject',
+        Resource: 'arn:aws:s3:::my_bucket/*'
+      }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
+
+      //Then toJSON should return the original statement object
+      expect(statement.toJSON()).toEqual(statementDoc)
+    })
+  })
 })

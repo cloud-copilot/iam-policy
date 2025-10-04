@@ -82,6 +82,11 @@ export interface Statement {
    * The path to the statement in the policy
    */
   path(): string
+
+  /**
+   * Returns the raw policy object
+   */
+  toJSON(): any
 }
 
 /**
@@ -310,6 +315,10 @@ export class StatementImpl
       )
     }
     return this.statementObject.NotPrincipal === '*'
+  }
+
+  public toJSON(): any {
+    return this.statementObject
   }
 
   /**
