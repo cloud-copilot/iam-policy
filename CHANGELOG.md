@@ -1,3 +1,5 @@
+## [0.1.55](https://github.com/cloud-copilot/iam-policy/compare/v0.1.54...v0.1.55) (2025-11-01)
+
 ## [0.1.54](https://github.com/cloud-copilot/iam-policy/compare/v0.1.53...v0.1.54) (2025-10-25)
 
 ## [0.1.53](https://github.com/cloud-copilot/iam-policy/compare/v0.1.52...v0.1.53) (2025-10-18)
