@@ -1,3 +1,10 @@
+## [0.1.57](https://github.com/cloud-copilot/iam-policy/compare/v0.1.56...v0.1.57) (2025-11-09)
+
+
+### Bug Fixes
+
+* Remove GuardDog package scan ([46b20a4](https://github.com/cloud-copilot/iam-policy/commit/46b20a416076c7814669316b2fd007e5c6c9fe3a))
+
 ## [0.1.56](https://github.com/cloud-copilot/iam-policy/compare/v0.1.55...v0.1.56) (2025-11-08)
 
 ## [0.1.55](https://github.com/cloud-copilot/iam-policy/compare/v0.1.54...v0.1.55) (2025-11-01)
