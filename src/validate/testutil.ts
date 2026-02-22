@@ -1,4 +1,4 @@
-import { ValidationError } from './validate.js'
+import { type ValidationError } from './validate.js'
 
 export function sortErrors(errors: ValidationError[]): ValidationError[] {
   return errors.sort((a, b) => {
