@@ -1,7 +1,7 @@
-import { Action, ActionImpl } from '../actions/action.js'
-import { Condition, ConditionImpl } from '../conditions/condition.js'
-import { Principal, PrincipalImpl, PrincipalType } from '../principals/principal.js'
-import { Resource, ResourceImpl } from '../resources/resource.js'
+import { type Action, ActionImpl } from '../actions/action.js'
+import { type Condition, ConditionImpl } from '../conditions/condition.js'
+import { type Principal, PrincipalImpl, type PrincipalType } from '../principals/principal.js'
+import { type Resource, ResourceImpl } from '../resources/resource.js'
 
 /*
 things to change in a statement

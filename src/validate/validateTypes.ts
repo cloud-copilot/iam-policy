@@ -1,4 +1,4 @@
-import { validatePolicySyntax, ValidationError } from './validate.js'
+import { validatePolicySyntax, type ValidationError } from './validate.js'
 
 /**
  * Validates an Identity Policy attached to an IAM role or user, or managed policy

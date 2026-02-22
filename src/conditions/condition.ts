@@ -1,4 +1,4 @@
-import { ConditionOperation, ConditionOperationImpl } from './conditionOperation.js'
+import { type ConditionOperation, ConditionOperationImpl } from './conditionOperation.js'
 
 export interface Condition {
   /**

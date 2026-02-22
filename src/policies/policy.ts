@@ -1,4 +1,4 @@
-import { Statement, StatementImpl } from '../statements/statement.js'
+import { type Statement, StatementImpl } from '../statements/statement.js'
 
 export interface Policy<T = undefined> {
   /**

@@ -85,7 +85,7 @@ export function validatePolicySyntax(
       },
       {} as Record<string, number>
     )
-    for (const [sid, paths] of Object.entries<string[]>(statementIdCounts)) {
+    for (const [, paths] of Object.entries<string[]>(statementIdCounts)) {
       if (paths.length > 1) {
         for (const path of paths) {
           allErrors.push({
