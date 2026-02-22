@@ -83,7 +83,7 @@ export function validatePolicySyntax(
         }
         return acc
       },
-      {} as Record<string, number>
+      {} as Record<string, string[]>
     )
     for (const [, paths] of Object.entries<string[]>(statementIdCounts)) {
       if (paths.length > 1) {
