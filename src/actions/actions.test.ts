@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { loadPolicy } from '../parser.js'
-import { ActionStatement } from '../statements/statement.js'
+import type { ActionStatement } from '../statements/statement.js'
 import { ActionImpl } from './action.js'
 
 describe('ActionImpl', () => {
