@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { loadPolicy } from '../parser.js'
-import { ResourceStatement } from '../statements/statement.js'
+import type { ResourceStatement } from '../statements/statement.js'
 import { ResourceImpl } from './resource.js'
 
 describe('ResourceImpl', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { loadPolicy } from '../parser.js'
-import { NotPrincipalStatement, PrincipalStatement, StatementImpl } from './statement.js'
+import { type NotPrincipalStatement, type PrincipalStatement, StatementImpl } from './statement.js'
 
 describe('StatementImpl', () => {
   describe('sid', () => {
