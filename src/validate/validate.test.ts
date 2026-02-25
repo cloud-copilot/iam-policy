@@ -23,7 +23,7 @@ function getAllFiles(dir: string, allFiles: string[] = []): string[] {
   return allFiles
 }
 
-describe('valdiatePolicySyntax', () => {
+describe('validatePolicySyntax', () => {
   const testFolderPath = resolve(join(__dirname, 'validateTests'))
   const allFiles = getAllFiles(testFolderPath)
   const pickTest: string | undefined = undefined
