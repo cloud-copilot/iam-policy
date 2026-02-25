@@ -151,7 +151,7 @@
     ]
   },
   {
-    "name": "Vaid set operators",
+    "name": "Valid set operators",
     "policy": {
       "Statement": {
         "Effect": "Allow",

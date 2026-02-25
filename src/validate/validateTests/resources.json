@@ -87,7 +87,7 @@
     "expectedErrors": []
   },
   {
-    "name": "Multiple ARN Resources withour arn prefix",
+    "name": "Multiple ARN Resources without arn prefix",
     "policy": {
       "Version": "2012-10-17",
       "Statement": [
