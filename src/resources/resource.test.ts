@@ -18,7 +18,7 @@ describe('ResourceImpl', () => {
         ]
       })
 
-      // When the recource is extracted
+      // When the resource is extracted
       const resource = (policy.statements()[0] as ResourceStatement).resources()[0]
 
       // Then the path should be "Resource"
@@ -38,7 +38,7 @@ describe('ResourceImpl', () => {
         ]
       })
 
-      // When the recources are extracted
+      // When the resources are extracted
       const resources = (policy.statements()[0] as ResourceStatement).resources()
 
       // Then the path should be "Statement[0].Resource[0]" and "Statement[0].Resource[1]"
