@@ -56,6 +56,20 @@
     "expectedErrors": []
   },
   {
+    "name": "Action with Comma",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:GetObject,PutObject",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
     "name": "Too many segments",
     "policy": {
       "Version": "2012-10-17",
@@ -126,7 +140,7 @@
     },
     "expectedErrors": [
       {
-        "message": "Action can only contain letters, numbers, asterisks, and question marks",
+        "message": "Action can only contain letters, numbers, asterisks, question marks, and commas",
         "path": "Statement[0].Action"
       }
     ]
