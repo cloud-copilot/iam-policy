@@ -1,3 +1,10 @@
+## [0.1.77](https://github.com/cloud-copilot/iam-policy/compare/v0.1.76...v0.1.77) (2026-03-04)
+
+
+### Bug Fixes
+
+* Allow commas in action strings, because AWS will technically let you save that. ([7fcada3](https://github.com/cloud-copilot/iam-policy/commit/7fcada35fdd4d4facb948b9d76e12f50e2751693))
+
 ## [0.1.76](https://github.com/cloud-copilot/iam-policy/compare/v0.1.75...v0.1.76) (2026-03-02)
 
 ## [0.1.75](https://github.com/cloud-copilot/iam-policy/compare/v0.1.74...v0.1.75) (2026-02-25)
