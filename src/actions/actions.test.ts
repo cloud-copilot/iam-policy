@@ -68,6 +68,28 @@ describe('ActionImpl', () => {
       // Assert
       expect(action.type()).toBe('service')
     })
+
+    it('should return wildcard when multiple wildcard characters', () => {
+      // Given an action wildcard
+      const actionString = '***'
+
+      // When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      // Assert
+      expect(action.type()).toBe('wildcard')
+    })
+
+    it('should return service for comma-delimited action strings', () => {
+      // Given a comma-delimited action string
+      const actionString = 's3:GetObject,PutObject'
+
+      // When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      // Assert
+      expect(action.type()).toBe('service')
+    })
   })
 
   describe('wildcardValue', () => {
@@ -155,6 +177,17 @@ describe('ActionImpl', () => {
       // Assert
       expect(action.service()).toBe('s3')
     })
+
+    it('should lowercase the service', () => {
+      // Given an action string
+      const actionString = 'S3:GetObject'
+
+      // When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      // Assert
+      expect(action.service()).toBe('s3')
+    })
   })
 
   describe('action', () => {
@@ -167,6 +200,34 @@ describe('ActionImpl', () => {
 
       // Assert
       expect(action.action()).toBe('GetObject')
+    })
+  })
+
+  describe('type guards', () => {
+    it('should be consistent for wildcard actions', () => {
+      // Given an action wildcard
+      const actionString = '*'
+
+      // When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      // Assert
+      expect(action.type()).toBe('wildcard')
+      expect(action.isWildcardAction()).toBe(true)
+      expect(action.isServiceAction()).toBe(false)
+    })
+
+    it('should be consistent for service actions', () => {
+      // Given an action string
+      const actionString = 's3:GetObject'
+
+      // When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      // Assert
+      expect(action.type()).toBe('service')
+      expect(action.isWildcardAction()).toBe(false)
+      expect(action.isServiceAction()).toBe(true)
     })
   })
 })
