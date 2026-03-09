@@ -499,9 +499,14 @@ export class StatementImpl
     return Object.entries(this.statementObject.Condition)
       .map(([opKey, opValue]) => {
         return Object.entries(opValue as any).map(([condKey, condValue]) => {
-          return new ConditionImpl(opKey, condKey, condValue as string | string[], {
-            conditionPath: `${this.path()}.Condition`
-          })
+          return new ConditionImpl(
+            opKey,
+            condKey,
+            condValue as string | boolean | (string | boolean)[],
+            {
+              conditionPath: `${this.path()}.Condition`
+            }
+          )
         })
       })
       .flat()

@@ -21,7 +21,7 @@ const allowedStatementKeys = new Set([
 const allowedPrincipalKeys = new Set(['AWS', 'Service', 'Federated', 'CanonicalUser'])
 const validConditionOperatorPattern = /^[a-zA-Z0-9:]+$/
 const allowedSetOperators = new Set(['forallvalues', 'foranyvalue'])
-type PolicyDataType = 'string' | 'object'
+type PolicyDataType = 'string' | 'object' | 'boolean'
 
 export interface ValidationCallbacks {
   validateVersion?: (version: any, path: string) => ValidationError[]
@@ -232,13 +232,18 @@ function validateResource(resource: any, path: string): ValidationError[] {
     return []
   }
   if (typeof resource === 'string') {
-    return validateResourceString(resource, path)
+    return []
   } else if (Array.isArray(resource)) {
-    const resourceErrors: ValidationError[] = []
+    const validationErrors: ValidationError[] = []
     for (let i = 0; i < resource.length; i++) {
-      resourceErrors.push(...validateResourceString(resource[i], `${path}[${i}]`))
+      if (typeof resource[i] !== 'string') {
+        validationErrors.push({
+          message: `Resource must be a string or array of strings, found type ${typeof resource[i]}`,
+          path: `${path}[${i}]`
+        })
+      }
     }
-    return resourceErrors
+    return validationErrors
   }
   return [
     {
@@ -246,23 +251,6 @@ function validateResource(resource: any, path: string): ValidationError[] {
       message: `Must be a string or array of strings`
     }
   ]
-}
-
-function validateResourceString(resourceString: any, path: string): ValidationError[] {
-  if (resourceString === '*') {
-    return []
-  }
-  const parts = resourceString.split(':')
-  if (parts.length < 6 || parts.at(0) != 'arn') {
-    return [
-      {
-        path,
-        message: `Resource arn must have 6 segments and start with "arn:"`
-      }
-    ]
-  }
-
-  return []
 }
 
 function validateActionIfPresent(action: any, path: string): ValidationError[] {
@@ -380,7 +368,7 @@ function validateCondition(condition: any, path: string): ValidationError[] {
           ...validateTypeOrArrayOfTypeIfExists(
             condition[operator][key],
             `${path}.${operator}.${key}`,
-            'string'
+            ['string', 'boolean']
           )
         )
       }

@@ -103,7 +103,7 @@
     "expectedErrors": [
       {
         "path": "Statement.Condition.StringEquals.aws:Username",
-        "message": "Found data type object allowed type(s) are string"
+        "message": "Found data type object allowed type(s) are string, boolean"
       }
     ]
   },
@@ -134,6 +134,104 @@
       }
     },
     "expectedErrors": []
+  },
+  {
+    "name": "Valid Condition Boolean true",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "Bool": {
+            "aws:MultiFactorAuthPresent": true
+          }
+        }
+      }
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Valid Condition Boolean false",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "Bool": {
+            "aws:MultiFactorAuthPresent": false
+          }
+        }
+      }
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Valid Condition Boolean array",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "Bool": {
+            "aws:MultiFactorAuthPresent": [true, false]
+          }
+        }
+      }
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Valid Condition mixed string and boolean array",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "Bool": {
+            "aws:MultiFactorAuthPresent": ["true", false]
+          }
+        }
+      }
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Invalid Condition number value",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "NumericEquals": {
+            "s3:max-keys": 10
+          }
+        }
+      }
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement.Condition.NumericEquals.s3:max-keys",
+        "message": "Found data type number allowed type(s) are string, boolean"
+      }
+    ]
+  },
+  {
+    "name": "Invalid Condition number in array",
+    "policy": {
+      "Statement": {
+        "Effect": "Allow",
+        "Condition": {
+          "NumericEquals": {
+            "s3:max-keys": [10, 20]
+          }
+        }
+      }
+    },
+    "expectedErrors": [
+      {
+        "path": "Statement.Condition.NumericEquals.s3:max-keys[0]",
+        "message": "Found data type number allowed type(s) are string, boolean"
+      },
+      {
+        "path": "Statement.Condition.NumericEquals.s3:max-keys[1]",
+        "message": "Found data type number allowed type(s) are string, boolean"
+      }
+    ]
   },
   {
     "name": "Validate Condition is not null",

@@ -44,15 +44,10 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].Resource",
-        "message": "Resource arn must have 6 segments and start with \"arn:\""
-      }
-    ]
+    "expectedErrors": []
   },
   {
-    "name": "ARN Resource without arn prefix",
+    "name": "Non-ARN Resource string",
     "policy": {
       "Version": "2012-10-17",
       "Statement": [
@@ -64,12 +59,7 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].Resource",
-        "message": "Resource arn must have 6 segments and start with \"arn:\""
-      }
-    ]
+    "expectedErrors": []
   },
   {
     "name": "Multiple ARN Resources",
@@ -87,7 +77,7 @@
     "expectedErrors": []
   },
   {
-    "name": "Multiple ARN Resources without arn prefix",
+    "name": "Multiple Resource strings without arn prefix",
     "policy": {
       "Version": "2012-10-17",
       "Statement": [
@@ -99,15 +89,10 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].Resource[0]",
-        "message": "Resource arn must have 6 segments and start with \"arn:\""
-      }
-    ]
+    "expectedErrors": []
   },
   {
-    "name": "ARN resource without correct number of segments",
+    "name": "Resource string without correct number of segments",
     "policy": {
       "Version": "2012-10-17",
       "Statement": [
@@ -119,10 +104,25 @@
         }
       ]
     },
+    "expectedErrors": []
+  },
+  {
+    "name": "Invalid type in Resource array",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Resource": ["arn:aws:s3:::my_bucket", 42],
+          "Action": "s3:GetObject",
+          "Principal": "*"
+        }
+      ]
+    },
     "expectedErrors": [
       {
-        "path": "Statement[0].Resource",
-        "message": "Resource arn must have 6 segments and start with \"arn:\""
+        "path": "Statement[0].Resource[1]",
+        "message": "Resource must be a string or array of strings, found type number"
       }
     ]
   }

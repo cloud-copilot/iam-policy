@@ -17,6 +17,7 @@ export interface Condition {
 
   /**
    * Returns the values of the condition. For example ["o-1234567890abcdef0"].
+   * Boolean literals in the policy are converted to their string equivalents.
    *
    * @returns the values of the condition.
    */
@@ -54,7 +55,7 @@ export class ConditionImpl implements Condition {
   constructor(
     private readonly op: string,
     private readonly key: string,
-    private readonly values: string | string[],
+    private readonly values: string | boolean | (string | boolean)[],
     private readonly otherProps: {
       conditionPath: string
     }
@@ -69,7 +70,8 @@ export class ConditionImpl implements Condition {
   }
 
   public conditionValues(): string[] {
-    return typeof this.values === 'string' ? [this.values] : this.values
+    const values = Array.isArray(this.values) ? this.values : [this.values]
+    return values.map((v) => String(v))
   }
 
   public valueIsArray(): boolean {
