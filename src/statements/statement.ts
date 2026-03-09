@@ -39,9 +39,9 @@ export interface Statement {
 
   /**
    * The conditions of the statement as a map similar to the AWS IAM policy document.
-   * In this case all condition values are arrays, instead of strings, booleans, or arrays.
+   * In this case all condition values are arrays, instead of strings or arrays.
    */
-  conditionMap(): Record<string, Record<string, (string | boolean)[]>> | undefined
+  conditionMap(): Record<string, Record<string, string[]>> | undefined
 
   /**
    * The conditions for the statement
@@ -471,11 +471,11 @@ export class StatementImpl
     return this.statementObject.NotResource === '*'
   }
 
-  public conditionMap(): Record<string, Record<string, (string | boolean)[]>> | undefined {
+  public conditionMap(): Record<string, Record<string, string[]>> | undefined {
     if (!this.statementObject.Condition) {
       return undefined
     }
-    const result = {} as Record<string, Record<string, (string | boolean)[]>>
+    const result = {} as Record<string, Record<string, string[]>>
     for (const key of Object.keys(this.statementObject.Condition)) {
       const value = this.statementObject.Condition[key]
       result[key] = {}
@@ -499,9 +499,14 @@ export class StatementImpl
     return Object.entries(this.statementObject.Condition)
       .map(([opKey, opValue]) => {
         return Object.entries(opValue as any).map(([condKey, condValue]) => {
-          return new ConditionImpl(opKey, condKey, condValue as string | boolean | (string | boolean)[], {
-            conditionPath: `${this.path()}.Condition`
-          })
+          return new ConditionImpl(
+            opKey,
+            condKey,
+            condValue as string | boolean | (string | boolean)[],
+            {
+              conditionPath: `${this.path()}.Condition`
+            }
+          )
         })
       })
       .flat()

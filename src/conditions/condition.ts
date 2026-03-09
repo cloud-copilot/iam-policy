@@ -16,11 +16,12 @@ export interface Condition {
   conditionKey(): string
 
   /**
-   * Returns the values of the condition. For example ["o-1234567890abcdef0"] or [true].
+   * Returns the values of the condition. For example ["o-1234567890abcdef0"].
+   * Boolean literals in the policy are converted to their string equivalents.
    *
    * @returns the values of the condition.
    */
-  conditionValues(): (string | boolean)[]
+  conditionValues(): string[]
 
   /**
    * Checks if the the condition values are an array.
@@ -68,8 +69,9 @@ export class ConditionImpl implements Condition {
     return this.key
   }
 
-  public conditionValues(): (string | boolean)[] {
-    return Array.isArray(this.values) ? this.values : [this.values]
+  public conditionValues(): string[] {
+    const values = Array.isArray(this.values) ? this.values : [this.values]
+    return values.map((v) => String(v))
   }
 
   public valueIsArray(): boolean {

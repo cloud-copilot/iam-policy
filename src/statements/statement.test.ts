@@ -1010,7 +1010,7 @@ describe('StatementImpl', () => {
       expect(statement.conditions().length).toEqual(1)
       expect(statement.conditions()[0].operation().value()).toEqual('Bool')
       expect(statement.conditions()[0].conditionKey()).toEqual('aws:MultiFactorAuthPresent')
-      expect(statement.conditions()[0].conditionValues()).toEqual([true])
+      expect(statement.conditions()[0].conditionValues()).toEqual(['true'])
       expect(statement.conditions()[0].valueIsArray()).toBe(false)
     })
 
@@ -1027,11 +1027,11 @@ describe('StatementImpl', () => {
       //When a StatementImpl is created with the statement
       const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
 
-      //Then conditions should return the Condition
+      //Then conditions should return the Condition with booleans converted to strings
       expect(statement.conditions().length).toEqual(1)
       expect(statement.conditions()[0].operation().value()).toEqual('Bool')
       expect(statement.conditions()[0].conditionKey()).toEqual('aws:MultiFactorAuthPresent')
-      expect(statement.conditions()[0].conditionValues()).toEqual([true, false])
+      expect(statement.conditions()[0].conditionValues()).toEqual(['true', 'false'])
       expect(statement.conditions()[0].valueIsArray()).toBe(true)
     })
 
