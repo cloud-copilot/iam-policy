@@ -993,6 +993,48 @@ describe('StatementImpl', () => {
       ])
     })
 
+    it('should return the conditions when the condition value is a boolean', () => {
+      //Given a statement with a Condition with a boolean value
+      const statementDoc = {
+        Condition: {
+          Bool: {
+            'aws:MultiFactorAuthPresent': true
+          }
+        }
+      }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
+
+      //Then conditions should return the Condition
+      expect(statement.conditions().length).toEqual(1)
+      expect(statement.conditions()[0].operation().value()).toEqual('Bool')
+      expect(statement.conditions()[0].conditionKey()).toEqual('aws:MultiFactorAuthPresent')
+      expect(statement.conditions()[0].conditionValues()).toEqual([true])
+      expect(statement.conditions()[0].valueIsArray()).toBe(false)
+    })
+
+    it('should return the conditions when the condition value is a boolean array', () => {
+      //Given a statement with a Condition with a boolean array value
+      const statementDoc = {
+        Condition: {
+          Bool: {
+            'aws:MultiFactorAuthPresent': [true, false]
+          }
+        }
+      }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
+
+      //Then conditions should return the Condition
+      expect(statement.conditions().length).toEqual(1)
+      expect(statement.conditions()[0].operation().value()).toEqual('Bool')
+      expect(statement.conditions()[0].conditionKey()).toEqual('aws:MultiFactorAuthPresent')
+      expect(statement.conditions()[0].conditionValues()).toEqual([true, false])
+      expect(statement.conditions()[0].valueIsArray()).toBe(true)
+    })
+
     it('should return multiple conditions', () => {
       //Given a statement with multiple Conditions
       const statementDoc = {

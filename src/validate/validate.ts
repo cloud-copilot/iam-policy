@@ -21,7 +21,7 @@ const allowedStatementKeys = new Set([
 const allowedPrincipalKeys = new Set(['AWS', 'Service', 'Federated', 'CanonicalUser'])
 const validConditionOperatorPattern = /^[a-zA-Z0-9:]+$/
 const allowedSetOperators = new Set(['forallvalues', 'foranyvalue'])
-type PolicyDataType = 'string' | 'object'
+type PolicyDataType = 'string' | 'object' | 'boolean'
 
 export interface ValidationCallbacks {
   validateVersion?: (version: any, path: string) => ValidationError[]
@@ -380,7 +380,7 @@ function validateCondition(condition: any, path: string): ValidationError[] {
           ...validateTypeOrArrayOfTypeIfExists(
             condition[operator][key],
             `${path}.${operator}.${key}`,
-            'string'
+            ['string', 'boolean']
           )
         )
       }

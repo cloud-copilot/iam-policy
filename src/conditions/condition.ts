@@ -16,11 +16,11 @@ export interface Condition {
   conditionKey(): string
 
   /**
-   * Returns the values of the condition. For example ["o-1234567890abcdef0"].
+   * Returns the values of the condition. For example ["o-1234567890abcdef0"] or [true].
    *
    * @returns the values of the condition.
    */
-  conditionValues(): string[]
+  conditionValues(): (string | boolean)[]
 
   /**
    * Checks if the the condition values are an array.
@@ -54,7 +54,7 @@ export class ConditionImpl implements Condition {
   constructor(
     private readonly op: string,
     private readonly key: string,
-    private readonly values: string | string[],
+    private readonly values: string | boolean | (string | boolean)[],
     private readonly otherProps: {
       conditionPath: string
     }
@@ -68,8 +68,8 @@ export class ConditionImpl implements Condition {
     return this.key
   }
 
-  public conditionValues(): string[] {
-    return typeof this.values === 'string' ? [this.values] : this.values
+  public conditionValues(): (string | boolean)[] {
+    return Array.isArray(this.values) ? this.values : [this.values]
   }
 
   public valueIsArray(): boolean {
