@@ -1,3 +1,16 @@
+## [0.1.79](https://github.com/cloud-copilot/iam-policy/compare/v0.1.78...v0.1.79) (2026-03-09)
+
+
+### Bug Fixes
+
+* Allow any string in a resource ARN, because AWS does ([455a541](https://github.com/cloud-copilot/iam-policy/commit/455a541dc36e2d52a46d0204560cf35ca3121075))
+* Allow boolean literals in condition keys ([86f7fd4](https://github.com/cloud-copilot/iam-policy/commit/86f7fd4669eaadb135826e8098a18112e54eac43))
+
+
+### Features
+
+* Treat all booleans as strings, that is what the IAM engine does, so this change simplifies things for downstream consumers ([a277234](https://github.com/cloud-copilot/iam-policy/commit/a277234e99bca3e650565242365c90ce0fef7e86))
+
 ## [0.1.78](https://github.com/cloud-copilot/iam-policy/compare/v0.1.77...v0.1.78) (2026-03-07)
 
 ## [0.1.77](https://github.com/cloud-copilot/iam-policy/compare/v0.1.76...v0.1.77) (2026-03-04)
