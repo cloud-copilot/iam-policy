@@ -13,7 +13,7 @@ export type {
   ServicePrincipal,
   WildcardPrincipal
 } from './principals/principal.js'
-export type { Resource } from './resources/resource.js'
+export type { Resource, ArnResource } from './resources/resource.js'
 export type {
   ActionStatement,
   NotActionStatement,
