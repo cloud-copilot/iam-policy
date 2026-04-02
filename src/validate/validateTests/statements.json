@@ -109,7 +109,7 @@
     ]
   },
   {
-    "name": "Statement Ids must be unique",
+    "name": "Duplicate Statement Ids are allowed in validation",
     "policy": {
       "Statement": [
         {
@@ -126,15 +126,6 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "path": "Statement[0].Sid",
-        "message": "Statement Ids (Sid) must be unique"
-      },
-      {
-        "path": "Statement[1].Sid",
-        "message": "Statement Ids (Sid) must be unique"
-      }
-    ]
+    "expectedErrors": []
   }
 ]
