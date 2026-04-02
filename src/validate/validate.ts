@@ -73,28 +73,6 @@ export function validatePolicySyntax(
         ...validateStatement(policyDocument.Statement[i], `Statement[${i}]`, validationCallbacks)
       )
     }
-    const statementIdCounts = policyDocument.Statement.reduce(
-      (acc: Record<string, string[]>, statement: any, index: number) => {
-        if (statement.Sid) {
-          if (!acc[statement.Sid]) {
-            acc[statement.Sid] = []
-          }
-          acc[statement.Sid].push(`Statement[${index}].Sid`)
-        }
-        return acc
-      },
-      {} as Record<string, string[]>
-    )
-    for (const [, paths] of Object.entries<string[]>(statementIdCounts)) {
-      if (paths.length > 1) {
-        for (const path of paths) {
-          allErrors.push({
-            path,
-            message: `Statement Ids (Sid) must be unique`
-          })
-        }
-      }
-    }
   }
 
   return allErrors

@@ -23,6 +23,7 @@ export type {
   ResourceStatement,
   Statement
 } from './statements/statement.js'
+export { lintPolicy } from './lint/lint.js'
 export { validatePolicySyntax, type ValidationError } from './validate/validate.js'
 export {
   validateEndpointPolicy,
