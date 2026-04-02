@@ -1,3 +1,10 @@
+## [0.1.82](https://github.com/cloud-copilot/iam-policy/compare/v0.1.81...v0.1.82) (2026-04-02)
+
+
+### Features
+
+* Export ArnResource ([57cf972](https://github.com/cloud-copilot/iam-policy/commit/57cf972be05932ca323f1c1472841008520ca45a))
+
 ## [0.1.81](https://github.com/cloud-copilot/iam-policy/compare/v0.1.80...v0.1.81) (2026-03-28)
 
 ## [0.1.80](https://github.com/cloud-copilot/iam-policy/compare/v0.1.79...v0.1.80) (2026-03-22)
