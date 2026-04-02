@@ -1,3 +1,10 @@
+## [0.1.83](https://github.com/cloud-copilot/iam-policy/compare/v0.1.82...v0.1.83) (2026-04-02)
+
+
+### Bug Fixes
+
+* Don't fail validation on duplicate Sids ([0737b3b](https://github.com/cloud-copilot/iam-policy/commit/0737b3b3f2e8fba7e4284e39ce8998ba5ea5ce35))
+
 ## [0.1.82](https://github.com/cloud-copilot/iam-policy/compare/v0.1.81...v0.1.82) (2026-04-02)
 
 
