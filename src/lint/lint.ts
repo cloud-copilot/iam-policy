@@ -19,7 +19,94 @@ export function lintPolicy(
 ): ValidationError[] {
   const allErrors = validatePolicySyntax(policyDocument, validationCallbacks)
   allErrors.push(...findDuplicateSids(policyDocument))
+  allErrors.push(...findEmptyActions(policyDocument))
   return allErrors
+}
+
+/**
+ * Checks a single action string for issues with the action part after the
+ * colon. Flags two cases:
+ * - Empty or whitespace-only action (e.g. "s3:" or "s3:   ")
+ * - Action containing whitespace (e.g. "s3:GetObject   " or "s3: GetObject")
+ *
+ * AWS technically allows these, but they almost always indicate authoring
+ * mistakes.
+ *
+ * @param action - the raw action string value
+ * @param path - the JSON-path location of this action in the policy document
+ * @returns an array of validation errors for any issues found
+ */
+function lintActionString(action: string, path: string): ValidationError[] {
+  if (typeof action !== 'string') {
+    return []
+  }
+  const parts = action.split(':')
+  if (parts.length !== 2) {
+    return []
+  }
+  if (parts[1].trim().length === 0) {
+    return [
+      {
+        path,
+        message: 'Action is empty for the service'
+      }
+    ]
+  }
+  if (parts[1] !== parts[1].trim()) {
+    return [
+      {
+        path,
+        message: 'Action contains whitespace'
+      }
+    ]
+  }
+  return []
+}
+
+/**
+ * Finds actions in a policy document that have the format "service:" — a
+ * service prefix followed by a colon but no action name. AWS allows this
+ * but it likely indicates an authoring mistake.
+ *
+ * @param policyDocument - the raw policy document object to check
+ * @returns an array of validation errors, one for each action that has an empty action part
+ */
+export function findEmptyActions(policyDocument: any): ValidationError[] {
+  if (typeof policyDocument !== 'object' || policyDocument === null) {
+    return []
+  }
+
+  const statements = Array.isArray(policyDocument.Statement)
+    ? policyDocument.Statement
+    : policyDocument.Statement !== undefined
+      ? [policyDocument.Statement]
+      : []
+
+  const errors: ValidationError[] = []
+  for (let i = 0; i < statements.length; i++) {
+    const statement = statements[i]
+    if (typeof statement !== 'object' || statement === null) {
+      continue
+    }
+    const basePath = Array.isArray(policyDocument.Statement) ? `Statement[${i}]` : 'Statement'
+
+    for (const field of ['Action', 'NotAction']) {
+      const value = statement[field]
+      if (value === undefined) {
+        continue
+      }
+      const fieldPath = `${basePath}.${field}`
+      if (typeof value === 'string') {
+        errors.push(...lintActionString(value, fieldPath))
+      } else if (Array.isArray(value)) {
+        for (let j = 0; j < value.length; j++) {
+          errors.push(...lintActionString(value[j], `${fieldPath}[${j}]`))
+        }
+      }
+    }
+  }
+
+  return errors
 }
 
 /**

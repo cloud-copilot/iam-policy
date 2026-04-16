@@ -201,6 +201,133 @@ describe('ActionImpl', () => {
       // Assert
       expect(action.action()).toBe('GetObject')
     })
+
+    it('should preserve trailing whitespace on the action', () => {
+      //Given an action string with trailing whitespace after the action name
+      const actionString = 's3:ListAllMyBuckets     '
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the action should preserve the trailing whitespace
+      expect(action.action()).toBe('ListAllMyBuckets     ')
+    })
+  })
+
+  describe('trailing colon with no action', () => {
+    it('should return service type for a trailing colon action', () => {
+      //Given an action string with a trailing colon
+      const actionString = 's3:'
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the type should be service
+      expect(action.type()).toBe('service')
+    })
+
+    it('should return the service for a trailing colon action', () => {
+      //Given an action string with a trailing colon
+      const actionString = 's3:'
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the service should be s3
+      expect(action.service()).toBe('s3')
+    })
+
+    it('should return an empty string for the action part', () => {
+      //Given an action string with a trailing colon
+      const actionString = 's3:'
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the action should be an empty string
+      expect(action.action()).toBe('')
+    })
+
+    it('should return the raw value', () => {
+      //Given an action string with a trailing colon
+      const actionString = 's3:'
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the value should be the raw string
+      expect(action.value()).toBe('s3:')
+    })
+
+    it('should be a service action and not a wildcard action', () => {
+      //Given an action string with a trailing colon
+      const actionString = 's3:'
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then it should be a service action
+      expect(action.isServiceAction()).toBe(true)
+      expect(action.isWildcardAction()).toBe(false)
+    })
+  })
+
+  describe('whitespace-only action after colon', () => {
+    it('should return service type for a whitespace-only action', () => {
+      //Given an action string with whitespace after the colon
+      const actionString = 's3:      '
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the type should be service
+      expect(action.type()).toBe('service')
+    })
+
+    it('should return the service for a whitespace-only action', () => {
+      //Given an action string with whitespace after the colon
+      const actionString = 's3:      '
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the service should be s3
+      expect(action.service()).toBe('s3')
+    })
+
+    it('should return the whitespace for the action part', () => {
+      //Given an action string with whitespace after the colon
+      const actionString = 's3:      '
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the action should preserve the whitespace
+      expect(action.action()).toBe('      ')
+    })
+
+    it('should return the raw value including whitespace', () => {
+      //Given an action string with whitespace after the colon
+      const actionString = 's3:      '
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then the value should be the raw string including whitespace
+      expect(action.value()).toBe('s3:      ')
+    })
+
+    it('should be a service action and not a wildcard action', () => {
+      //Given an action string with whitespace after the colon
+      const actionString = 's3:      '
+
+      //When an ActionImpl is created
+      const action = new ActionImpl(actionString, { path: 'Statement.Action' })
+
+      //Then it should be a service action
+      expect(action.isServiceAction()).toBe(true)
+      expect(action.isWildcardAction()).toBe(false)
+    })
   })
 
   describe('type guards', () => {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { ServiceAction } from '../actions/action.js'
 import { loadPolicy } from '../parser.js'
 import { type NotPrincipalStatement, type PrincipalStatement, StatementImpl } from './statement.js'
 
@@ -567,6 +568,41 @@ describe('StatementImpl', () => {
       expect(() => statement.actions()).toThrow(
         'Called actions on a statement without Action, use isActionStatement before calling actions'
       )
+    })
+  })
+
+  describe('actions with trailing colon', () => {
+    it('should return an action with an empty action part for a trailing colon string', () => {
+      //Given a statement with an Action with a trailing colon
+      const statementDoc = { Action: 's3:' }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
+
+      //Then actions should return an Action with an empty action part
+      const actions = statement.actions()
+      expect(actions.length).toEqual(1)
+      expect(actions[0].value()).toEqual('s3:')
+      expect(actions[0].isServiceAction()).toBe(true)
+      const serviceAction = actions[0] as ServiceAction
+      expect(serviceAction.service()).toBe('s3')
+      expect(serviceAction.action()).toBe('')
+    })
+
+    it('should return a trailing colon action in an array', () => {
+      //Given a statement with an Action array containing a trailing colon entry
+      const statementDoc = { Action: ['s3:', 's3:GetObject'] }
+
+      //When a StatementImpl is created with the statement
+      const statement = new StatementImpl(statementDoc, 0, { path: 'Statement' })
+
+      //Then actions should return both Actions
+      const actions = statement.actions()
+      expect(actions.length).toEqual(2)
+      expect(actions[0].value()).toEqual('s3:')
+      expect((actions[0] as ServiceAction).action()).toBe('')
+      expect(actions[1].value()).toEqual('s3:GetObject')
+      expect((actions[1] as ServiceAction).action()).toBe('GetObject')
     })
   })
 
