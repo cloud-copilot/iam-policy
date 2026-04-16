@@ -89,7 +89,7 @@
     ]
   },
   {
-    "name": "Too many segments",
+    "name": "Trailing colon with no action",
     "policy": {
       "Version": "2012-10-17",
       "Statement": [
@@ -100,12 +100,49 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "message": "Action is required for the service",
-        "path": "Statement[0].Action"
-      }
-    ]
+    "expectedErrors": []
+  },
+  {
+    "name": "Action with trailing whitespace",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:ListAllMyBuckets     ",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Action with leading whitespace",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:     ListAllMyBuckets",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
+  },
+  {
+    "name": "Trailing colon with whitespace only action",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:      ",
+          "Principal": "*"
+        }
+      ]
+    },
+    "expectedErrors": []
   },
   {
     "name": "Invalid Service",
@@ -140,7 +177,7 @@
     },
     "expectedErrors": [
       {
-        "message": "Action can only contain letters, numbers, asterisks, question marks, and commas",
+        "message": "Action can only contain letters, numbers, asterisks, question marks, commas, and spaces",
         "path": "Statement[0].Action"
       }
     ]
