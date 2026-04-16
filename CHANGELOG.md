@@ -1,3 +1,10 @@
+## [0.1.86](https://github.com/cloud-copilot/iam-policy/compare/v0.1.85...v0.1.86) (2026-04-16)
+
+
+### Bug Fixes
+
+* support action strings with action after the colon or whitespace after the colon ([624bb40](https://github.com/cloud-copilot/iam-policy/commit/624bb401264ba3d4e72e78c8941f75f5e938618e))
+
 ## [0.1.85](https://github.com/cloud-copilot/iam-policy/compare/v0.1.84...v0.1.85) (2026-04-11)
 
 ## [0.1.84](https://github.com/cloud-copilot/iam-policy/compare/v0.1.83...v0.1.84) (2026-04-04)
