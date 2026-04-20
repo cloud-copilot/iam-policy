@@ -4,7 +4,7 @@ export interface ValidationError {
 }
 
 const serviceRegex = /^[a-zA-Z0-9-]+$/
-const actionRegex = /^[a-zA-Z0-9*\?, ]+$/
+const actionRegex = /^[a-zA-Z0-9*\?, \-]+$/
 
 const allowedPolicyKeys = new Set(['Version', 'Statement', 'Id'])
 const allowedStatementKeys = new Set([
@@ -276,7 +276,7 @@ function validateActionString(string: string, path: string): ValidationError[] {
   if (action.length > 0 && !actionRegex.test(action)) {
     errors.push({
       path,
-      message: `Action can only contain letters, numbers, asterisks, question marks, commas, and spaces`
+      message: `Action can only contain letters, numbers, asterisks, question marks, commas, hyphens, and spaces`
     })
   }
 

@@ -164,7 +164,7 @@
     ]
   },
   {
-    "name": "Invalid Service",
+    "name": "Service and Action with hyphens",
     "policy": {
       "Version": "2012-10-17",
       "Statement": [
@@ -175,9 +175,23 @@
         }
       ]
     },
+    "expectedErrors": []
+  },
+  {
+    "name": "Action with invalid character",
+    "policy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "s3:Get$Object",
+          "Principal": "*"
+        }
+      ]
+    },
     "expectedErrors": [
       {
-        "message": "Action can only contain letters, numbers, asterisks, question marks, commas, and spaces",
+        "message": "Action can only contain letters, numbers, asterisks, question marks, commas, hyphens, and spaces",
         "path": "Statement[0].Action"
       }
     ]
