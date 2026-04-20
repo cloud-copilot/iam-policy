@@ -1,3 +1,10 @@
+## [0.1.87](https://github.com/cloud-copilot/iam-policy/compare/v0.1.86...v0.1.87) (2026-04-20)
+
+
+### Bug Fixes
+
+* Allow dashes in action strings ([3d2ca34](https://github.com/cloud-copilot/iam-policy/commit/3d2ca34baf00f2d17942130c4151ceca8f38f488))
+
 ## [0.1.86](https://github.com/cloud-copilot/iam-policy/compare/v0.1.85...v0.1.86) (2026-04-16)
 
 
