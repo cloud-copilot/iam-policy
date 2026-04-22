@@ -1,3 +1,10 @@
+## [0.1.88](https://github.com/cloud-copilot/iam-policy/compare/v0.1.87...v0.1.88) (2026-04-22)
+
+
+### Features
+
+* ValidatedPolicy as a new type to wrap a policy that has already been validated ([1c6d62c](https://github.com/cloud-copilot/iam-policy/commit/1c6d62cc927c677a1bb24e339277288c5e425411))
+
 ## [0.1.87](https://github.com/cloud-copilot/iam-policy/compare/v0.1.86...v0.1.87) (2026-04-20)
 
 
