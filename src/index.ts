@@ -24,6 +24,11 @@ export type {
   Statement
 } from './statements/statement.js'
 export { lintPolicy } from './lint/lint.js'
+export {
+  createValidatedPolicy,
+  isValidatedPolicy,
+  type ValidatedPolicy
+} from './validatedPolicy.js'
 export { validatePolicySyntax, type ValidationError } from './validate/validate.js'
 export {
   validateEndpointPolicy,
