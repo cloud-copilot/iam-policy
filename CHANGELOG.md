@@ -1,3 +1,10 @@
+## [0.1.89](https://github.com/cloud-copilot/iam-policy/compare/v0.1.88...v0.1.89) (2026-04-23)
+
+
+### Bug Fixes
+
+* Allow resource policies without a Principal or NotPrincipal element ([f53fcfc](https://github.com/cloud-copilot/iam-policy/commit/f53fcfc7603269890f8c2adff7f75c7b66731bf0))
+
 ## [0.1.88](https://github.com/cloud-copilot/iam-policy/compare/v0.1.87...v0.1.88) (2026-04-22)
 
 
