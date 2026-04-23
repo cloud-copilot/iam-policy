@@ -58,9 +58,6 @@ export function validateResourcePolicy(policy: any): ValidationError[] {
       const policyType = 'a resource policy'
       const errors: ValidationError[] = []
       errors.push(...validateAtLeastOneOf(statement, ['Action', 'NotAction'], path, policyType))
-      errors.push(
-        ...validateAtLeastOneOf(statement, ['Principal', 'NotPrincipal'], path, policyType)
-      )
       return errors
     }
   })
