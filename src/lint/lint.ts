@@ -3,6 +3,7 @@ import {
   type ValidationCallbacks,
   type ValidationError
 } from '../validate/validate.js'
+import { validateResourcePolicy } from '../validate/validateTypes.js'
 
 /**
  * Lints an IAM policy document by running all syntax validation checks from
@@ -21,6 +22,61 @@ export function lintPolicy(
   allErrors.push(...findDuplicateSids(policyDocument))
   allErrors.push(...findEmptyActions(policyDocument))
   return allErrors
+}
+
+/**
+ * Lints a resource policy document. Runs the resource-policy syntax validation
+ * plus the generic lint rules and the resource-policy-specific check for
+ * statements missing both `Principal` and `NotPrincipal`. AWS accepts such
+ * statements syntactically, but they can never match a request.
+ *
+ * @param policyDocument - the raw resource policy document to lint
+ * @returns an array of validation errors including syntax errors and lint warnings
+ */
+export function lintResourcePolicy(policyDocument: any): ValidationError[] {
+  const errors = validateResourcePolicy(policyDocument)
+  errors.push(...findDuplicateSids(policyDocument))
+  errors.push(...findEmptyActions(policyDocument))
+  errors.push(...findStatementsWithoutPrincipal(policyDocument))
+  return errors
+}
+
+/**
+ * Finds statements in a resource policy that have neither a `Principal` nor a
+ * `NotPrincipal` element. AWS accepts these syntactically but they can never
+ * match a request, which is almost always an authoring mistake.
+ *
+ * @param policyDocument - the raw resource policy document to check
+ * @returns an array of validation errors, one for each statement missing both Principal and NotPrincipal
+ */
+function findStatementsWithoutPrincipal(policyDocument: any): ValidationError[] {
+  if (typeof policyDocument !== 'object' || policyDocument === null) {
+    return []
+  }
+
+  const rawStatements = policyDocument.Statement
+  if (rawStatements === undefined) {
+    return []
+  }
+
+  const statements = Array.isArray(rawStatements) ? rawStatements : [rawStatements]
+  const isArray = Array.isArray(rawStatements)
+
+  const errors: ValidationError[] = []
+  for (let i = 0; i < statements.length; i++) {
+    const statement = statements[i]
+    if (typeof statement !== 'object' || statement === null) {
+      continue
+    }
+    if (statement.Principal === undefined && statement.NotPrincipal === undefined) {
+      errors.push({
+        path: isArray ? `Statement[${i}]` : 'Statement',
+        message: 'One of Principal or NotPrincipal is required in a resource policy'
+      })
+    }
+  }
+
+  return errors
 }
 
 /**

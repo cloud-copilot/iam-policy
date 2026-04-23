@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { sortErrors } from '../validate/testutil.js'
-import { findDuplicateSids, findEmptyActions, lintPolicy } from './lint.js'
+import { findDuplicateSids, findEmptyActions, lintPolicy, lintResourcePolicy } from './lint.js'
 
 describe('lintPolicy', () => {
   it('should return no errors for a valid policy with unique Sids', () => {
@@ -589,5 +589,247 @@ describe('findEmptyActions', () => {
 
     //Then no errors should be returned
     expect(errors).toEqual([])
+  })
+})
+
+describe('lintResourcePolicy', () => {
+  it('should return no errors for a valid resource policy with Principal', () => {
+    //Given a valid resource policy with a Principal
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Sid: 'AllowGet',
+          Effect: 'Allow',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my-bucket/*',
+          Principal: { AWS: 'arn:aws:iam::123456789012:user/Alice' }
+        }
+      ]
+    }
+
+    //When the resource policy is linted
+    const errors = lintResourcePolicy(policy)
+
+    //Then no errors should be returned
+    expect(errors).toEqual([])
+  })
+
+  it('should return no errors for a resource policy with NotPrincipal', () => {
+    //Given a resource policy with a NotPrincipal statement
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Deny',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my-bucket/*',
+          NotPrincipal: { AWS: 'arn:aws:iam::123456789012:user/Alice' }
+        }
+      ]
+    }
+
+    //When the resource policy is linted
+    const errors = lintResourcePolicy(policy)
+
+    //Then no errors should be returned
+    expect(errors).toEqual([])
+  })
+
+  it('should return a lint error when a statement is missing both Principal and NotPrincipal', () => {
+    //Given a resource policy whose only statement has no Principal or NotPrincipal
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my-bucket/*'
+        }
+      ]
+    }
+
+    //When the resource policy is linted
+    const errors = lintResourcePolicy(policy)
+
+    //Then a single lint error should be returned
+    expect(errors).toEqual([
+      {
+        path: 'Statement[0]',
+        message: 'One of Principal or NotPrincipal is required in a resource policy'
+      }
+    ])
+  })
+
+  it('should report only the offending indices when some statements have a Principal', () => {
+    //Given a mixed resource policy where only some statements lack Principal
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my-bucket/*',
+          Principal: '*'
+        },
+        {
+          Effect: 'Allow',
+          Action: 's3:PutObject',
+          Resource: 'arn:aws:s3:::my-bucket/*'
+        },
+        {
+          Effect: 'Deny',
+          Action: 's3:DeleteObject',
+          Resource: 'arn:aws:s3:::my-bucket/*'
+        }
+      ]
+    }
+
+    //When the resource policy is linted
+    const errors = lintResourcePolicy(policy)
+
+    //Then only the two offending indices are flagged
+    expect(sortErrors(errors)).toEqual(
+      sortErrors([
+        {
+          path: 'Statement[1]',
+          message: 'One of Principal or NotPrincipal is required in a resource policy'
+        },
+        {
+          path: 'Statement[2]',
+          message: 'One of Principal or NotPrincipal is required in a resource policy'
+        }
+      ])
+    )
+  })
+
+  it('should flag a single-statement (non-array) resource policy missing Principal at path "Statement"', () => {
+    //Given a resource policy whose Statement is a single object with no Principal
+    const policy = {
+      Version: '2012-10-17',
+      Statement: {
+        Effect: 'Allow',
+        Action: 's3:GetObject',
+        Resource: 'arn:aws:s3:::my-bucket/*'
+      }
+    }
+
+    //When the resource policy is linted
+    const errors = lintResourcePolicy(policy)
+
+    //Then the error path is "Statement" (no array index)
+    expect(errors).toEqual([
+      {
+        path: 'Statement',
+        message: 'One of Principal or NotPrincipal is required in a resource policy'
+      }
+    ])
+  })
+
+  it('should not throw and should not emit missing-Principal errors for malformed or non-object inputs', () => {
+    //Given inputs that are malformed but do not cause validateResourcePolicy to throw
+    const cases: Array<{ input: any; label: string }> = [
+      { label: 'undefined', input: undefined },
+      { label: 'empty object', input: {} },
+      { label: 'object with Version but no Statement', input: { Version: '2012-10-17' } },
+      { label: 'empty Statement array', input: { Version: '2012-10-17', Statement: [] } },
+      {
+        label: 'Statement is a string',
+        input: { Version: '2012-10-17', Statement: 'not-an-object' }
+      },
+      {
+        label: 'Statement array containing a non-object entry',
+        input: {
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Action: 's3:GetObject',
+              Resource: 'arn:aws:s3:::my-bucket/*',
+              Principal: '*'
+            },
+            'not-an-object'
+          ]
+        }
+      }
+    ]
+
+    for (const { input, label } of cases) {
+      //When the resource policy is linted
+      const run = () => lintResourcePolicy(input)
+
+      //Then it should not throw
+      expect(run, label).not.toThrow()
+
+      //And no "One of Principal or NotPrincipal..." lint error should be produced from the malformed entries
+      const errors = run()
+      const missingPrincipalErrors = errors.filter(
+        (e) => e.message === 'One of Principal or NotPrincipal is required in a resource policy'
+      )
+      expect(missingPrincipalErrors, `${label}: no missing-Principal lint errors`).toEqual([])
+    }
+  })
+
+  it('should include duplicate Sid, empty action, and missing-Principal errors together', () => {
+    //Given a resource policy with all three issues
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Sid: 'Dup',
+          Effect: 'Allow',
+          Action: 's3:',
+          Resource: 'arn:aws:s3:::my-bucket/*'
+        },
+        {
+          Sid: 'Dup',
+          Effect: 'Allow',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my-bucket/*',
+          Principal: '*'
+        }
+      ]
+    }
+
+    //When the resource policy is linted
+    const errors = lintResourcePolicy(policy)
+
+    //Then all three categories of issue should be reported
+    expect(sortErrors(errors)).toEqual(
+      sortErrors([
+        {
+          path: 'Statement[0]',
+          message: 'One of Principal or NotPrincipal is required in a resource policy'
+        },
+        {
+          path: 'Statement[0].Action',
+          message: 'Action is empty for the service'
+        },
+        { path: 'Statement[0].Sid', message: 'Statement Ids (Sid) must be unique' },
+        { path: 'Statement[1].Sid', message: 'Statement Ids (Sid) must be unique' }
+      ])
+    )
+  })
+
+  it('should surface resource-policy syntax errors through lintResourcePolicy', () => {
+    //Given a resource policy with an invalid Effect
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'InvalidEffect',
+          Action: 's3:GetObject',
+          Resource: 'arn:aws:s3:::my-bucket/*',
+          Principal: '*'
+        }
+      ]
+    }
+
+    //When the resource policy is linted
+    const errors = lintResourcePolicy(policy)
+
+    //Then the Effect validation error from validateResourcePolicy should be present
+    const hasEffectError = errors.some((e) => e.path === 'Statement[0].Effect')
+    expect(hasEffectError).toBe(true)
   })
 })

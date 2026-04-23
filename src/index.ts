@@ -23,7 +23,7 @@ export type {
   ResourceStatement,
   Statement
 } from './statements/statement.js'
-export { lintPolicy } from './lint/lint.js'
+export { lintPolicy, lintResourcePolicy } from './lint/lint.js'
 export {
   createValidatedPolicy,
   isValidatedPolicy,

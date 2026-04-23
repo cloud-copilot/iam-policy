@@ -34,7 +34,7 @@
     ]
   },
   {
-    "name": "Principal or NotPrincipal is required",
+    "name": "Principal or NotPrincipal is not required",
     "policy": {
       "Statement": [
         {
@@ -45,11 +45,6 @@
         }
       ]
     },
-    "expectedErrors": [
-      {
-        "message": "One of Principal or NotPrincipal is required in a resource policy",
-        "path": "Statement[0]"
-      }
-    ]
+    "expectedErrors": []
   }
 ]
