@@ -103,7 +103,7 @@
     "expectedErrors": [
       {
         "path": "Statement.Condition.StringEquals.aws:Username",
-        "message": "Found data type object allowed type(s) are string, boolean"
+        "message": "Found data type object allowed type(s) are string, boolean, number"
       }
     ]
   },
@@ -178,13 +178,13 @@
     "expectedErrors": []
   },
   {
-    "name": "Valid Condition mixed string and boolean array",
+    "name": "Valid Condition mixed string, boolean, and number array",
     "policy": {
       "Statement": {
         "Effect": "Allow",
         "Condition": {
           "Bool": {
-            "aws:MultiFactorAuthPresent": ["true", false]
+            "aws:MultiFactorAuthPresent": ["true", false, 1]
           }
         }
       }
@@ -192,7 +192,7 @@
     "expectedErrors": []
   },
   {
-    "name": "Invalid Condition number value",
+    "name": "Valid Condition number value",
     "policy": {
       "Statement": {
         "Effect": "Allow",
@@ -203,15 +203,10 @@
         }
       }
     },
-    "expectedErrors": [
-      {
-        "path": "Statement.Condition.NumericEquals.s3:max-keys",
-        "message": "Found data type number allowed type(s) are string, boolean"
-      }
-    ]
+    "expectedErrors": []
   },
   {
-    "name": "Invalid Condition number in array",
+    "name": "Valid Condition number array",
     "policy": {
       "Statement": {
         "Effect": "Allow",
@@ -222,16 +217,7 @@
         }
       }
     },
-    "expectedErrors": [
-      {
-        "path": "Statement.Condition.NumericEquals.s3:max-keys[0]",
-        "message": "Found data type number allowed type(s) are string, boolean"
-      },
-      {
-        "path": "Statement.Condition.NumericEquals.s3:max-keys[1]",
-        "message": "Found data type number allowed type(s) are string, boolean"
-      }
-    ]
+    "expectedErrors": []
   },
   {
     "name": "Validate Condition is not null",

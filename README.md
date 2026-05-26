@@ -71,8 +71,7 @@ validatePolicySyntax({
   { message: 'Invalid key Comment', path: 'Comment' },
   { message: 'Effect must be present and exactly "Allow" or "Deny"', path: 'Statement[0].Effect' },
   { message: 'Effect must be present and exactly "Allow" or "Deny"', path: 'Statement[1].Effect' },
-  { message: 'Found data type number allowed type(s) are string', path: 'Statement[1].Condition.NumericLessThan s3:max-keys' },
-  { message: 'Found data type object allowed type(s) are string', path: 'Statement[1].Condition.StringLike.s3:authType' }
+  { message: 'Found data type object allowed type(s) are string, boolean, number', path: 'Statement[1].Condition.StringLike.s3:authType' }
 ]
 */
 ```
