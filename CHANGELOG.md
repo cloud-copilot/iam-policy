@@ -1,3 +1,10 @@
+## [0.1.96](https://github.com/cloud-copilot/iam-policy/compare/v0.1.95...v0.1.96) (2026-05-26)
+
+
+### Bug Fixes
+
+* allow numeric condition values ([b7c2673](https://github.com/cloud-copilot/iam-policy/commit/b7c2673b806f65495c3cd57db70d1e8335a229ca))
+
 ## [0.1.95](https://github.com/cloud-copilot/iam-policy/compare/v0.1.94...v0.1.95) (2026-05-23)
 
 ## [0.1.94](https://github.com/cloud-copilot/iam-policy/compare/v0.1.93...v0.1.94) (2026-05-16)
