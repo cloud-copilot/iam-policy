@@ -1,3 +1,10 @@
+import {
+  caseInsensitiveEndsWith,
+  caseInsensitiveEquals,
+  delimitedSegmentAt,
+  lastDelimitedSegment
+} from '../utils.js'
+
 export type SetOperator = 'ForAllValues' | 'ForAnyValue'
 
 /**
@@ -34,22 +41,22 @@ export class ConditionOperationImpl implements ConditionOperation {
     if (!this.op.includes(':')) {
       return undefined
     }
-    const setOp = this.op.split(':').at(0)?.toLowerCase()
-    if (setOp === 'forallvalues') {
+    const setOp = delimitedSegmentAt(this.op, ':', 0)!
+    if (caseInsensitiveEquals(setOp, 'ForAllValues')) {
       return 'ForAllValues'
-    } else if (setOp === 'foranyvalue') {
+    } else if (caseInsensitiveEquals(setOp, 'ForAnyValue')) {
       return 'ForAnyValue'
     }
     throw new Error(`Unknown set operator: ${setOp}`)
   }
 
   public isIfExists(): boolean {
-    return this.op.toLowerCase().endsWith('ifexists')
+    return caseInsensitiveEndsWith(this.op, 'IfExists')
   }
 
   public baseOperator(): string {
-    const base = this.op.split(':').at(-1)!
-    if (base?.toLowerCase().endsWith('ifexists')) {
+    const base = lastDelimitedSegment(this.op, ':')
+    if (caseInsensitiveEndsWith(base, 'IfExists')) {
       return base.slice(0, ifExistsSlice)
     }
     return base

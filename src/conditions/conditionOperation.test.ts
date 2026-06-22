@@ -100,7 +100,7 @@ describe('ConditionOperationImpl', () => {
       const conditionOp = new ConditionOperationImpl('UnknownOperator:StringNotEqualsIfExists')
 
       //When setOperator is called, then an error is thrown
-      expect(() => conditionOp.setOperator()).toThrowError('Unknown set operator: unknownoperator')
+      expect(() => conditionOp.setOperator()).toThrowError('Unknown set operator: UnknownOperator')
     })
   })
 

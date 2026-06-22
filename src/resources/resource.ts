@@ -1,4 +1,4 @@
-import { isAllWildcards } from '../utils.js'
+import { delimitedSegmentAt, delimitedSegmentRemainder, isAllWildcards } from '../utils.js'
 
 /**
  * A resource string in an IAM policy
@@ -70,7 +70,7 @@ export class ResourceImpl implements Resource, ArnResource {
         'Called partition on a resource without an ARN, use isArnResource before calling partition'
       )
     }
-    return this.value().split(':').at(1)!
+    return delimitedSegmentAt(this.value(), ':', 1)!
   }
 
   service(): string {
@@ -79,7 +79,7 @@ export class ResourceImpl implements Resource, ArnResource {
         'Called service on a resource without an ARN, use isArnResource before calling service'
       )
     }
-    return this.value().split(':').at(2)!
+    return delimitedSegmentAt(this.value(), ':', 2)!
   }
 
   region(): string {
@@ -88,7 +88,7 @@ export class ResourceImpl implements Resource, ArnResource {
         'Called region on a resource without an ARN, use isArnResource before calling region'
       )
     }
-    return this.value().split(':').at(3)!
+    return delimitedSegmentAt(this.value(), ':', 3)!
   }
 
   account(): string {
@@ -97,7 +97,7 @@ export class ResourceImpl implements Resource, ArnResource {
         'Called account on a resource without an ARN, use isArnResource before calling account'
       )
     }
-    return this.value().split(':').at(4)!
+    return delimitedSegmentAt(this.value(), ':', 4)!
   }
 
   resource(): string {
@@ -106,7 +106,7 @@ export class ResourceImpl implements Resource, ArnResource {
         'Called resource on a resource without an ARN, use isArnResource before calling resource'
       )
     }
-    return this.value().split(':').slice(5).join(':')
+    return delimitedSegmentRemainder(this.value(), ':', 5)!
   }
 
   value(): string {

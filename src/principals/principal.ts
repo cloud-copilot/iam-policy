@@ -1,4 +1,4 @@
-import { isAllWildcards } from '../utils.js'
+import { delimitedSegmentAt, isAllWildcards } from '../utils.js'
 
 export type PrincipalType = 'AWS' | 'Service' | 'Federated' | 'CanonicalUser'
 
@@ -203,7 +203,7 @@ export class PrincipalImpl
       )
     }
     if (accountArnRegex.test(this.principalId)) {
-      return this.principalId.split(':')[4]
+      return delimitedSegmentAt(this.principalId, ':', 4)!
     }
     return this.principalId
   }

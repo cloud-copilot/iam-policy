@@ -96,11 +96,12 @@ function lintActionString(action: string, path: string): ValidationError[] {
   if (typeof action !== 'string') {
     return []
   }
-  const parts = action.split(':')
-  if (parts.length !== 2) {
+  const colonIndex = action.indexOf(':')
+  if (colonIndex === -1 || action.indexOf(':', colonIndex + 1) !== -1) {
     return []
   }
-  if (parts[1].trim().length === 0) {
+  const actionName = action.slice(colonIndex + 1)
+  if (actionName.trim().length === 0) {
     return [
       {
         path,
@@ -108,7 +109,7 @@ function lintActionString(action: string, path: string): ValidationError[] {
       }
     ]
   }
-  if (parts[1] !== parts[1].trim()) {
+  if (actionName !== actionName.trim()) {
     return [
       {
         path,

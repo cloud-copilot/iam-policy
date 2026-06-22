@@ -1,3 +1,5 @@
+import { caseInsensitiveEquals, delimitedSegmentAt } from '../utils.js'
+
 export interface ValidationError {
   message: string
   path: string
@@ -20,8 +22,24 @@ const allowedStatementKeys = new Set([
 ])
 const allowedPrincipalKeys = new Set(['AWS', 'Service', 'Federated', 'CanonicalUser'])
 const validConditionOperatorPattern = /^[a-zA-Z0-9:]+$/
-const allowedSetOperators = new Set(['forallvalues', 'foranyvalue'])
+const allowedSetOperators = ['ForAllValues', 'ForAnyValue'] as const
 type PolicyDataType = 'string' | 'object' | 'boolean' | 'number'
+
+/**
+ * Checks whether a condition set operator is one of the IAM set operator names,
+ * ignoring case without normalizing the candidate string first.
+ *
+ * @param setOperator - the condition set operator to check
+ * @returns true when the set operator is allowed
+ */
+function isAllowedSetOperator(setOperator: string): boolean {
+  for (const allowedSetOperator of allowedSetOperators) {
+    if (caseInsensitiveEquals(setOperator, allowedSetOperator)) {
+      return true
+    }
+  }
+  return false
+}
 
 export interface ValidationCallbacks {
   validateVersion?: (version: any, path: string) => ValidationError[]
@@ -255,8 +273,9 @@ function validateActionString(string: string, path: string): ValidationError[] {
   if (string === '*') {
     return []
   }
-  const parts = string.trim().split(':')
-  if (parts.length != 2) {
+  const trimmedString = string.trim()
+  const firstColonIndex = trimmedString.indexOf(':')
+  if (firstColonIndex === -1 || trimmedString.indexOf(':', firstColonIndex + 1) !== -1) {
     return [
       {
         path,
@@ -265,7 +284,8 @@ function validateActionString(string: string, path: string): ValidationError[] {
     ]
   }
 
-  const [service, action] = parts
+  const service = trimmedString.slice(0, firstColonIndex)
+  const action = trimmedString.slice(firstColonIndex + 1)
   const errors: ValidationError[] = []
   if (!serviceRegex.test(service)) {
     errors.push({
@@ -308,15 +328,15 @@ function validateCondition(condition: any, path: string): ValidationError[] {
         message: `Condition operator is invalid`
       })
     }
-    const splitOperator = operator.split(':')
-    if (splitOperator.length > 2) {
+    const firstColonIndex = operator.indexOf(':')
+    if (firstColonIndex !== -1 && operator.indexOf(':', firstColonIndex + 1) !== -1) {
       conditionErrors.push({
         path: `${path}.#${operator}`,
         message: `Condition operator is invalid`
       })
-    } else if (splitOperator.length === 2) {
-      const setOperator = splitOperator[0].toLowerCase()
-      if (!allowedSetOperators.has(setOperator)) {
+    } else if (firstColonIndex !== -1) {
+      const setOperator = delimitedSegmentAt(operator, ':', 0)!
+      if (!isAllowedSetOperator(setOperator)) {
         conditionErrors.push({
           path: `${path}.#${operator}`,
           message: `Condition set operator must be either ForAllValues or ForAnyValue`
