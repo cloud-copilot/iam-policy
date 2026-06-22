@@ -1,4 +1,4 @@
-import { isAllWildcards } from '../utils.js'
+import { delimitedSegmentAt, isAllWildcards } from '../utils.js'
 
 export type ActionType = 'service' | 'wildcard'
 
@@ -97,10 +97,10 @@ export class ActionImpl implements Action, WildcardAction, ServiceAction {
   }
 
   public service(): string {
-    return this.rawValue.split(':')[0]!.toLowerCase()
+    return delimitedSegmentAt(this.rawValue, ':', 0)!.toLowerCase()
   }
 
   public action(): string {
-    return this.rawValue.split(':')[1]
+    return delimitedSegmentAt(this.rawValue, ':', 1)!
   }
 }
