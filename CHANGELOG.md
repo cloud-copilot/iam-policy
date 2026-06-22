@@ -1,3 +1,10 @@
+## [0.1.100](https://github.com/cloud-copilot/iam-policy/compare/v0.1.99...v0.1.100) (2026-06-22)
+
+
+### Features
+
+* Memory improvements ([722d962](https://github.com/cloud-copilot/iam-policy/commit/722d9621f76fb51ad3b209499df69d92471992c8))
+
 ## [0.1.99](https://github.com/cloud-copilot/iam-policy/compare/v0.1.98...v0.1.99) (2026-06-13)
 
 ## [0.1.98](https://github.com/cloud-copilot/iam-policy/compare/v0.1.97...v0.1.98) (2026-06-06)
