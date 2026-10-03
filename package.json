@@ -1,6 +1,6 @@
 {
   "name": "@actsecurity/iam-policy",
-  "version": "0.1.114",
+  "version": "0.1.115",
   "description": "An ORM for AWS IAM policies",
   "repository": {
     "type": "git",
